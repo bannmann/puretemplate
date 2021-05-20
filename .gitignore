@@ -1,15 +1,6 @@
 # Maven build folders
 /target/
 
-# Ant build folders
-/build/
-/dist/
-/lib/
-user.build.properties
-
-# NetBeans user configuration
-nbactions*.xml
-
 # IntelliJ project files
 *.iml
 *.ipr
