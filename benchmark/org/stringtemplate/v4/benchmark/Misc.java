@@ -26,7 +26,7 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.stringtemplate.v4.benchmark;
+package com.github.bannmann.puretemplate.benchmark;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -28,7 +28,7 @@
 
 /** Borrowed from Oliver Zeigermann */
 
-package org.stringtemplate.v4.benchmark.oliver;
+package com.github.bannmann.puretemplate.benchmark.oliver;
 
 import java.math.BigDecimal;
 import java.util.*;

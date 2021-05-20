@@ -28,7 +28,7 @@
 
 /** Borrowed from Oliver Zeigermann */
 
-package org.stringtemplate.v4.benchmark.oliver;
+package com.github.bannmann.puretemplate.benchmark.oliver;
 
 public class Customer {
     public final String firstName;

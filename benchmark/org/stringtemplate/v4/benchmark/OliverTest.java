@@ -28,10 +28,10 @@
 
 /** Borrowed from Oliver Zeigermann */
 
-package org.stringtemplate.v4.benchmark;
+package com.github.bannmann.puretemplate.benchmark;
 
-import org.stringtemplate.v4.*;
-import org.stringtemplate.v4.benchmark.oliver.Helper;
+import com.github.bannmann.puretemplate.*;
+import com.github.bannmann.puretemplate.benchmark.oliver.Helper;
 
 import java.io.IOException;
 import java.io.StringWriter;

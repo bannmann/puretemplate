@@ -26,11 +26,11 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.stringtemplate.v4.benchmark;
+package com.github.bannmann.puretemplate.benchmark;
 
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import com.github.bannmann.puretemplate.ST;
+import com.github.bannmann.puretemplate.STGroup;
+import com.github.bannmann.puretemplate.STGroupFile;
 
 public class Attributes {
     public static class User {

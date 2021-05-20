@@ -26,9 +26,9 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.stringtemplate.v4.benchmark;
+package com.github.bannmann.puretemplate.benchmark;
 
-import org.stringtemplate.v4.misc.MultiMap;
+import com.github.bannmann.puretemplate.misc.MultiMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,7 +41,7 @@ import java.util.*;
  *  as good but probably ok for my needs.
  *
  *  Use -XX:+PrintCompilation to see if compilation happens during trials
- *  java -XX:+PrintCompilation org.stringtemplate.v4.benchmark.Benchmark MyTest
+ *  java -XX:+PrintCompilation com.github.bannmann.puretemplate.benchmark.Benchmark MyTest
  */
 public class Benchmark {
     private static final int WARMUP_REPS = 10000; // HotSpot needs this to warm up
