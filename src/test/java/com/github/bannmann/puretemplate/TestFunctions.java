@@ -1,6 +1,6 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,14 +8,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
-public class TestFunctions extends BaseTest {
-    @Test public void testFirst() throws Exception {
+public class TestFunctions extends BaseTest
+{
+    @Test
+    public void testFirst() throws Exception
+    {
         String template = "<first(names)>";
         ST st = new ST(template);
-        List<String> names = new ArrayList<String>() {
-            {add("Ter"); add("Tom");}
+        List<String> names = new ArrayList<String>()
+        {
+            {
+                add("Ter");
+                add("Tom");
+            }
         };
         st.add("names", names);
         String expected = "Ter";
@@ -23,11 +30,17 @@ public class TestFunctions extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testLength() throws Exception {
+    @Test
+    public void testLength() throws Exception
+    {
         String template = "<length(names)>";
         ST st = new ST(template);
-        List<String> names = new ArrayList<String>() {
-            {add("Ter"); add("Tom");}
+        List<String> names = new ArrayList<String>()
+        {
+            {
+                add("Ter");
+                add("Tom");
+            }
         };
         st.add("names", names);
         String expected = "2";
@@ -35,11 +48,19 @@ public class TestFunctions extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testLengthWithNullValues() throws Exception {
+    @Test
+    public void testLengthWithNullValues() throws Exception
+    {
         String template = "<length(names)>";
         ST st = new ST(template);
-        List<String> names = new ArrayList<String>() {
-            {add("Ter"); add(null); add("Tom"); add(null); }
+        List<String> names = new ArrayList<String>()
+        {
+            {
+                add("Ter");
+                add(null);
+                add("Tom");
+                add(null);
+            }
         };
         st.add("names", names);
         String expected = "4";
@@ -47,10 +68,10 @@ public class TestFunctions extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testFirstOp() throws Exception {
-        ST e = new ST(
-                "<first(names)>"
-            );
+    @Test
+    public void testFirstOp() throws Exception
+    {
+        ST e = new ST("<first(names)>");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("names", "Sriram");
@@ -58,37 +79,37 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testFirstOpList() throws Exception {
-        ST e = new ST(
-                "<first(names)>"
-            );
+    @Test
+    public void testFirstOpList() throws Exception
+    {
+        ST e = new ST("<first(names)>");
         e.add("names", Arrays.asList("Ter", "Tom", "Sriram"));
         String expecting = "Ter";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testFirstOpArray() throws Exception {
-        ST e = new ST(
-                "<first(names)>"
-            );
-        e.add("names", new String[] { "Ter", "Tom", "Sriram" });
+    @Test
+    public void testFirstOpArray() throws Exception
+    {
+        ST e = new ST("<first(names)>");
+        e.add("names", new String[]{ "Ter", "Tom", "Sriram" });
         String expecting = "Ter";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testFirstOpPrimitiveArray() throws Exception {
-        ST e = new ST(
-                "<first(names)>"
-            );
-        e.add("names", new int[] { 0, 1, 2 });
+    @Test
+    public void testFirstOpPrimitiveArray() throws Exception
+    {
+        ST e = new ST("<first(names)>");
+        e.add("names", new int[]{ 0, 1, 2 });
         String expecting = "0";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testTruncOp() throws Exception {
-        ST e = new ST(
-                "<trunc(names); separator=\", \">"
-            );
+    @Test
+    public void testTruncOp() throws Exception
+    {
+        ST e = new ST("<trunc(names); separator=\", \">");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("names", "Sriram");
@@ -96,37 +117,37 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testTruncOpList() throws Exception {
-        ST e = new ST(
-                "<trunc(names); separator=\", \">"
-            );
+    @Test
+    public void testTruncOpList() throws Exception
+    {
+        ST e = new ST("<trunc(names); separator=\", \">");
         e.add("names", Arrays.asList("Ter", "Tom", "Sriram"));
         String expecting = "Ter, Tom";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testTruncOpArray() throws Exception {
-        ST e = new ST(
-                "<trunc(names); separator=\", \">"
-            );
-        e.add("names", new String[] { "Ter", "Tom", "Sriram" });
+    @Test
+    public void testTruncOpArray() throws Exception
+    {
+        ST e = new ST("<trunc(names); separator=\", \">");
+        e.add("names", new String[]{ "Ter", "Tom", "Sriram" });
         String expecting = "Ter, Tom";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testTruncOpPrimitiveArray() throws Exception {
-        ST e = new ST(
-                "<trunc(names); separator=\", \">"
-            );
-        e.add("names", new int[] { 0, 1, 2 });
+    @Test
+    public void testTruncOpPrimitiveArray() throws Exception
+    {
+        ST e = new ST("<trunc(names); separator=\", \">");
+        e.add("names", new int[]{ 0, 1, 2 });
         String expecting = "0, 1";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestOp() throws Exception {
-        ST e = new ST(
-                "<rest(names); separator=\", \">"
-            );
+    @Test
+    public void testRestOp() throws Exception
+    {
+        ST e = new ST("<rest(names); separator=\", \">");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("names", "Sriram");
@@ -134,67 +155,66 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestOpList() throws Exception {
-        ST e = new ST(
-                "<rest(names); separator=\", \">"
-            );
+    @Test
+    public void testRestOpList() throws Exception
+    {
+        ST e = new ST("<rest(names); separator=\", \">");
         e.add("names", Arrays.asList("Ter", "Tom", "Sriram"));
         String expecting = "Tom, Sriram";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestOpArray() throws Exception {
-        ST e = new ST(
-                "<rest(names); separator=\", \">"
-            );
-        e.add("names", new String[] { "Ter", "Tom", "Sriram" });
+    @Test
+    public void testRestOpArray() throws Exception
+    {
+        ST e = new ST("<rest(names); separator=\", \">");
+        e.add("names", new String[]{ "Ter", "Tom", "Sriram" });
         String expecting = "Tom, Sriram";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestOpPrimitiveArray() throws Exception {
-        ST e = new ST(
-                "<rest(names); separator=\", \">"
-            );
-        e.add("names", new int[] { 0, 1, 2 });
+    @Test
+    public void testRestOpPrimitiveArray() throws Exception
+    {
+        ST e = new ST("<rest(names); separator=\", \">");
+        e.add("names", new int[]{ 0, 1, 2 });
         String expecting = "1, 2";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestOpEmptyList() throws Exception {
-        ST e = new ST(
-                "<rest(names); separator=\", \">"
-            );
+    @Test
+    public void testRestOpEmptyList() throws Exception
+    {
+        ST e = new ST("<rest(names); separator=\", \">");
         e.add("names", new ArrayList<Object>());
         String expecting = "";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestOpEmptyArray() throws Exception {
-        ST e = new ST(
-                "<rest(names); separator=\", \">"
-            );
+    @Test
+    public void testRestOpEmptyArray() throws Exception
+    {
+        ST e = new ST("<rest(names); separator=\", \">");
         e.add("names", new String[0]);
         String expecting = "";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestOpEmptyPrimitiveArray() throws Exception {
-        ST e = new ST(
-                "<rest(names); separator=\", \">"
-            );
+    @Test
+    public void testRestOpEmptyPrimitiveArray() throws Exception
+    {
+        ST e = new ST("<rest(names); separator=\", \">");
         e.add("names", new int[0]);
         String expecting = "";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testReUseOfRestResult() throws Exception {
-        String templates =
-            "a(names) ::= \"<b(rest(names))>\""+newline+
-            "b(x) ::= \"<x>, <x>\""+newline
-            ;
+    @Test
+    public void testReUseOfRestResult() throws Exception
+    {
+        String templates = "a(names) ::= \"<b(rest(names))>\"" + newline + "b(x) ::= \"<x>, <x>\"" + newline;
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/"+"t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         ST e = group.getInstanceOf("a");
         List<String> names = new ArrayList<String>();
         names.add("Ter");
@@ -204,23 +224,22 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testReUseOfRestPrimitiveArrayResult() throws Exception {
-        String templates =
-            "a(names) ::= \"<b(rest(names))>\""+newline+
-            "b(x) ::= \"<x>, <x>\""+newline
-            ;
+    @Test
+    public void testReUseOfRestPrimitiveArrayResult() throws Exception
+    {
+        String templates = "a(names) ::= \"<b(rest(names))>\"" + newline + "b(x) ::= \"<x>, <x>\"" + newline;
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/"+"t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         ST e = group.getInstanceOf("a");
-        e.add("names", new int[] { 0, 1 });
+        e.add("names", new int[]{ 0, 1 });
         String expecting = "1, 1";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLastOp() throws Exception {
-        ST e = new ST(
-                "<last(names)>"
-            );
+    @Test
+    public void testLastOp() throws Exception
+    {
+        ST e = new ST("<last(names)>");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("names", "Sriram");
@@ -228,37 +247,37 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLastOpList() throws Exception {
-        ST e = new ST(
-                "<last(names)>"
-            );
+    @Test
+    public void testLastOpList() throws Exception
+    {
+        ST e = new ST("<last(names)>");
         e.add("names", Arrays.asList("Ter", "Tom", "Sriram"));
         String expecting = "Sriram";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLastOpArray() throws Exception {
-        ST e = new ST(
-                "<last(names)>"
-            );
-        e.add("names", new String[] { "Ter", "Tom", "Sriram" });
+    @Test
+    public void testLastOpArray() throws Exception
+    {
+        ST e = new ST("<last(names)>");
+        e.add("names", new String[]{ "Ter", "Tom", "Sriram" });
         String expecting = "Sriram";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLastOpPrimitiveArray() throws Exception {
-        ST e = new ST(
-                "<last(names)>"
-            );
-        e.add("names", new int[] { 0, 1, 2 });
+    @Test
+    public void testLastOpPrimitiveArray() throws Exception
+    {
+        ST e = new ST("<last(names)>");
+        e.add("names", new int[]{ 0, 1, 2 });
         String expecting = "2";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testStripOp() throws Exception {
-        ST e = new ST(
-                "<strip(names); null=\"n/a\">"
-            );
+    @Test
+    public void testStripOp() throws Exception
+    {
+        ST e = new ST("<strip(names); null=\"n/a\">");
         e.add("names", null);
         e.add("names", "Tom");
         e.add("names", null);
@@ -269,28 +288,28 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testStripOpList() throws Exception {
-        ST e = new ST(
-                "<strip(names); null=\"n/a\">"
-            );
+    @Test
+    public void testStripOpList() throws Exception
+    {
+        ST e = new ST("<strip(names); null=\"n/a\">");
         e.add("names", Arrays.asList(null, "Tom", null, null, "Sriram", null));
         String expecting = "TomSriram";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testStripOpArray() throws Exception {
-        ST e = new ST(
-                "<strip(names); null=\"n/a\">"
-            );
-        e.add("names", new String[] { null, "Tom", null, null, "Sriram", null });
+    @Test
+    public void testStripOpArray() throws Exception
+    {
+        ST e = new ST("<strip(names); null=\"n/a\">");
+        e.add("names", new String[]{ null, "Tom", null, null, "Sriram", null });
         String expecting = "TomSriram";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLengthStrip() throws Exception {
-        ST e = new ST(
-                "<length(strip(names))>"
-            );
+    @Test
+    public void testLengthStrip() throws Exception
+    {
+        ST e = new ST("<length(strip(names))>");
         e.add("names", null);
         e.add("names", "Tom");
         e.add("names", null);
@@ -301,29 +320,29 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLengthStripList() throws Exception {
-        ST e = new ST(
-                "<length(strip(names))>"
-            );
+    @Test
+    public void testLengthStripList() throws Exception
+    {
+        ST e = new ST("<length(strip(names))>");
         e.add("names", Arrays.asList(null, "Tom", null, null, "Sriram", null));
         String expecting = "2";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLengthStripArray() throws Exception {
-        ST e = new ST(
-                "<length(strip(names))>"
-            );
-        e.add("names", new String[] { null, "Tom", null, null, "Sriram", null });
+    @Test
+    public void testLengthStripArray() throws Exception
+    {
+        ST e = new ST("<length(strip(names))>");
+        e.add("names", new String[]{ null, "Tom", null, null, "Sriram", null });
         String expecting = "2";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCombinedOp() throws Exception {
+    @Test
+    public void testCombinedOp() throws Exception
+    {
         // replace first of yours with first of mine
-        ST e = new ST(
-                "<[first(mine),rest(yours)]; separator=\", \">"
-            );
+        ST e = new ST("<[first(mine),rest(yours)]; separator=\", \">");
         e.add("mine", "1");
         e.add("mine", "2");
         e.add("mine", "3");
@@ -333,11 +352,11 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCombinedOpList() throws Exception {
+    @Test
+    public void testCombinedOpList() throws Exception
+    {
         // replace first of yours with first of mine
-        ST e = new ST(
-                "<[first(mine),rest(yours)]; separator=\", \">"
-            );
+        ST e = new ST("<[first(mine),rest(yours)]; separator=\", \">");
         e.add("mine", Arrays.asList("1", "2", "3"));
         e.add("yours", "a");
         e.add("yours", "b");
@@ -345,35 +364,35 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCombinedOpArray() throws Exception {
+    @Test
+    public void testCombinedOpArray() throws Exception
+    {
         // replace first of yours with first of mine
-        ST e = new ST(
-                "<[first(mine),rest(yours)]; separator=\", \">"
-            );
-        e.add("mine", new String[] { "1", "2", "3" });
+        ST e = new ST("<[first(mine),rest(yours)]; separator=\", \">");
+        e.add("mine", new String[]{ "1", "2", "3" });
         e.add("yours", "a");
         e.add("yours", "b");
         String expecting = "1, b";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCombinedOpPrimitiveArray() throws Exception {
+    @Test
+    public void testCombinedOpPrimitiveArray() throws Exception
+    {
         // replace first of yours with first of mine
-        ST e = new ST(
-                "<[first(mine),rest(yours)]; separator=\", \">"
-            );
-        e.add("mine", new int[] { 1, 2, 3 });
+        ST e = new ST("<[first(mine),rest(yours)]; separator=\", \">");
+        e.add("mine", new int[]{ 1, 2, 3 });
         e.add("yours", "a");
         e.add("yours", "b");
         String expecting = "1, b";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCatListAndSingleAttribute() throws Exception {
+    @Test
+    public void testCatListAndSingleAttribute() throws Exception
+    {
         // replace first of yours with first of mine
-        ST e = new ST(
-                "<[mine,yours]; separator=\", \">"
-            );
+        ST e = new ST("<[mine,yours]; separator=\", \">");
         e.add("mine", "1");
         e.add("mine", "2");
         e.add("mine", "3");
@@ -382,46 +401,45 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCatListAndSingleAttribute2() throws Exception {
+    @Test
+    public void testCatListAndSingleAttribute2() throws Exception
+    {
         // replace first of yours with first of mine
-        ST e = new ST(
-                "<[mine,yours]; separator=\", \">"
-            );
+        ST e = new ST("<[mine,yours]; separator=\", \">");
         e.add("mine", Arrays.asList("1", "2", "3"));
         e.add("yours", "a");
         String expecting = "1, 2, 3, a";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCatArrayAndSingleAttribute() throws Exception {
+    @Test
+    public void testCatArrayAndSingleAttribute() throws Exception
+    {
         // replace first of yours with first of mine
-        ST e = new ST(
-                "<[mine,yours]; separator=\", \">"
-            );
-        e.add("mine", new String[] { "1", "2", "3" });
+        ST e = new ST("<[mine,yours]; separator=\", \">");
+        e.add("mine", new String[]{ "1", "2", "3" });
         e.add("yours", "a");
         String expecting = "1, 2, 3, a";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCatPrimitiveArrayAndSingleAttribute() throws Exception {
+    @Test
+    public void testCatPrimitiveArrayAndSingleAttribute() throws Exception
+    {
         // replace first of yours with first of mine
-        ST e = new ST(
-                "<[mine,yours]; separator=\", \">"
-            );
-        e.add("mine", new int[] { 1, 2, 3 });
+        ST e = new ST("<[mine,yours]; separator=\", \">");
+        e.add("mine", new int[]{ 1, 2, 3 });
         e.add("yours", "a");
         String expecting = "1, 2, 3, a";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testReUseOfCat() throws Exception {
-        String templates =
-            "a(mine,yours) ::= \"<b([mine,yours])>\""+newline+
-            "b(x) ::= \"<x>, <x>\""+newline
-            ;
+    @Test
+    public void testReUseOfCat() throws Exception
+    {
+        String templates = "a(mine,yours) ::= \"<b([mine,yours])>\"" + newline + "b(x) ::= \"<x>, <x>\"" + newline;
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/"+"t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         ST e = group.getInstanceOf("a");
         List<String> mine = new ArrayList<String>();
         mine.add("Ter");
@@ -434,14 +452,16 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCatListAndEmptyAttributes() throws Exception {
-        // + is overloaded to be cat strings and cat lists so the
-        // two operands (from left to right) determine which way it
-        // goes.  In this case, x+mine is a list so everything from their
-        // to the right becomes list cat.
-        ST e = new ST(
-                "<[x,mine,y,yours,z]; separator=\", \">"
-            );
+    @Test
+    public void testCatListAndEmptyAttributes() throws Exception
+    {
+        /*
+         * + is overloaded to be cat strings and cat lists so the
+         * two operands (from left to right) determine which way it
+         * goes.  In this case, x+mine is a list so everything from there
+         * to the right becomes list cat.
+         */
+        ST e = new ST("<[x,mine,y,yours,z]; separator=\", \">");
         e.add("mine", "1");
         e.add("mine", "2");
         e.add("mine", "3");
@@ -450,52 +470,43 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCatListAndEmptyAttributes2() throws Exception {
-        // + is overloaded to be cat strings and cat lists so the
-        // two operands (from left to right) determine which way it
-        // goes.  In this case, x+mine is a list so everything from their
-        // to the right becomes list cat.
-        ST e = new ST(
-                "<[x,mine,y,yours,z]; separator=\", \">"
-            );
+    @Test
+    public void testCatListAndEmptyAttributes2() throws Exception
+    {
+        // see the comment in testCatListAndEmptyAttributes()
+        ST e = new ST("<[x,mine,y,yours,z]; separator=\", \">");
         e.add("mine", Arrays.asList("1", "2", "3"));
         e.add("yours", "a");
         String expecting = "1, 2, 3, a";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCatArrayAndEmptyAttributes2() throws Exception {
-        // + is overloaded to be cat strings and cat lists so the
-        // two operands (from left to right) determine which way it
-        // goes.  In this case, x+mine is a list so everything from their
-        // to the right becomes list cat.
-        ST e = new ST(
-                "<[x,mine,y,yours,z]; separator=\", \">"
-            );
-        e.add("mine", new String[] { "1", "2", "3" });
+    @Test
+    public void testCatArrayAndEmptyAttributes2() throws Exception
+    {
+        // see the comment in testCatListAndEmptyAttributes()
+        ST e = new ST("<[x,mine,y,yours,z]; separator=\", \">");
+        e.add("mine", new String[]{ "1", "2", "3" });
         e.add("yours", "a");
         String expecting = "1, 2, 3, a";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testCatPrimitiveArrayAndEmptyAttributes() throws Exception {
-        // + is overloaded to be cat strings and cat lists so the
-        // two operands (from left to right) determine which way it
-        // goes.  In this case, x+mine is a list so everything from their
-        // to the right becomes list cat.
-        ST e = new ST(
-                "<[x,mine,y,yours,z]; separator=\", \">"
-            );
-        e.add("mine", new int[] { 1, 2, 3 });
+    @Test
+    public void testCatPrimitiveArrayAndEmptyAttributes() throws Exception
+    {
+        // see the comment in testCatListAndEmptyAttributes()
+        ST e = new ST("<[x,mine,y,yours,z]; separator=\", \">");
+        e.add("mine", new int[]{ 1, 2, 3 });
         e.add("yours", "a");
         String expecting = "1, 2, 3, a";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testNestedOp() throws Exception {
-        ST e = new ST(
-                "<first(rest(names))>" // gets 2nd element
-            );
+    @Test
+    public void testNestedOp() throws Exception
+    {
+        ST e = new ST("<first(rest(names))>"); // gets 2nd element
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("names", "Sriram");
@@ -503,165 +514,171 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testNestedOpList() throws Exception {
-        ST e = new ST(
-                "<first(rest(names))>" // gets 2nd element
-            );
+    @Test
+    public void testNestedOpList() throws Exception
+    {
+        ST e = new ST("<first(rest(names))>"); // gets 2nd element
         e.add("names", Arrays.asList("Ter", "Tom", "Sriram"));
         String expecting = "Tom";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testNestedOpArray() throws Exception {
-        ST e = new ST(
-                "<first(rest(names))>" // gets 2nd element
-            );
-        e.add("names", new String[] { "Ter", "Tom", "Sriram" });
+    @Test
+    public void testNestedOpArray() throws Exception
+    {
+        ST e = new ST("<first(rest(names))>"); // gets 2nd element
+        e.add("names", new String[]{ "Ter", "Tom", "Sriram" });
         String expecting = "Tom";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testNestedOpPrimitiveArray() throws Exception {
-        ST e = new ST(
-                "<first(rest(names))>" // gets 2nd element
-            );
-        e.add("names", new int[] { 0, 1, 2 });
+    @Test
+    public void testNestedOpPrimitiveArray() throws Exception
+    {
+        ST e = new ST("<first(rest(names))>"); // gets 2nd element
+        e.add("names", new int[]{ 0, 1, 2 });
         String expecting = "1";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testFirstWithOneAttributeOp() throws Exception {
-        ST e = new ST(
-                "<first(names)>"
-            );
+    @Test
+    public void testFirstWithOneAttributeOp() throws Exception
+    {
+        ST e = new ST("<first(names)>");
         e.add("names", "Ter");
         String expecting = "Ter";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLastWithOneAttributeOp() throws Exception {
-        ST e = new ST(
-                "<last(names)>"
-            );
+    @Test
+    public void testLastWithOneAttributeOp() throws Exception
+    {
+        ST e = new ST("<last(names)>");
         e.add("names", "Ter");
         String expecting = "Ter";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLastWithLengthOneListAttributeOp() throws Exception {
-        ST e = new ST(
-                "<last(names)>"
-            );
-        e.add("names", new ArrayList<String>() {{add("Ter");}});
+    @Test
+    public void testLastWithLengthOneListAttributeOp() throws Exception
+    {
+        ST e = new ST("<last(names)>");
+        e.add("names", new ArrayList<String>()
+        {{
+            add("Ter");
+        }});
         String expecting = "Ter";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLastWithLengthOneArrayAttributeOp() throws Exception {
-        ST e = new ST(
-                "<last(names)>"
-            );
-        e.add("names", new String[] { "Ter" });
+    @Test
+    public void testLastWithLengthOneArrayAttributeOp() throws Exception
+    {
+        ST e = new ST("<last(names)>");
+        e.add("names", new String[]{ "Ter" });
         String expecting = "Ter";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testLastWithLengthOnePrimitiveArrayAttributeOp() throws Exception {
-        ST e = new ST(
-                "<last(names)>"
-            );
-        e.add("names", new int[] { 0 });
+    @Test
+    public void testLastWithLengthOnePrimitiveArrayAttributeOp() throws Exception
+    {
+        ST e = new ST("<last(names)>");
+        e.add("names", new int[]{ 0 });
         String expecting = "0";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestWithOneAttributeOp() throws Exception {
-        ST e = new ST(
-                "<rest(names)>"
-            );
+    @Test
+    public void testRestWithOneAttributeOp() throws Exception
+    {
+        ST e = new ST("<rest(names)>");
         e.add("names", "Ter");
         String expecting = "";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestWithLengthOneListAttributeOp() throws Exception {
-        ST e = new ST(
-                "<rest(names)>"
-            );
-        e.add("names", new ArrayList<String>() {{add("Ter");}});
+    @Test
+    public void testRestWithLengthOneListAttributeOp() throws Exception
+    {
+        ST e = new ST("<rest(names)>");
+        e.add("names", new ArrayList<String>()
+        {{
+            add("Ter");
+        }});
         String expecting = "";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestWithLengthOneArrayAttributeOp() throws Exception {
-        ST e = new ST(
-                "<rest(names)>"
-            );
-        e.add("names", new String[] { "Ter" });
+    @Test
+    public void testRestWithLengthOneArrayAttributeOp() throws Exception
+    {
+        ST e = new ST("<rest(names)>");
+        e.add("names", new String[]{ "Ter" });
         String expecting = "";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRestWithLengthOnePrimitiveArrayAttributeOp() throws Exception {
-        ST e = new ST(
-                "<rest(names)>"
-            );
-        e.add("names", new int[] { 0 });
+    @Test
+    public void testRestWithLengthOnePrimitiveArrayAttributeOp() throws Exception
+    {
+        ST e = new ST("<rest(names)>");
+        e.add("names", new int[]{ 0 });
         String expecting = "";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRepeatedRestOp() throws Exception {
-        ST e = new ST(
-                "<rest(names)>, <rest(names)>" // gets 2nd element
-            );
+    @Test
+    public void testRepeatedRestOp() throws Exception
+    {
+        ST e = new ST("<rest(names)>, <rest(names)>"); // gets 2nd element
         e.add("names", "Ter");
         e.add("names", "Tom");
         String expecting = "Tom, Tom";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRepeatedRestOpList() throws Exception {
-        ST e = new ST(
-                "<rest(names)>, <rest(names)>" // gets 2nd element
-            );
+    @Test
+    public void testRepeatedRestOpList() throws Exception
+    {
+        ST e = new ST("<rest(names)>, <rest(names)>"); // gets 2nd element
         e.add("names", Arrays.asList("Ter", "Tom"));
         String expecting = "Tom, Tom";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRepeatedRestOpArray() throws Exception {
-        ST e = new ST(
-                "<rest(names)>, <rest(names)>" // gets 2nd element
-            );
-        e.add("names", new String[] { "Ter", "Tom" });
+    @Test
+    public void testRepeatedRestOpArray() throws Exception
+    {
+        ST e = new ST("<rest(names)>, <rest(names)>"); // gets 2nd element
+        e.add("names", new String[]{ "Ter", "Tom" });
         String expecting = "Tom, Tom";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testRepeatedRestOpPrimitiveArray() throws Exception {
-        ST e = new ST(
-                "<rest(names)>, <rest(names)>" // gets 2nd element
-            );
-        e.add("names", new int[] { 0, 1 });
+    @Test
+    public void testRepeatedRestOpPrimitiveArray() throws Exception
+    {
+        ST e = new ST("<rest(names)>, <rest(names)>"); // gets 2nd element
+        e.add("names", new int[]{ 0, 1 });
         String expecting = "1, 1";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testIncomingLists() throws Exception {
-        ST e = new ST(
-                "<rest(names)>, <rest(names)>" // gets 2nd element
-            );
+    @Test
+    public void testIncomingLists() throws Exception
+    {
+        ST e = new ST("<rest(names)>, <rest(names)>"); // gets 2nd element
         e.add("names", "Ter");
         e.add("names", "Tom");
         String expecting = "Tom, Tom";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testFirstWithCatAttribute() throws Exception {
-        ST e = new ST(
-                "<first([names,phones])>"
-            );
+    @Test
+    public void testFirstWithCatAttribute() throws Exception
+    {
+        ST e = new ST("<first([names,phones])>");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("phones", "1");
@@ -670,10 +687,10 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testFirstWithListOfMaps() throws Exception {
-        ST e = new ST(
-                "<first(maps).Ter>"
-            );
+    @Test
+    public void testFirstWithListOfMaps() throws Exception
+    {
+        ST e = new ST("<first(maps).Ter>");
         final Map<String, String> m1 = new HashMap<String, String>();
         final Map<String, String> m2 = new HashMap<String, String>();
         m1.put("Ter", "x5707");
@@ -683,16 +700,20 @@ public class TestFunctions extends BaseTest {
         String expecting = "x5707";
         assertEquals(expecting, e.render());
 
-        List<Map<String, String>> list = new ArrayList<Map<String, String>>() {{add(m1); add(m2);}};
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>()
+        {{
+            add(m1);
+            add(m2);
+        }};
         e.add("maps", list);
         expecting = "x5707";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testFirstWithListOfMaps2() throws Exception {
-        ST e = new ST(
-                "<first(maps):{ m | <m>!}>"
-            );
+    @Test
+    public void testFirstWithListOfMaps2() throws Exception
+    {
+        ST e = new ST("<first(maps):{ m | <m>!}>");
         final Map<String, String> m1 = new HashMap<String, String>();
         final Map<String, String> m2 = new HashMap<String, String>();
         m1.put("Ter", "x5707");
@@ -701,34 +722,38 @@ public class TestFunctions extends BaseTest {
         e.add("maps", m2);
         String expecting = "Ter!";
         assertEquals(expecting, e.render());
-        List<Map<String, String>> list = new ArrayList<Map<String, String>>() {{add(m1); add(m2);}};
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>()
+        {{
+            add(m1);
+            add(m2);
+        }};
         e.add("maps", list);
         expecting = "Ter!";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testTrim() throws Exception {
-        ST e = new ST(
-                "<trim(name)>"
-            );
+    @Test
+    public void testTrim() throws Exception
+    {
+        ST e = new ST("<trim(name)>");
         e.add("name", " Ter  \n");
         String expecting = "Ter";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testStrlen() throws Exception {
-        ST e = new ST(
-                "<strlen(name)>"
-            );
+    @Test
+    public void testStrlen() throws Exception
+    {
+        ST e = new ST("<strlen(name)>");
         e.add("name", "012345");
         String expecting = "6";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testReverse() throws Exception {
-        ST e = new ST(
-                "<reverse(names); separator=\", \">"
-            );
+    @Test
+    public void testReverse() throws Exception
+    {
+        ST e = new ST("<reverse(names); separator=\", \">");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("names", "Sriram");
@@ -736,31 +761,30 @@ public class TestFunctions extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testReverseList() throws Exception {
-        ST e = new ST(
-                "<reverse(names); separator=\", \">"
-            );
+    @Test
+    public void testReverseList() throws Exception
+    {
+        ST e = new ST("<reverse(names); separator=\", \">");
         e.add("names", Arrays.asList("Ter", "Tom", "Sriram"));
         String expecting = "Sriram, Tom, Ter";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testReverseArray() throws Exception {
-        ST e = new ST(
-                "<reverse(names); separator=\", \">"
-            );
-        e.add("names", new String[] { "Ter", "Tom", "Sriram" });
+    @Test
+    public void testReverseArray() throws Exception
+    {
+        ST e = new ST("<reverse(names); separator=\", \">");
+        e.add("names", new String[]{ "Ter", "Tom", "Sriram" });
         String expecting = "Sriram, Tom, Ter";
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testReversePrimitiveArray() throws Exception {
-        ST e = new ST(
-                "<reverse(names); separator=\", \">"
-            );
-        e.add("names", new int[] { 0, 1, 2 });
+    @Test
+    public void testReversePrimitiveArray() throws Exception
+    {
+        ST e = new ST("<reverse(names); separator=\", \">");
+        e.add("names", new int[]{ 0, 1, 2 });
         String expecting = "2, 1, 0";
         assertEquals(expecting, e.render());
     }
-
 }

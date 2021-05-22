@@ -29,25 +29,28 @@
 package com.github.bannmann.puretemplate.misc;
 
 /**
- *
  * @author Sam Harwell
  */
-public class AmbiguousMatchException extends RuntimeException {
+public class AmbiguousMatchException extends RuntimeException
+{
 
-    public AmbiguousMatchException() {
+    public AmbiguousMatchException()
+    {
         super();
     }
 
-    public AmbiguousMatchException(String message) {
+    public AmbiguousMatchException(String message)
+    {
         super(message);
     }
 
-    public AmbiguousMatchException(Throwable cause) {
+    public AmbiguousMatchException(Throwable cause)
+    {
         super(cause);
     }
 
-    public AmbiguousMatchException(String message, Throwable cause) {
+    public AmbiguousMatchException(String message, Throwable cause)
+    {
         super(message, cause);
     }
-
 }

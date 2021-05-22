@@ -1,16 +1,20 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.Test;
-
-import com.github.bannmann.puretemplate.misc.ErrorBuffer;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class TestIndirectionAndEarlyEval extends BaseTest {
-    @Test public void testEarlyEval() throws Exception {
+import com.github.bannmann.puretemplate.misc.ErrorBuffer;
+
+public class TestIndirectionAndEarlyEval extends BaseTest
+{
+    @Test
+    public void testEarlyEval() throws Exception
+    {
         String template = "<(name)>";
         ST st = new ST(template);
         st.add("name", "Ter");
@@ -19,7 +23,9 @@ public class TestIndirectionAndEarlyEval extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testIndirectTemplateInclude() throws Exception {
+    @Test
+    public void testIndirectTemplateInclude() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("foo", "bar");
         String template = "<(name)()>";
@@ -31,7 +37,9 @@ public class TestIndirectionAndEarlyEval extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testIndirectTemplateIncludeWithArgs() throws Exception {
+    @Test
+    public void testIndirectTemplateIncludeWithArgs() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("foo", "x,y", "<x><y>");
         String template = "<(name)({1},{2})>";
@@ -44,14 +52,13 @@ public class TestIndirectionAndEarlyEval extends BaseTest {
     }
 
     @Test
-    public void testIndirectCallWithPassThru() throws Exception {
+    public void testIndirectCallWithPassThru() throws Exception
+    {
         // pass-through for dynamic template invocation is not supported by the
         // bytecode representation
-        writeFile(tmpdir, "t.stg",
-            "t1(x) ::= \"<x>\"\n" +
-            "main(x=\"hello\",t=\"t1\") ::= <<\n" +
-            "<(t)(...)>\n" +
-            ">>");
+        writeFile(tmpdir,
+            "t.stg",
+            "t1(x) ::= \"<x>\"\n" + "main(x=\"hello\",t=\"t1\") ::= <<\n" + "<(t)(...)>\n" + ">>");
         STGroup group = new STGroupFile(tmpdir + "/t.stg");
         ErrorBuffer errors = new ErrorBuffer();
         group.setListener(errors);
@@ -60,7 +67,9 @@ public class TestIndirectionAndEarlyEval extends BaseTest {
         assertNull(st);
     }
 
-    @Test public void testIndirectTemplateIncludeViaTemplate() throws Exception {
+    @Test
+    public void testIndirectTemplateIncludeViaTemplate() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("foo", "bar");
         group.defineTemplate("tname", "foo");
@@ -72,7 +81,9 @@ public class TestIndirectionAndEarlyEval extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testIndirectProp() throws Exception {
+    @Test
+    public void testIndirectProp() throws Exception
+    {
         String template = "<u.(propname)>: <u.name>";
         ST st = new ST(template);
         st.add("u", new TestCoreBasics.User(1, "parrt"));
@@ -82,7 +93,9 @@ public class TestIndirectionAndEarlyEval extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testIndirectMap() throws Exception {
+    @Test
+    public void testIndirectMap() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("a", "x", "[<x>]");
         group.defineTemplate("test", "names,templateName", "hi <names:(templateName)()>!");
@@ -91,13 +104,14 @@ public class TestIndirectionAndEarlyEval extends BaseTest {
         st.add("names", "Tom");
         st.add("names", "Sumana");
         st.add("templateName", "a");
-        String expected =
-            "hi [Ter][Tom][Sumana]!";
+        String expected = "hi [Ter][Tom][Sumana]!";
         String result = st.render();
         assertEquals(expected, result);
     }
 
-    @Test public void testNonStringDictLookup() throws Exception {
+    @Test
+    public void testNonStringDictLookup() throws Exception
+    {
         String template = "<m.(intkey)>";
         ST st = new ST(template);
         Map<Integer, String> m = new HashMap<Integer, String>();

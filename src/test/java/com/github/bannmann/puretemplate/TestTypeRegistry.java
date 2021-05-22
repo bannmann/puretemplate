@@ -1,20 +1,27 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.Test;
-import com.github.bannmann.puretemplate.misc.TypeRegistry;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class TestTypeRegistry {
+import org.junit.Test;
+
+import com.github.bannmann.puretemplate.misc.TypeRegistry;
+
+public class TestTypeRegistry
+{
     // https://github.com/antlr/stringtemplate4/issues/122
 
-    static class A {}
+    static class A
+    {
+    }
 
-    static class B extends A {}
+    static class B extends A
+    {
+    }
 
     @Test
-    public void registryWithObject() {
+    public void registryWithObject()
+    {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(Object.class, "Object");
         assertEquals("Object", registry.get(Object.class));
@@ -23,7 +30,8 @@ public class TestTypeRegistry {
     }
 
     @Test
-    public void registryWithA() {
+    public void registryWithA()
+    {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(A.class, "A");
         assertNull(registry.get(Object.class));
@@ -32,7 +40,8 @@ public class TestTypeRegistry {
     }
 
     @Test
-    public void registryWithB() {
+    public void registryWithB()
+    {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(B.class, "B");
         assertNull(registry.get(Object.class));
@@ -41,7 +50,8 @@ public class TestTypeRegistry {
     }
 
     @Test
-    public void registryWithObjectAndA() {
+    public void registryWithObjectAndA()
+    {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(Object.class, "Object");
         registry.put(A.class, "A");
@@ -51,7 +61,8 @@ public class TestTypeRegistry {
     }
 
     @Test
-    public void registryWithObjectAndB() {
+    public void registryWithObjectAndB()
+    {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(Object.class, "Object");
         registry.put(B.class, "B");
@@ -61,7 +72,8 @@ public class TestTypeRegistry {
     }
 
     @Test
-    public void registryWithAAndB() {
+    public void registryWithAAndB()
+    {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(A.class, "A");
         registry.put(B.class, "B");
@@ -71,7 +83,8 @@ public class TestTypeRegistry {
     }
 
     @Test
-    public void registryWithObjectAndAAndB() {
+    public void registryWithObjectAndAAndB()
+    {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(Object.class, "Object");
         registry.put(A.class, "A");

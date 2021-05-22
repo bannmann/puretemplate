@@ -156,7 +156,8 @@ scope {
 	$impl.template = template; // always forget the entire template; char indexes are relative to it
 }
 	:	chunk
-		{ // finish off the CompiledST result
+		{
+        // finish off the CompiledST result
         if ( $template::state.stringtable!=null ) $impl.strings = $template::state.stringtable.toArray();
         $impl.codeSize = $template::state.ip;
 		}

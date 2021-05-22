@@ -1,8 +1,6 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,9 +9,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TestRenderers extends BaseTest {
+public class TestRenderers extends BaseTest
+{
 
     String javaVersion = System.getProperty("java.version");
 
@@ -22,38 +23,43 @@ public class TestRenderers extends BaseTest {
 
     @Before
     @Override
-    public void setUp() {
+    public void setUp()
+    {
         super.setUp();
         origLocale = Locale.getDefault();
         Locale.setDefault(Locale.US);
     }
 
     @After
-    public void tearDown() {
+    public void tearDown()
+    {
         Locale.setDefault(origLocale);
     }
 
-    @Test public void testRendererForGroup() throws Exception {
-        String templates =
-                "dateThing(created) ::= \"datetime: <created>\"\n";
+    @Test
+    public void testRendererForGroup() throws Exception
+    {
+        String templates = "dateThing(created) ::= \"datetime: <created>\"\n";
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(GregorianCalendar.class, new DateRenderer());
         ST st = group.getInstanceOf("dateThing");
         st.add("created", new GregorianCalendar(2005, 7 - 1, 5));
         String expecting = "datetime: 7/5/05, 12:00 AM";
-        if ( javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8") ) {
+        if (javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8"))
+        {
             expecting = "datetime: 7/5/05 12:00 AM";
         }
         String result = st.render();
         assertEquals(expecting, result);
     }
 
-    @Test public void testRendererWithFormat() throws Exception {
-        String templates =
-                "dateThing(created) ::= << date: <created; format=\"yyyy.MM.dd\"> >>\n";
+    @Test
+    public void testRendererWithFormat() throws Exception
+    {
+        String templates = "dateThing(created) ::= << date: <created; format=\"yyyy.MM.dd\"> >>\n";
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(GregorianCalendar.class, new DateRenderer());
         ST st = group.getInstanceOf("dateThing");
         st.add("created", new GregorianCalendar(2005, 7 - 1, 5));
@@ -62,53 +68,60 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testRendererWithPredefinedFormat() throws Exception {
-        String templates =
-                "dateThing(created) ::= << datetime: <created; format=\"short\"> >>\n";
+    @Test
+    public void testRendererWithPredefinedFormat() throws Exception
+    {
+        String templates = "dateThing(created) ::= << datetime: <created; format=\"short\"> >>\n";
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(GregorianCalendar.class, new DateRenderer());
         ST st = group.getInstanceOf("dateThing");
         st.add("created", new GregorianCalendar(2005, 7 - 1, 5));
         String expecting = " datetime: 7/5/05, 12:00 AM ";
-        if ( javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8") ) {
+        if (javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8"))
+        {
             expecting = " datetime: 7/5/05 12:00 AM ";
         }
         String result = st.render();
         assertEquals(expecting, result);
     }
 
-    @Test public void testRendererWithPredefinedFormat2() throws Exception {
-        String templates =
-                "dateThing(created) ::= << datetime: <created; format=\"full\"> >>\n";
+    @Test
+    public void testRendererWithPredefinedFormat2() throws Exception
+    {
+        String templates = "dateThing(created) ::= << datetime: <created; format=\"full\"> >>\n";
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(GregorianCalendar.class, new DateRenderer());
         ST st = group.getInstanceOf("dateThing");
         TimeZone origTimeZone = TimeZone.getDefault();
-        try {
+        try
+        {
             // set Timezone to "PDT"
             TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
             st.add("created", new GregorianCalendar(2005, 7 - 1, 5));
             String expecting = " datetime: Tuesday, July 5, 2005 at 12:00:00 AM Pacific Daylight Time ";
-            if ( javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8") ) {
+            if (javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8"))
+            {
                 expecting = " datetime: Tuesday, July 5, 2005 12:00:00 AM PDT ";
             }
             String result = st.render();
             assertEquals(expecting, result);
         }
-        finally {
+        finally
+        {
             // Restore original Timezone
             TimeZone.setDefault(origTimeZone);
         }
-   }
+    }
 
-    @Test public void testRendererWithPredefinedFormat3() throws Exception {
-        String templates =
-                "dateThing(created) ::= << date: <created; format=\"date:medium\"> >>\n";
+    @Test
+    public void testRendererWithPredefinedFormat3() throws Exception
+    {
+        String templates = "dateThing(created) ::= << date: <created; format=\"date:medium\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(GregorianCalendar.class, new DateRenderer());
         ST st = group.getInstanceOf("dateThing");
         st.add("created", new GregorianCalendar(2005, 7 - 1, 5));
@@ -117,12 +130,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testRendererWithPredefinedFormat4() throws Exception {
-        String templates =
-                "dateThing(created) ::= << time: <created; format=\"time:medium\"> >>\n";
+    @Test
+    public void testRendererWithPredefinedFormat4() throws Exception
+    {
+        String templates = "dateThing(created) ::= << time: <created; format=\"time:medium\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(GregorianCalendar.class, new DateRenderer());
         ST st = group.getInstanceOf("dateThing");
         st.add("created", new GregorianCalendar(2005, 7 - 1, 5));
@@ -131,12 +145,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testStringRendererWithFormat_cap() throws Exception {
-        String templates =
-                "foo(x) ::= << <x; format=\"cap\"> >>\n";
+    @Test
+    public void testStringRendererWithFormat_cap() throws Exception
+    {
+        String templates = "foo(x) ::= << <x; format=\"cap\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(String.class, new StringRenderer());
         ST st = group.getInstanceOf("foo");
         st.add("x", "hi");
@@ -145,14 +160,14 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testStringRendererWithTemplateInclude_cap() throws Exception {
+    @Test
+    public void testStringRendererWithTemplateInclude_cap() throws Exception
+    {
         // must toString the t() ref before applying format
-        String templates =
-                "foo(x) ::= << <(t()); format=\"cap\"> >>\n" +
-                "t() ::= <<ack>>\n";
+        String templates = "foo(x) ::= << <(t()); format=\"cap\"> >>\n" + "t() ::= <<ack>>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(String.class, new StringRenderer());
         ST st = group.getInstanceOf("foo");
         st.add("x", "hi");
@@ -161,13 +176,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testStringRendererWithSubtemplateInclude_cap() throws Exception {
-        String templates =
-                "foo(x) ::= << <({ack}); format=\"cap\"> >>\n" +
-                "t() ::= <<ack>>\n";
+    @Test
+    public void testStringRendererWithSubtemplateInclude_cap() throws Exception
+    {
+        String templates = "foo(x) ::= << <({ack}); format=\"cap\"> >>\n" + "t() ::= <<ack>>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(String.class, new StringRenderer());
         ST st = group.getInstanceOf("foo");
         st.add("x", "hi");
@@ -176,12 +191,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testStringRendererWithFormat_cap_emptyValue() throws Exception {
-        String templates =
-                "foo(x) ::= << <x; format=\"cap\"> >>\n";
+    @Test
+    public void testStringRendererWithFormat_cap_emptyValue() throws Exception
+    {
+        String templates = "foo(x) ::= << <x; format=\"cap\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(String.class, new StringRenderer());
         ST st = group.getInstanceOf("foo");
         st.add("x", "");
@@ -190,12 +206,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testStringRendererWithFormat_url_encode() throws Exception {
-        String templates =
-                "foo(x) ::= << <x; format=\"url-encode\"> >>\n";
+    @Test
+    public void testStringRendererWithFormat_url_encode() throws Exception
+    {
+        String templates = "foo(x) ::= << <x; format=\"url-encode\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(String.class, new StringRenderer());
         ST st = group.getInstanceOf("foo");
         st.add("x", "a b");
@@ -204,12 +221,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testStringRendererWithFormat_xml_encode() throws Exception {
-        String templates =
-                "foo(x) ::= << <x; format=\"xml-encode\"> >>\n";
+    @Test
+    public void testStringRendererWithFormat_xml_encode() throws Exception
+    {
+        String templates = "foo(x) ::= << <x; format=\"xml-encode\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(String.class, new StringRenderer());
         ST st = group.getInstanceOf("foo");
         st.add("x", "a<b> &\t\b");
@@ -218,12 +236,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testStringRendererWithFormat_xml_encode_null() throws Exception {
-        String templates =
-                "foo(x) ::= << <x; format=\"xml-encode\"> >>\n";
+    @Test
+    public void testStringRendererWithFormat_xml_encode_null() throws Exception
+    {
+        String templates = "foo(x) ::= << <x; format=\"xml-encode\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(String.class, new StringRenderer());
         ST st = group.getInstanceOf("foo");
         st.add("x", null);
@@ -232,12 +251,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testStringRendererWithFormat_xml_encode_emoji() throws Exception {
-        String templates =
-            "foo(x) ::= << <x; format=\"xml-encode\"> >>\n";
+    @Test
+    public void testStringRendererWithFormat_xml_encode_emoji() throws Exception
+    {
+        String templates = "foo(x) ::= << <x; format=\"xml-encode\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(String.class, new StringRenderer());
         ST st = group.getInstanceOf("foo");
         st.add("x", "\uD83E\uDE73");
@@ -246,12 +266,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testStringRendererWithPrintfFormat() throws Exception {
-        String templates =
-                "foo(x) ::= << <x; format=\"%6s\"> >>\n";
+    @Test
+    public void testStringRendererWithPrintfFormat() throws Exception
+    {
+        String templates = "foo(x) ::= << <x; format=\"%6s\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(String.class, new StringRenderer());
         ST st = group.getInstanceOf("foo");
         st.add("x", "hi");
@@ -260,12 +281,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testNumberRendererWithPrintfFormat() throws Exception {
-        String templates =
-                "foo(x,y) ::= << <x; format=\"%d\"> <y; format=\"%2.3f\"> >>\n";
+    @Test
+    public void testNumberRendererWithPrintfFormat() throws Exception
+    {
+        String templates = "foo(x,y) ::= << <x; format=\"%d\"> <y; format=\"%2.3f\"> >>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(Integer.class, new NumberRenderer());
         group.registerRenderer(Double.class, new NumberRenderer());
         ST st = group.getInstanceOf("foo");
@@ -276,11 +298,12 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testInstanceofRenderer() throws Exception {
-        String templates =
-                "numberThing(x,y,z) ::= \"numbers: <x>, <y>; <z>\"\n";
+    @Test
+    public void testInstanceofRenderer() throws Exception
+    {
+        String templates = "numberThing(x,y,z) ::= \"numbers: <x>, <y>; <z>\"\n";
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(Number.class, new NumberRenderer());
         ST st = group.getInstanceOf("numberThing");
         st.add("x", -2100);
@@ -291,14 +314,13 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testLocaleWithNumberRenderer() throws Exception {
-        String templates =
-                "foo(x,y) ::= <<\n" +
-                "<x; format=\"%,d\"> <y; format=\"%,2.3f\">\n" +
-                ">>\n";
+    @Test
+    public void testLocaleWithNumberRenderer() throws Exception
+    {
+        String templates = "foo(x,y) ::= <<\n" + "<x; format=\"%,d\"> <y; format=\"%,2.3f\">\n" + ">>\n";
 
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/t.stg");
         group.registerRenderer(Integer.class, new NumberRenderer());
         group.registerRenderer(Double.class, new NumberRenderer());
         ST st = group.getInstanceOf("foo");
@@ -310,9 +332,10 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testRendererWithFormatAndList() throws Exception {
-        String template =
-                "The names: <names; format=\"upper\">";
+    @Test
+    public void testRendererWithFormatAndList() throws Exception
+    {
+        String template = "The names: <names; format=\"upper\">";
         STGroup group = new STGroup();
         group.registerRenderer(String.class, new StringRenderer());
         ST st = new ST(group, template);
@@ -324,9 +347,10 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testRendererWithFormatAndSeparator() throws Exception {
-        String template =
-                "The names: <names; separator=\" and \", format=\"upper\">";
+    @Test
+    public void testRendererWithFormatAndSeparator() throws Exception
+    {
+        String template = "The names: <names; separator=\" and \", format=\"upper\">";
         STGroup group = new STGroup();
         group.registerRenderer(String.class, new StringRenderer());
         ST st = new ST(group, template);
@@ -338,9 +362,10 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testRendererWithFormatAndSeparatorAndNull() throws Exception {
-        String template =
-                "The names: <names; separator=\" and \", null=\"n/a\", format=\"upper\">";
+    @Test
+    public void testRendererWithFormatAndSeparatorAndNull() throws Exception
+    {
+        String template = "The names: <names; separator=\" and \", null=\"n/a\", format=\"upper\">";
         STGroup group = new STGroup();
         group.registerRenderer(String.class, new StringRenderer());
         ST st = new ST(group, template);
@@ -354,7 +379,9 @@ public class TestRenderers extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testDateRendererWithLocale() {
+    @Test
+    public void testDateRendererWithLocale()
+    {
         String input = "<date; format=\"dd 'de' MMMMM 'de' yyyy\">";
         STGroup group = new STGroup();
         group.registerRenderer(Calendar.class, new DateRenderer());
@@ -365,7 +392,8 @@ public class TestRenderers extends BaseTest {
         st.add("date", cal);
 
         String expected = "12 de junho de 2012";
-        if ( javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8") ) {
+        if (javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8"))
+        {
             expected = "12 de Junho de 2012";
         }
         assertEquals(expected, st.render(new Locale("pt")));

@@ -4,7 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Locale;
 
-/** This render knows to perform a few format operations on {@link String} objects:
+/**
+ * This render knows to perform a few format operations on {@link String} objects:
  * <ul>
  *  <li>{@code upper}: Convert to upper case.</li>
  *  <li>{@code lower}: Convert to lower case.</li>
@@ -13,69 +14,95 @@ import java.util.Locale;
  *  <li>{@code xml-encode}:</li>
  * </ul>
  */
-public class StringRenderer implements AttributeRenderer<Object> {
+public class StringRenderer implements AttributeRenderer<Object>
+{
     // accepts Object for backward compatibility,
     // but fails when value is not a String at runtime
 
     @Override
-    public String toString(Object value, String formatString, Locale locale) {
+    public String toString(Object value, String formatString, Locale locale)
+    {
         return toString((String) value, formatString, locale);
     }
 
     // trim(s) and strlen(s) built-in funcs; these are format options
-    public String toString(String value, String formatString, Locale locale) {
-        if ( formatString==null ) return value;
-        if ( formatString.equals("upper") ) return value.toUpperCase(locale);
-        if ( formatString.equals("lower") ) return value.toLowerCase(locale);
-        if ( formatString.equals("cap") ) {
-            return (value.length() > 0) ? Character.toUpperCase(value.charAt(0))+value.substring(1) : value;
+    public String toString(String value, String formatString, Locale locale)
+    {
+        if (formatString == null)
+        {
+            return value;
         }
-        if ( formatString.equals("url-encode") ) {
-            try {
+        if (formatString.equals("upper"))
+        {
+            return value.toUpperCase(locale);
+        }
+        if (formatString.equals("lower"))
+        {
+            return value.toLowerCase(locale);
+        }
+        if (formatString.equals("cap"))
+        {
+            return (value.length() > 0)
+                ? Character.toUpperCase(value.charAt(0)) + value.substring(1)
+                : value;
+        }
+        if (formatString.equals("url-encode"))
+        {
+            try
+            {
                 return URLEncoder.encode(value, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
+            }
+            catch (UnsupportedEncodingException ex)
+            {
                 // UTF-8 is standard, should always be available
             }
         }
-        if ( formatString.equals("xml-encode") ) {
+        if (formatString.equals("xml-encode"))
+        {
             return escapeHTML(value);
         }
         return String.format(locale, formatString, value);
     }
 
-    public static String escapeHTML(String s) {
-        if ( s==null ) {
+    public static String escapeHTML(String s)
+    {
+        if (s == null)
+        {
             return null;
         }
-        StringBuilder buf = new StringBuilder( s.length() );
+        StringBuilder buf = new StringBuilder(s.length());
         int len = s.length();
-        for (int i=0; i<len;) {
+        for (int i = 0; i < len; )
+        {
             int c = s.codePointAt(i);
-            switch ( c ) {
-                case '&' :
+            switch (c)
+            {
+                case '&':
                     buf.append("&amp;");
                     break;
-                case '<' :
+                case '<':
                     buf.append("&lt;");
                     break;
-                case '>' :
+                case '>':
                     buf.append("&gt;");
                     break;
                 case '\r':
                 case '\n':
                 case '\t':
-                    buf.append((char)c);
+                    buf.append((char) c);
                     break;
                 default:
                     boolean control = c < ' '; // 32
                     boolean aboveASCII = c > 126;
-                    if ( control || aboveASCII ) {
+                    if (control || aboveASCII)
+                    {
                         buf.append("&#");
                         buf.append(c);
                         buf.append(";");
                     }
-                    else {
-                        buf.append((char)c);
+                    else
+                    {
+                        buf.append((char) c);
                     }
             }
             i += Character.charCount(c);

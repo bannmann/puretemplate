@@ -1,12 +1,14 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
-public class TestAttributes extends BaseTest {
+import org.junit.Test;
+
+public class TestAttributes extends BaseTest
+{
     @Test
-    public void testRedefOfKeyInClone() {
+    public void testRedefOfKeyInClone()
+    {
         ST a = new ST("x");
         // a has no formal args
 
@@ -18,10 +20,12 @@ public class TestAttributes extends BaseTest {
         assertTrue(true); // should not get exception
     }
 
-    // See https://github.com/antlr/stringtemplate4/issues/72 and
-    // https://github.com/antlr/stringtemplate4/issues/98
+    /**
+     * See https://github.com/antlr/stringtemplate4/issues/72 and https://github.com/antlr/stringtemplate4/issues/98
+     */
     @Test
-    public void testRedefOfKeyInCloneAfterAddingAttribute() {
+    public void testRedefOfKeyInCloneAfterAddingAttribute()
+    {
         ST a = new ST("x");
         a.add("y", "eh?");  // This forces formal def of "y" attribute
 

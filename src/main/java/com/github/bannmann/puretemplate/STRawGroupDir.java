@@ -1,43 +1,48 @@
 package com.github.bannmann.puretemplate;
 
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonToken;
-import com.github.bannmann.puretemplate.compiler.*;
-import com.github.bannmann.puretemplate.compiler.Compiler;
-import com.github.bannmann.puretemplate.misc.Misc;
-
 import java.net.URL;
 
-import com.github.bannmann.puretemplate.compiler.CompiledST;
-import com.github.bannmann.puretemplate.compiler.STLexer;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonToken;
 
-/** A directory of templates without headers like ST v3 had.  Still allows group
- *  files in directory though like {@link STGroupDir} parent.
+import com.github.bannmann.puretemplate.compiler.CompiledST;
+import com.github.bannmann.puretemplate.compiler.Compiler;
+import com.github.bannmann.puretemplate.compiler.STLexer;
+import com.github.bannmann.puretemplate.misc.Misc;
+
+/**
+ * A directory of templates without headers like ST v3 had.  Still allows group files in directory though like {@link
+ * STGroupDir} parent.
  */
-public class STRawGroupDir extends STGroupDir {
-    public STRawGroupDir(String dirName) {
+public class STRawGroupDir extends STGroupDir
+{
+    public STRawGroupDir(String dirName)
+    {
         super(dirName);
     }
 
-    public STRawGroupDir(String dirName, char delimiterStartChar, char delimiterStopChar) {
+    public STRawGroupDir(String dirName, char delimiterStartChar, char delimiterStopChar)
+    {
         super(dirName, delimiterStartChar, delimiterStopChar);
     }
 
-    public STRawGroupDir(String dirName, String encoding) {
+    public STRawGroupDir(String dirName, String encoding)
+    {
         super(dirName, encoding);
     }
 
-    public STRawGroupDir(String dirName, String encoding, char delimiterStartChar, char delimiterStopChar) {
+    public STRawGroupDir(String dirName, String encoding, char delimiterStartChar, char delimiterStopChar)
+    {
         super(dirName, encoding, delimiterStartChar, delimiterStopChar);
     }
 
-    public STRawGroupDir(URL root, String encoding, char delimiterStartChar, char delimiterStopChar) {
+    public STRawGroupDir(URL root, String encoding, char delimiterStartChar, char delimiterStopChar)
+    {
         super(root, encoding, delimiterStartChar, delimiterStopChar);
     }
 
     @Override
-    public CompiledST loadTemplateFile(String prefix, String unqualifiedFileName,
-                                       CharStream templateStream)
+    public CompiledST loadTemplateFile(String prefix, String unqualifiedFileName, CharStream templateStream)
     {
         String template = templateStream.substring(0, templateStream.size() - 1);
         String templateName = Misc.getFileNameNoSuffix(unqualifiedFileName);

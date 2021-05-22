@@ -1,56 +1,75 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.*;
-
-import com.github.bannmann.puretemplate.misc.STNoSuchPropertyException;
-import com.github.bannmann.puretemplate.misc.STRuntimeMessage;
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.TreeMap;
 
-public class TestModelAdaptors extends BaseTest {
+import org.junit.Test;
+
+import com.github.bannmann.puretemplate.misc.STNoSuchPropertyException;
+import com.github.bannmann.puretemplate.misc.STRuntimeMessage;
+
+public class TestModelAdaptors extends BaseTest
+{
     static class UserAdaptor implements ModelAdaptor<User>
     {
         @Override
         public Object getProperty(Interpreter interp, ST self, User model, Object property, String propertyName)
             throws STNoSuchPropertyException
         {
-            if ( propertyName.equals("id") ) return model.id;
-            if ( propertyName.equals("name") ) return model.getName();
-            throw new STNoSuchPropertyException(null, model, "User."+propertyName);
+            if (propertyName.equals("id"))
+            {
+                return model.id;
+            }
+            if (propertyName.equals("name"))
+            {
+                return model.getName();
+            }
+            throw new STNoSuchPropertyException(null, model, "User." + propertyName);
         }
     }
 
-    static class UserAdaptorConst implements ModelAdaptor<User> {
+    static class UserAdaptorConst implements ModelAdaptor<User>
+    {
         @Override
         public Object getProperty(Interpreter interp, ST self, User model, Object property, String propertyName)
             throws STNoSuchPropertyException
         {
-            if ( propertyName.equals("id") ) return "const id value";
-            if ( propertyName.equals("name") ) return "const name value";
-            throw new STNoSuchPropertyException(null, model, "User."+propertyName);
+            if (propertyName.equals("id"))
+            {
+                return "const id value";
+            }
+            if (propertyName.equals("name"))
+            {
+                return "const name value";
+            }
+            throw new STNoSuchPropertyException(null, model, "User." + propertyName);
         }
     }
 
-    static class SuperUser extends User {
+    static class SuperUser extends User
+    {
         int bitmask;
-        public SuperUser(int id, String name) {
+
+        public SuperUser(int id, String name)
+        {
             super(id, name);
             bitmask = 0x8080;
         }
 
         @Override
-        public String getName() {
-            return "super "+super.getName();
+        public String getName()
+        {
+            return "super " + super.getName();
         }
     }
 
-    @Test public void testSimpleAdaptor() throws Exception {
-        String templates =
-                "foo(x) ::= \"<x.id>: <x.name>\"\n";
+    @Test
+    public void testSimpleAdaptor() throws Exception
+    {
+        String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
         writeFile(tmpdir, "foo.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/foo.stg");
+        STGroup group = new STGroupFile(tmpdir + "/foo.stg");
         group.registerModelAdaptor(User.class, new UserAdaptor());
         ST st = group.getInstanceOf("foo");
         st.add("x", new User(100, "parrt"));
@@ -59,12 +78,13 @@ public class TestModelAdaptors extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testAdaptorAndBadProp() throws Exception {
+    @Test
+    public void testAdaptorAndBadProp() throws Exception
+    {
         ErrorBufferAllErrors errors = new ErrorBufferAllErrors();
-        String templates =
-                "foo(x) ::= \"<x.qqq>\"\n";
+        String templates = "foo(x) ::= \"<x.qqq>\"\n";
         writeFile(tmpdir, "foo.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/foo.stg");
+        STGroup group = new STGroupFile(tmpdir + "/foo.stg");
         group.setListener(errors);
         group.registerModelAdaptor(User.class, new UserAdaptor());
         ST st = group.getInstanceOf("foo");
@@ -73,16 +93,17 @@ public class TestModelAdaptors extends BaseTest {
         String result = st.render();
         assertEquals(expecting, result);
 
-        STRuntimeMessage msg = (STRuntimeMessage)errors.errors.get(0);
-        STNoSuchPropertyException e = (STNoSuchPropertyException)msg.cause;
+        STRuntimeMessage msg = (STRuntimeMessage) errors.errors.get(0);
+        STNoSuchPropertyException e = (STNoSuchPropertyException) msg.cause;
         assertEquals("User.qqq", e.propertyName);
     }
 
-    @Test public void testAdaptorCoversSubclass() throws Exception {
-        String templates =
-                "foo(x) ::= \"<x.id>: <x.name>\"\n";
+    @Test
+    public void testAdaptorCoversSubclass() throws Exception
+    {
+        String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
         writeFile(tmpdir, "foo.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/foo.stg");
+        STGroup group = new STGroupFile(tmpdir + "/foo.stg");
         group.registerModelAdaptor(User.class, new UserAdaptor());
         ST st = group.getInstanceOf("foo");
         st.add("x", new SuperUser(100, "parrt")); // create subclass of User
@@ -91,11 +112,12 @@ public class TestModelAdaptors extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testWeCanResetAdaptorCacheInvalidatedUponAdaptorReset() throws Exception {
-        String templates =
-                "foo(x) ::= \"<x.id>: <x.name>\"\n";
+    @Test
+    public void testWeCanResetAdaptorCacheInvalidatedUponAdaptorReset() throws Exception
+    {
+        String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
         writeFile(tmpdir, "foo.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/foo.stg");
+        STGroup group = new STGroupFile(tmpdir + "/foo.stg");
         group.registerModelAdaptor(User.class, new UserAdaptor());
         group.getModelAdaptor(User.class); // get User, SuperUser into cache
         group.getModelAdaptor(SuperUser.class);
@@ -109,11 +131,12 @@ public class TestModelAdaptors extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void testSeesMostSpecificAdaptor() throws Exception {
-        String templates =
-                "foo(x) ::= \"<x.id>: <x.name>\"\n";
+    @Test
+    public void testSeesMostSpecificAdaptor() throws Exception
+    {
+        String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
         writeFile(tmpdir, "foo.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/foo.stg");
+        STGroup group = new STGroupFile(tmpdir + "/foo.stg");
         group.registerModelAdaptor(User.class, new UserAdaptor());
         group.registerModelAdaptor(SuperUser.class, new UserAdaptorConst()); // most specific
         ST st = group.getInstanceOf("foo");
@@ -130,11 +153,12 @@ public class TestModelAdaptors extends BaseTest {
     }
 
     // https://github.com/antlr/stringtemplate4/issues/214
-    @Test public void testHandlesNullKeys() {
-        String templates =
-            "foo(x, y) ::= \"<x.(y); null={NULL}>\"";
+    @Test
+    public void testHandlesNullKeys()
+    {
+        String templates = "foo(x, y) ::= \"<x.(y); null={NULL}>\"";
         writeFile(tmpdir, "foo.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/foo.stg");
+        STGroup group = new STGroupFile(tmpdir + "/foo.stg");
         ST st = group.getInstanceOf("foo");
         st.add("x", new TreeMap<String, String>());
         st.add("y", null);
@@ -144,11 +168,12 @@ public class TestModelAdaptors extends BaseTest {
     }
 
     // https://github.com/antlr/stringtemplate4/issues/214
-    @Test public void testHandlesKeysNotComparableToString() {
-        String templates =
-            "foo(x) ::= \"<x.keys>\"";
+    @Test
+    public void testHandlesKeysNotComparableToString()
+    {
+        String templates = "foo(x) ::= \"<x.keys>\"";
         writeFile(tmpdir, "foo.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/foo.stg");
+        STGroup group = new STGroupFile(tmpdir + "/foo.stg");
         ST st = group.getInstanceOf("foo");
 
         TreeMap<Integer, String> x = new TreeMap<Integer, String>();

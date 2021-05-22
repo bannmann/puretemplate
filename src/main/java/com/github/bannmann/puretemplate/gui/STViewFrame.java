@@ -4,18 +4,34 @@
 
 package com.github.bannmann.puretemplate.gui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextPane;
+import javax.swing.JToolBar;
+import javax.swing.JTree;
 
 /**
  * @author Terence Parr
  */
-public class STViewFrame extends JFrame {
-    public STViewFrame() {
+public class STViewFrame extends JFrame
+{
+    public STViewFrame()
+    {
         initComponents();
     }
 
-    private void initComponents() {
+    private void initComponents()
+    {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner non-commercial license
         toolBar1 = new JToolBar();
@@ -44,13 +60,22 @@ public class STViewFrame extends JFrame {
         //======== this ========
         Container contentPane = getContentPane();
         contentPane.setLayout(new GridBagLayout());
-        ((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 0};
-        ((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
-        ((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
-        ((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 1.0, 0.0, 1.0E-4};
-        contentPane.add(toolBar1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 0, 0), 0, 0));
+        ((GridBagLayout) contentPane.getLayout()).columnWidths = new int[]{ 0, 0 };
+        ((GridBagLayout) contentPane.getLayout()).rowHeights = new int[]{ 0, 0, 0, 0 };
+        ((GridBagLayout) contentPane.getLayout()).columnWeights = new double[]{ 1.0, 1.0E-4 };
+        ((GridBagLayout) contentPane.getLayout()).rowWeights = new double[]{ 0.0, 1.0, 0.0, 1.0E-4 };
+        contentPane.add(toolBar1,
+            new GridBagConstraints(0,
+                0,
+                1,
+                1,
+                0.0,
+                0.0,
+                GridBagConstraints.CENTER,
+                GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0),
+                0,
+                0));
 
         //======== treeContentSplitPane ========
         {
@@ -107,36 +132,51 @@ public class STViewFrame extends JFrame {
                     }
                     templateBytecodeTraceTabPanel.addTab("template", panel1);
 
-
                     //======== scrollPane15 ========
                     {
                         scrollPane15.setViewportView(bytecode);
                     }
                     templateBytecodeTraceTabPanel.addTab("bytecode", scrollPane15);
 
-
                     //======== scrollPane1 ========
                     {
                         scrollPane1.setViewportView(trace);
                     }
                     templateBytecodeTraceTabPanel.addTab("trace", scrollPane1);
-
                 }
                 outputTemplateSplitPane.setBottomComponent(templateBytecodeTraceTabPanel);
             }
             treeContentSplitPane.setRightComponent(outputTemplateSplitPane);
         }
-        contentPane.add(treeContentSplitPane, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(treeContentSplitPane,
+            new GridBagConstraints(0,
+                1,
+                1,
+                1,
+                0.0,
+                0.0,
+                GridBagConstraints.CENTER,
+                GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0),
+                0,
+                0));
 
         //======== errorScrollPane ========
         {
             errorScrollPane.setViewportView(errorList);
         }
-        contentPane.add(errorScrollPane, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(errorScrollPane,
+            new GridBagConstraints(0,
+                2,
+                1,
+                1,
+                0.0,
+                0.0,
+                GridBagConstraints.CENTER,
+                GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0),
+                0,
+                0));
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents

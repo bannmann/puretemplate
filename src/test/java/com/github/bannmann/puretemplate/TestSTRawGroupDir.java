@@ -1,14 +1,18 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.Test;
-
-import java.util.*;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class TestSTRawGroupDir extends BaseTest {
-    @Test public void testSimpleGroup() throws Exception {
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+
+public class TestSTRawGroupDir extends BaseTest
+{
+    @Test
+    public void testSimpleGroup() throws Exception
+    {
         String dir = getRandomDir();
         writeFile(dir, "a.st", "foo");
         STGroup group = new STRawGroupDir(dir, '$', '$');
@@ -18,7 +22,9 @@ public class TestSTRawGroupDir extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testSimpleGroup2() throws Exception {
+    @Test
+    public void testSimpleGroup2() throws Exception
+    {
         String dir = getRandomDir();
         writeFile(dir, "a.st", "foo");
         writeFile(dir, "b.st", "$name$");
@@ -33,7 +39,9 @@ public class TestSTRawGroupDir extends BaseTest {
         assertEquals("Bob", b.render());
     }
 
-    @Test public void testSimpleGroupAngleBrackets() throws Exception {
+    @Test
+    public void testSimpleGroupAngleBrackets() throws Exception
+    {
         String dir = getRandomDir();
         writeFile(dir, "a.st", "foo");
         writeFile(dir, "b.st", "<name>");
@@ -48,7 +56,9 @@ public class TestSTRawGroupDir extends BaseTest {
         assertEquals("Bob", b.render());
     }
 
-    @Test public void testSTRawGroupDir() {
+    @Test
+    public void testSTRawGroupDir()
+    {
         String dir = getRandomDir();
         writeFile(dir, "template.st", "$values:{foo|[$foo$]}$");
         STGroup group = new STRawGroupDir(dir, '$', '$');
@@ -61,7 +71,9 @@ public class TestSTRawGroupDir extends BaseTest {
         assertEquals("[one][two][three]", template.render());
     }
 
-    @Test public void testMap() throws Exception {
+    @Test
+    public void testMap() throws Exception
+    {
         String dir = getRandomDir();
         writeFile(dir, "a.st", "$names:bold()$");
         writeFile(dir, "bold.st", "<b>$it$</b>");
@@ -71,16 +83,14 @@ public class TestSTRawGroupDir extends BaseTest {
         names.add("parrt");
         names.add("tombu");
         st.add("names", names);
-//      String asmResult = st.impl.instrs();
-//      System.out.println(asmResult);
-
-//      st.inspect();
         String expected = "<b>parrt</b><b>tombu</b>";
         String result = st.render();
         assertEquals(expected, result);
     }
 
-    @Test public void testSuper() throws Exception {
+    @Test
+    public void testSuper() throws Exception
+    {
         String dir1 = getRandomDir();
         String a = "dir1 a";
         String b = "dir1 b";
@@ -100,22 +110,21 @@ public class TestSTRawGroupDir extends BaseTest {
     }
 
     /**
-     * This is a regression test for antlr/stringtemplate4#70. "Argument
-     * initialization for sub-template in template with STRawGroupDir doesn't
-     * recognize valid parameters"
-     * https://github.com/antlr/stringtemplate4/issues/70
+     * This is a regression test for antlr/stringtemplate4#70. "Argument initialization for sub-template in template
+     * with STRawGroupDir doesn't recognize valid parameters" https://github.com/antlr/stringtemplate4/issues/70
      */
     @Test
-    public void testRawArgumentPassing() {
+    public void testRawArgumentPassing()
+    {
         String dir1 = getRandomDir();
-        String mainRawTemplate = "Hello $name$" + newline +
-            "Then do the footer:" + newline +
-            "$footerRaw(lastLine=veryLastLineRaw())$" + newline;
-        String footerRawTemplate =
-            "Simple footer. And now a last line:" + newline +
-            "$lastLine$";
-        String veryLastLineTemplate =
-            "That's the last line.";
+        String mainRawTemplate = "Hello $name$" +
+            newline +
+            "Then do the footer:" +
+            newline +
+            "$footerRaw(lastLine=veryLastLineRaw())$" +
+            newline;
+        String footerRawTemplate = "Simple footer. And now a last line:" + newline + "$lastLine$";
+        String veryLastLineTemplate = "That's the last line.";
         writeFile(dir1, "mainRaw.st", mainRawTemplate);
         writeFile(dir1, "footerRaw.st", footerRawTemplate);
         writeFile(dir1, "veryLastLineRaw.st", veryLastLineTemplate);
@@ -125,11 +134,14 @@ public class TestSTRawGroupDir extends BaseTest {
         assertNotNull(st);
         st.add("name", "John");
         String result = st.render();
-        String expected =
-            "Hello John" + newline +
-            "Then do the footer:" + newline +
-            "Simple footer. And now a last line:" + newline +
-            "That's the last line." + newline;
+        String expected = "Hello John" +
+            newline +
+            "Then do the footer:" +
+            newline +
+            "Simple footer. And now a last line:" +
+            newline +
+            "That's the last line." +
+            newline;
         assertEquals(expected, result);
     }
 }

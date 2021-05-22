@@ -2,51 +2,79 @@ package com.github.bannmann.puretemplate;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
+
 import com.github.bannmann.puretemplate.compiler.CompiledST;
 import com.github.bannmann.puretemplate.compiler.GroupLexer;
 import com.github.bannmann.puretemplate.compiler.GroupParser;
 import com.github.bannmann.puretemplate.misc.ErrorType;
 
-/** A group derived from a string not a file or directory. */
-public class STGroupString extends STGroup {
+/**
+ * A group derived from a string not a file or directory.
+ */
+public class STGroupString extends STGroup
+{
     public String sourceName;
     public String text;
     protected boolean alreadyLoaded = false;
 
-    public STGroupString(String text) { this("<string>", text, '<', '>'); }
+    public STGroupString(String text)
+    {
+        this("<string>", text, '<', '>');
+    }
 
-    public STGroupString(String sourceName, String text) { this(sourceName, text, '<', '>'); }
+    public STGroupString(String sourceName, String text)
+    {
+        this(sourceName, text, '<', '>');
+    }
 
-    public STGroupString(String sourceName, String text, char delimiterStartChar, char delimiterStopChar) {
+    public STGroupString(String sourceName, String text, char delimiterStartChar, char delimiterStopChar)
+    {
         super(delimiterStartChar, delimiterStopChar);
         this.sourceName = sourceName;
         this.text = text;
     }
 
     @Override
-    public boolean isDictionary(String name) {
-        if ( !alreadyLoaded ) load();
+    public boolean isDictionary(String name)
+    {
+        if (!alreadyLoaded)
+        {
+            load();
+        }
         return super.isDictionary(name);
     }
 
     @Override
-    public boolean isDefined(String name) {
-        if ( !alreadyLoaded ) load();
+    public boolean isDefined(String name)
+    {
+        if (!alreadyLoaded)
+        {
+            load();
+        }
         return super.isDefined(name);
     }
 
     @Override
-    protected synchronized CompiledST load(String name) {
-        if ( !alreadyLoaded ) load();
+    protected synchronized CompiledST load(String name)
+    {
+        if (!alreadyLoaded)
+        {
+            load();
+        }
         return rawGetTemplate(name);
     }
 
     @Override
-    public synchronized void load() {
-        if (alreadyLoaded) return;
+    public synchronized void load()
+    {
+        if (alreadyLoaded)
+        {
+            return;
+        }
         alreadyLoaded = true;
         GroupParser parser;
-        try {
+        try
+        {
             ANTLRStringStream fs = new ANTLRStringStream(text);
             fs.name = sourceName;
             GroupLexer lexer = new GroupLexer(fs);
@@ -56,11 +84,15 @@ public class STGroupString extends STGroup {
             // beneath it.
             parser.group(this, "/");
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             errMgr.IOError(null, ErrorType.CANT_LOAD_GROUP_FILE, e, "<string>");
         }
     }
 
     @Override
-    public String getFileName() { return "<string>"; }
+    public String getFileName()
+    {
+        return "<string>";
+    }
 }

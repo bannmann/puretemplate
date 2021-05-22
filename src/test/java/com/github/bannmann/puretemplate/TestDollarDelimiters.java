@@ -1,12 +1,15 @@
 package com.github.bannmann.puretemplate;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
-public class TestDollarDelimiters extends BaseTest {
-    @Test public void testAttr() throws Exception {
+public class TestDollarDelimiters extends BaseTest
+{
+    @Test
+    public void testAttr() throws Exception
+    {
         String template = "hi $name$!";
         ST st = new ST(template, '$', '$');
         st.add("name", "Ter");
@@ -15,7 +18,9 @@ public class TestDollarDelimiters extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testParallelMap() throws Exception {
+    @Test
+    public void testParallelMap() throws Exception
+    {
         STGroup group = new STGroup('$', '$');
         group.defineTemplate("test", "names,phones", "hi $names,phones:{n,p | $n$:$p$;}$");
         ST st = group.getInstanceOf("test");
@@ -25,13 +30,14 @@ public class TestDollarDelimiters extends BaseTest {
         st.add("phones", "x5001");
         st.add("phones", "x5002");
         st.add("phones", "x5003");
-        String expected =
-            "hi Ter:x5001;Tom:x5002;Sumana:x5003;";
+        String expected = "hi Ter:x5001;Tom:x5002;Sumana:x5003;";
         String result = st.render();
         assertEquals(expected, result);
     }
 
-    @Test public void testRefToAnotherTemplateInSameGroup() throws Exception {
+    @Test
+    public void testRefToAnotherTemplateInSameGroup() throws Exception
+    {
         String dir = getRandomDir();
         String a = "a() ::= << <$b()$> >>\n";
         String b = "b() ::= <<bar>>\n";
@@ -44,15 +50,19 @@ public class TestDollarDelimiters extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testDefaultArgument() throws Exception {
-        String templates =
-                "method(name) ::= <<"+newline+
-                "$stat(name)$" +newline+
-                ">>"+newline+
-                "stat(name,value=\"99\") ::= \"x=$value$; // $name$\""+newline
-                ;
+    @Test
+    public void testDefaultArgument() throws Exception
+    {
+        String templates = "method(name) ::= <<" +
+            newline +
+            "$stat(name)$" +
+            newline +
+            ">>" +
+            newline +
+            "stat(name,value=\"99\") ::= \"x=$value$; // $name$\"" +
+            newline;
         writeFile(tmpdir, "group.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/group.stg", '$', '$');
+        STGroup group = new STGroupFile(tmpdir + "/group.stg", '$', '$');
         ST b = group.getInstanceOf("method");
         b.add("name", "foo");
         String expecting = "x=99; // foo";
@@ -61,19 +71,23 @@ public class TestDollarDelimiters extends BaseTest {
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#46.
-     * https://github.com/antlr/stringtemplate4/issues/46
+     * This is part of a regression test for antlr/stringtemplate4#46. https://github.com/antlr/stringtemplate4/issues/46
      */
-    @Test public void testDelimitersClause() throws Exception {
-        String templates =
-                "delimiters \"$\", \"$\""+newline+
-                "method(name) ::= <<"+newline+
-                "$stat(name)$" +newline+
-                ">>"+newline+
-                "stat(name,value=\"99\") ::= \"x=$value$; // $name$\""+newline
-                ;
+    @Test
+    public void testDelimitersClause() throws Exception
+    {
+        String templates = "delimiters \"$\", \"$\"" +
+            newline +
+            "method(name) ::= <<" +
+            newline +
+            "$stat(name)$" +
+            newline +
+            ">>" +
+            newline +
+            "stat(name,value=\"99\") ::= \"x=$value$; // $name$\"" +
+            newline;
         writeFile(tmpdir, "group.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/group.stg");
+        STGroup group = new STGroupFile(tmpdir + "/group.stg");
         ST b = group.getInstanceOf("method");
         b.add("name", "foo");
         String expecting = "x=99; // foo";
@@ -82,17 +96,21 @@ public class TestDollarDelimiters extends BaseTest {
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#46.
-     * https://github.com/antlr/stringtemplate4/issues/46
+     * This is part of a regression test for antlr/stringtemplate4#46. https://github.com/antlr/stringtemplate4/issues/46
      */
-    @Test public void testDelimitersClauseInGroupString() throws Exception {
-        String templates =
-                "delimiters \"$\", \"$\""+newline+
-                "method(name) ::= <<"+newline+
-                "$stat(name)$" +newline+
-                ">>"+newline+
-                "stat(name,value=\"99\") ::= \"x=$value$; // $name$\""+newline
-                ;
+    @Test
+    public void testDelimitersClauseInGroupString() throws Exception
+    {
+        String templates = "delimiters \"$\", \"$\"" +
+            newline +
+            "method(name) ::= <<" +
+            newline +
+            "$stat(name)$" +
+            newline +
+            ">>" +
+            newline +
+            "stat(name,value=\"99\") ::= \"x=$value$; // $name$\"" +
+            newline;
         STGroup group = new STGroupString(templates);
         ST b = group.getInstanceOf("method");
         b.add("name", "foo");
@@ -102,21 +120,22 @@ public class TestDollarDelimiters extends BaseTest {
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#66.
-     * https://github.com/antlr/stringtemplate4/issues/66
+     * This is part of a regression test for antlr/stringtemplate4#66. https://github.com/antlr/stringtemplate4/issues/66
      */
     @Test
-    public void testImportTemplatePreservesDelimiters() {
-        String groupFile =
-            "group GenerateHtml;" + newline +
-            "import \"html.st\"" + newline +
-            "entry() ::= <<" + newline +
-            "$html()$" + newline +
-            ">>" + newline;
-        String htmlFile =
-            "html() ::= <<" + newline +
-            "<table style=\"stuff\">" + newline +
-            ">>" + newline;
+    public void testImportTemplatePreservesDelimiters()
+    {
+        String groupFile = "group GenerateHtml;" +
+            newline +
+            "import \"html.st\"" +
+            newline +
+            "entry() ::= <<" +
+            newline +
+            "$html()$" +
+            newline +
+            ">>" +
+            newline;
+        String htmlFile = "html() ::= <<" + newline + "<table style=\"stuff\">" + newline + ">>" + newline;
 
         String dir = getRandomDir();
         writeFile(dir, "GenerateHtml.stg", groupFile);
@@ -140,21 +159,22 @@ public class TestDollarDelimiters extends BaseTest {
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#66.
-     * https://github.com/antlr/stringtemplate4/issues/66
+     * This is part of a regression test for antlr/stringtemplate4#66. https://github.com/antlr/stringtemplate4/issues/66
      */
     @Test
-    public void testImportGroupPreservesDelimiters() {
-        String groupFile =
-            "group GenerateHtml;" + newline +
-            "import \"HtmlTemplates.stg\"" + newline +
-            "entry() ::= <<" + newline +
-            "$html()$" + newline +
-            ">>" + newline;
-        String htmlFile =
-            "html() ::= <<" + newline +
-            "<table style=\"stuff\">" + newline +
-            ">>" + newline;
+    public void testImportGroupPreservesDelimiters()
+    {
+        String groupFile = "group GenerateHtml;" +
+            newline +
+            "import \"HtmlTemplates.stg\"" +
+            newline +
+            "entry() ::= <<" +
+            newline +
+            "$html()$" +
+            newline +
+            ">>" +
+            newline;
+        String htmlFile = "html() ::= <<" + newline + "<table style=\"stuff\">" + newline + ">>" + newline;
 
         String dir = getRandomDir();
         writeFile(dir, "GenerateHtml.stg", groupFile);
@@ -178,22 +198,24 @@ public class TestDollarDelimiters extends BaseTest {
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#66.
-     * https://github.com/antlr/stringtemplate4/issues/66
+     * This is part of a regression test for antlr/stringtemplate4#66. https://github.com/antlr/stringtemplate4/issues/66
      */
     @Test
-    public void testDelimitersClauseOverridesConstructorDelimiters() {
-        String groupFile =
-            "group GenerateHtml;" + newline +
-            "delimiters \"$\", \"$\"" + newline +
-            "import \"html.st\"" + newline +
-            "entry() ::= <<" + newline +
-            "$html()$" + newline +
-            ">>" + newline;
-        String htmlFile =
-            "html() ::= <<" + newline +
-            "<table style=\"stuff\">" + newline +
-            ">>" + newline;
+    public void testDelimitersClauseOverridesConstructorDelimiters()
+    {
+        String groupFile = "group GenerateHtml;" +
+            newline +
+            "delimiters \"$\", \"$\"" +
+            newline +
+            "import \"html.st\"" +
+            newline +
+            "entry() ::= <<" +
+            newline +
+            "$html()$" +
+            newline +
+            ">>" +
+            newline;
+        String htmlFile = "html() ::= <<" + newline + "<table style=\"stuff\">" + newline + ">>" + newline;
 
         String dir = getRandomDir();
         writeFile(dir, "GenerateHtml.stg", groupFile);
@@ -217,23 +239,31 @@ public class TestDollarDelimiters extends BaseTest {
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#66.
-     * https://github.com/antlr/stringtemplate4/issues/66
+     * This is part of a regression test for antlr/stringtemplate4#66. https://github.com/antlr/stringtemplate4/issues/66
      */
     @Test
-    public void testDelimitersClauseOverridesInheritedDelimiters() {
-        String groupFile =
-            "group GenerateHtml;" + newline +
-            "delimiters \"<\", \">\"" + newline +
-            "import \"HtmlTemplates.stg\"" + newline +
-            "entry() ::= <<" + newline +
-            "<html()>" + newline +
-            ">>" + newline;
-        String htmlFile =
-            "delimiters \"$\", \"$\"" + newline +
-            "html() ::= <<" + newline +
-            "<table style=\"stuff\">" + newline +
-            ">>" + newline;
+    public void testDelimitersClauseOverridesInheritedDelimiters()
+    {
+        String groupFile = "group GenerateHtml;" +
+            newline +
+            "delimiters \"<\", \">\"" +
+            newline +
+            "import \"HtmlTemplates.stg\"" +
+            newline +
+            "entry() ::= <<" +
+            newline +
+            "<html()>" +
+            newline +
+            ">>" +
+            newline;
+        String htmlFile = "delimiters \"$\", \"$\"" +
+            newline +
+            "html() ::= <<" +
+            newline +
+            "<table style=\"stuff\">" +
+            newline +
+            ">>" +
+            newline;
 
         String dir = getRandomDir();
         writeFile(dir, "GenerateHtml.stg", groupFile);

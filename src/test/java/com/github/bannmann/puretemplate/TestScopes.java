@@ -1,20 +1,21 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 import com.github.bannmann.puretemplate.misc.ErrorBuffer;
 import com.github.bannmann.puretemplate.misc.ErrorManager;
 
-public class TestScopes extends BaseTest {
-    @Test public void testSeesEnclosingAttr() throws Exception {
-        String templates =
-            "t(x,y) ::= \"<u()>\"\n" +
-            "u() ::= \"<x><y>\"";
+public class TestScopes extends BaseTest
+{
+    @Test
+    public void testSeesEnclosingAttr() throws Exception
+    {
+        String templates = "t(x,y) ::= \"<u()>\"\n" + "u() ::= \"<x><y>\"";
         ErrorBuffer errors = new ErrorBuffer();
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/"+"t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         group.setListener(errors);
         ST st = group.getInstanceOf("t");
         st.add("x", "x");
@@ -28,42 +29,43 @@ public class TestScopes extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testMissingArg() throws Exception {
-        String templates =
-            "t() ::= \"<u()>\"\n" +
-            "u(z) ::= \"\"";
+    @Test
+    public void testMissingArg() throws Exception
+    {
+        String templates = "t() ::= \"<u()>\"\n" + "u(z) ::= \"\"";
         ErrorBuffer errors = new ErrorBuffer();
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/"+"t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         group.setListener(errors);
         ST st = group.getInstanceOf("t");
         String result = st.render();
 
-        String expectedError = "context [/t] 1:1 passed 0 arg(s) to template /u with 1 declared arg(s)"+newline;
+        String expectedError = "context [/t] 1:1 passed 0 arg(s) to template /u with 1 declared arg(s)" + newline;
         assertEquals(expectedError, errors.toString());
     }
 
-    @Test public void testUnknownAttr() throws Exception {
-        String templates =
-            "t() ::= \"<x>\"\n";
+    @Test
+    public void testUnknownAttr() throws Exception
+    {
+        String templates = "t() ::= \"<x>\"\n";
         ErrorBuffer errors = new ErrorBuffer();
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/"+"t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         group.setListener(errors);
         ST st = group.getInstanceOf("t");
         String result = st.render();
 
-        String expectedError = "context [/t] 1:1 attribute x isn't defined"+newline;
+        String expectedError = "context [/t] 1:1 attribute x isn't defined" + newline;
         assertEquals(expectedError, errors.toString());
     }
 
-    @Test public void testArgWithSameNameAsEnclosing() throws Exception {
-        String templates =
-            "t(x,y) ::= \"<u(x)>\"\n" +
-            "u(y) ::= \"<x><y>\"";
+    @Test
+    public void testArgWithSameNameAsEnclosing() throws Exception
+    {
+        String templates = "t(x,y) ::= \"<u(x)>\"\n" + "u(y) ::= \"<x><y>\"";
         ErrorBuffer errors = new ErrorBuffer();
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/"+"t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         group.setListener(errors);
         ST st = group.getInstanceOf("t");
         st.add("x", "x");
@@ -78,25 +80,24 @@ public class TestScopes extends BaseTest {
         group.setListener(ErrorManager.DEFAULT_ERROR_LISTENER);
     }
 
-    @Test public void testIndexAttrVisibleLocallyOnly() throws Exception {
-        String templates =
-            "t(names) ::= \"<names:{n | <u(n)>}>\"\n" +
-            "u(x) ::= \"<i>:<x>\"";
+    @Test
+    public void testIndexAttrVisibleLocallyOnly() throws Exception
+    {
+        String templates = "t(names) ::= \"<names:{n | <u(n)>}>\"\n" + "u(x) ::= \"<i>:<x>\"";
         ErrorBuffer errors = new ErrorBuffer();
         writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/"+"t.stg");
+        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         group.setListener(errors);
         ST st = group.getInstanceOf("t");
         st.add("names", "Ter");
         String result = st.render();
         group.getInstanceOf("u").impl.dump();
 
-        String expectedError = "t.stg 2:11: implicitly-defined attribute i not visible"+newline;
+        String expectedError = "t.stg 2:11: implicitly-defined attribute i not visible" + newline;
         assertEquals(expectedError, errors.toString());
 
         String expected = ":Ter";
         assertEquals(expected, result);
         group.setListener(ErrorManager.DEFAULT_ERROR_LISTENER);
     }
-
 }

@@ -9,7 +9,6 @@ This fork of [StringTemplate](https://github.com/antlr/stringtemplate4) has the 
 * Enforce strict model-view separation just like StringTemplate does
 * Keep the StringTemplate language unchanged
 
-
 ## Current status
 
 Work in progress.

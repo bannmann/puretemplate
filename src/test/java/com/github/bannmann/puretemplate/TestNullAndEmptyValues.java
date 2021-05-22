@@ -1,6 +1,7 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -10,43 +11,49 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
-public class TestNullAndEmptyValues extends BaseTest {
-    public static class T {
+public class TestNullAndEmptyValues extends BaseTest
+{
+    public static class T
+    {
         String template;
         Object x;
         String expecting;
 
         String result;
 
-        public T(String template, Object x, String expecting) {
+        public T(String template, Object x, String expecting)
+        {
             this.template = template;
             this.x = x;
             this.expecting = expecting;
         }
 
-        public T(T t) {
+        public T(T t)
+        {
             this.template = t.template;
             this.x = t.x;
             this.expecting = t.expecting;
         }
 
         @Override
-        public String toString() {
+        public String toString()
+        {
             String s = x.toString();
-            if ( x.getClass().isArray() ) {
-                s = Arrays.toString((Object[])x);
+            if (x.getClass()
+                .isArray())
+            {
+                s = Arrays.toString((Object[]) x);
             }
-            return "('"+template+"', "+s+", '"+expecting+"', '"+result+"')";
+            return "('" + template + "', " + s + ", '" + expecting + "', '" + result + "')";
         }
     }
 
     final static Object UNDEF = "<undefined>";
     final static List<?> LIST0 = new ArrayList<Object>();
 
-    final static T[] singleValuedTests = new T[] {
+    final static T[] singleValuedTests = new T[]{
         new T("<x>", UNDEF, ""),
         new T("<x>", null, ""),
         new T("<x>", "", ""),
@@ -76,149 +83,155 @@ public class TestNullAndEmptyValues extends BaseTest {
         new T("<if(x)>y<else>z<endif>", null, "z"),
         new T("<if(x)>y<else>z<endif>", "", "y"),
         new T("<if(x)>y<else>z<endif>", LIST0, "z"),
-    };
+        };
 
-    final static String[] LISTa = {"a"};
-    final static String[] LISTab = {"a", "b"};
-    final static String[] LISTnull = {null};
-    final static String[] LISTa_null = {"a",null};
-    final static String[] LISTnull_b = {null,"b"};
-    final static String[] LISTa_null_b = {"a",null,"b"};
+    final static String[] LISTa = { "a" };
+    final static String[] LISTab = { "a", "b" };
+    final static String[] LISTnull = { null };
+    final static String[] LISTa_null = { "a", null };
+    final static String[] LISTnull_b = { null, "b" };
+    final static String[] LISTa_null_b = { "a", null, "b" };
 
-    final static T[] multiValuedTests = new T[] {
-        new T("<x>", LIST0,        ""),
-        new T("<x>", LISTa,        "a"),
-        new T("<x>", LISTab,       "ab"),
-        new T("<x>", LISTnull,     ""),
-        new T("<x>", LISTnull_b,   "b"),
-        new T("<x>", LISTa_null,   "a"),
+    final static T[] multiValuedTests = new T[]{
+        new T("<x>", LIST0, ""),
+        new T("<x>", LISTa, "a"),
+        new T("<x>", LISTab, "ab"),
+        new T("<x>", LISTnull, ""),
+        new T("<x>", LISTnull_b, "b"),
+        new T("<x>", LISTa_null, "a"),
         new T("<x>", LISTa_null_b, "ab"),
 
-        new T("<x; null={y}>", LIST0,        ""),
-        new T("<x; null={y}>", LISTa,        "a"),
-        new T("<x; null={y}>", LISTab,       "ab"),
-        new T("<x; null={y}>", LISTnull,     "y"),
-        new T("<x; null={y}>", LISTnull_b,   "yb"),
-        new T("<x; null={y}>", LISTa_null,   "ay"),
+        new T("<x; null={y}>", LIST0, ""),
+        new T("<x; null={y}>", LISTa, "a"),
+        new T("<x; null={y}>", LISTab, "ab"),
+        new T("<x; null={y}>", LISTnull, "y"),
+        new T("<x; null={y}>", LISTnull_b, "yb"),
+        new T("<x; null={y}>", LISTa_null, "ay"),
         new T("<x; null={y}>", LISTa_null_b, "ayb"),
 
-        new T("<x; separator={,}>", LIST0,        ""),
-        new T("<x; separator={,}>", LISTa,        "a"),
-        new T("<x; separator={,}>", LISTab,       "a,b"),
-        new T("<x; separator={,}>", LISTnull,     ""),
-        new T("<x; separator={,}>", LISTnull_b,   "b"),
-        new T("<x; separator={,}>", LISTa_null,   "a"),
+        new T("<x; separator={,}>", LIST0, ""),
+        new T("<x; separator={,}>", LISTa, "a"),
+        new T("<x; separator={,}>", LISTab, "a,b"),
+        new T("<x; separator={,}>", LISTnull, ""),
+        new T("<x; separator={,}>", LISTnull_b, "b"),
+        new T("<x; separator={,}>", LISTa_null, "a"),
         new T("<x; separator={,}>", LISTa_null_b, "a,b"),
 
-        new T("<x; null={y}, separator={,}>", LIST0,        ""),
-        new T("<x; null={y}, separator={,}>", LISTa,        "a"),
-        new T("<x; null={y}, separator={,}>", LISTab,       "a,b"),
-        new T("<x; null={y}, separator={,}>", LISTnull,     "y"),
-        new T("<x; null={y}, separator={,}>", LISTnull_b,   "y,b"),
-        new T("<x; null={y}, separator={,}>", LISTa_null,   "a,y"),
+        new T("<x; null={y}, separator={,}>", LIST0, ""),
+        new T("<x; null={y}, separator={,}>", LISTa, "a"),
+        new T("<x; null={y}, separator={,}>", LISTab, "a,b"),
+        new T("<x; null={y}, separator={,}>", LISTnull, "y"),
+        new T("<x; null={y}, separator={,}>", LISTnull_b, "y,b"),
+        new T("<x; null={y}, separator={,}>", LISTa_null, "a,y"),
         new T("<x; null={y}, separator={,}>", LISTa_null_b, "a,y,b"),
 
-        new T("<if(x)>y<endif>", LIST0,        ""),
-        new T("<if(x)>y<endif>", LISTa,        "y"),
-        new T("<if(x)>y<endif>", LISTab,       "y"),
-        new T("<if(x)>y<endif>", LISTnull,     "y"),
-        new T("<if(x)>y<endif>", LISTnull_b,   "y"),
-        new T("<if(x)>y<endif>", LISTa_null,   "y"),
+        new T("<if(x)>y<endif>", LIST0, ""),
+        new T("<if(x)>y<endif>", LISTa, "y"),
+        new T("<if(x)>y<endif>", LISTab, "y"),
+        new T("<if(x)>y<endif>", LISTnull, "y"),
+        new T("<if(x)>y<endif>", LISTnull_b, "y"),
+        new T("<if(x)>y<endif>", LISTa_null, "y"),
         new T("<if(x)>y<endif>", LISTa_null_b, "y"),
 
-        new T("<x:{it | <it>}>", LIST0,        ""),
-        new T("<x:{it | <it>}>", LISTa,        "a"),
-        new T("<x:{it | <it>}>", LISTab,       "ab"),
-        new T("<x:{it | <it>}>", LISTnull,     ""),
-        new T("<x:{it | <it>}>", LISTnull_b,   "b"),
-        new T("<x:{it | <it>}>", LISTa_null,   "a"),
+        new T("<x:{it | <it>}>", LIST0, ""),
+        new T("<x:{it | <it>}>", LISTa, "a"),
+        new T("<x:{it | <it>}>", LISTab, "ab"),
+        new T("<x:{it | <it>}>", LISTnull, ""),
+        new T("<x:{it | <it>}>", LISTnull_b, "b"),
+        new T("<x:{it | <it>}>", LISTa_null, "a"),
         new T("<x:{it | <it>}>", LISTa_null_b, "ab"),
 
-        new T("<x:{it | <it>}; null={y}>", LIST0,        ""),
-        new T("<x:{it | <it>}; null={y}>", LISTa,        "a"),
-        new T("<x:{it | <it>}; null={y}>", LISTab,       "ab"),
-        new T("<x:{it | <it>}; null={y}>", LISTnull,     "y"),
-        new T("<x:{it | <it>}; null={y}>", LISTnull_b,   "yb"),
-        new T("<x:{it | <it>}; null={y}>", LISTa_null,   "ay"),
+        new T("<x:{it | <it>}; null={y}>", LIST0, ""),
+        new T("<x:{it | <it>}; null={y}>", LISTa, "a"),
+        new T("<x:{it | <it>}; null={y}>", LISTab, "ab"),
+        new T("<x:{it | <it>}; null={y}>", LISTnull, "y"),
+        new T("<x:{it | <it>}; null={y}>", LISTnull_b, "yb"),
+        new T("<x:{it | <it>}; null={y}>", LISTa_null, "ay"),
         new T("<x:{it | <it>}; null={y}>", LISTa_null_b, "ayb"),
 
-        new T("<x:{it | <i>.<it>}>", LIST0,        ""),
-        new T("<x:{it | <i>.<it>}>", LISTa,        "1.a"),
-        new T("<x:{it | <i>.<it>}>", LISTab,       "1.a2.b"),
-        new T("<x:{it | <i>.<it>}>", LISTnull,     ""),
-        new T("<x:{it | <i>.<it>}>", LISTnull_b,   "1.b"),
-        new T("<x:{it | <i>.<it>}>", LISTa_null,   "1.a"),
+        new T("<x:{it | <i>.<it>}>", LIST0, ""),
+        new T("<x:{it | <i>.<it>}>", LISTa, "1.a"),
+        new T("<x:{it | <i>.<it>}>", LISTab, "1.a2.b"),
+        new T("<x:{it | <i>.<it>}>", LISTnull, ""),
+        new T("<x:{it | <i>.<it>}>", LISTnull_b, "1.b"),
+        new T("<x:{it | <i>.<it>}>", LISTa_null, "1.a"),
         new T("<x:{it | <i>.<it>}>", LISTa_null_b, "1.a2.b"),
 
-        new T("<x:{it | <i>.<it>}; null={y}>", LIST0,        ""),
-        new T("<x:{it | <i>.<it>}; null={y}>", LISTa,        "1.a"),
-        new T("<x:{it | <i>.<it>}; null={y}>", LISTab,       "1.a2.b"),
-        new T("<x:{it | <i>.<it>}; null={y}>", LISTnull,     "y"),
-        new T("<x:{it | <i>.<it>}; null={y}>", LISTnull_b,   "y1.b"),
-        new T("<x:{it | <i>.<it>}; null={y}>", LISTa_null,   "1.ay"),
+        new T("<x:{it | <i>.<it>}; null={y}>", LIST0, ""),
+        new T("<x:{it | <i>.<it>}; null={y}>", LISTa, "1.a"),
+        new T("<x:{it | <i>.<it>}; null={y}>", LISTab, "1.a2.b"),
+        new T("<x:{it | <i>.<it>}; null={y}>", LISTnull, "y"),
+        new T("<x:{it | <i>.<it>}; null={y}>", LISTnull_b, "y1.b"),
+        new T("<x:{it | <i>.<it>}; null={y}>", LISTa_null, "1.ay"),
         new T("<x:{it | <i>.<it>}; null={y}>", LISTa_null_b, "1.ay2.b"),
 
-        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LIST0,        ""),
-        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTa,        "x"),
-        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTab,       "xx"),
-        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTnull,     "z"),
-        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTnull_b,   "zx"),
-        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTa_null,   "xz"),
+        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LIST0, ""),
+        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTa, "x"),
+        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTab, "xx"),
+        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTnull, "z"),
+        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTnull_b, "zx"),
+        new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTa_null, "xz"),
         new T("<x:{it | x<if(!it)>y<endif>}; null={z}>", LISTa_null_b, "xzx"),
 
-        new T("<x:t():u(); null={y}>", LIST0,        ""),
-        new T("<x:t():u(); null={y}>", LISTa,        "a"),
-        new T("<x:t():u(); null={y}>", LISTab,       "ab"),
-        new T("<x:t():u(); null={y}>", LISTnull,     "y"),
-        new T("<x:t():u(); null={y}>", LISTnull_b,   "yb"),
-        new T("<x:t():u(); null={y}>", LISTa_null,   "ay"),
+        new T("<x:t():u(); null={y}>", LIST0, ""),
+        new T("<x:t():u(); null={y}>", LISTa, "a"),
+        new T("<x:t():u(); null={y}>", LISTab, "ab"),
+        new T("<x:t():u(); null={y}>", LISTnull, "y"),
+        new T("<x:t():u(); null={y}>", LISTnull_b, "yb"),
+        new T("<x:t():u(); null={y}>", LISTa_null, "ay"),
         new T("<x:t():u(); null={y}>", LISTa_null_b, "ayb")
     };
 
-    final static T[] listTests = new T[] {
+    final static T[] listTests = new T[]{
         new T("<[]>", UNDEF, ""),
         new T("<[]; null={x}>", UNDEF, ""),
         new T("<[]:{it | x}>", UNDEF, ""),
         new T("<[[],[]]:{it| x}>", UNDEF, ""),
         new T("<[]:t()>", UNDEF, ""),
-    };
+        };
 
-    @Test public void testSingleValued() throws Exception {
+    @Test
+    public void testSingleValued() throws Exception
+    {
         List<T> failed = testMatrix(singleValuedTests);
         List<T> expecting = Collections.emptyList();
-        assertArrayEquals("failed tests "+failed,
-                          expecting.toArray(), failed.toArray());
+        assertArrayEquals("failed tests " + failed, expecting.toArray(), failed.toArray());
     }
 
-    @Test public void testMultiValued() throws Exception {
+    @Test
+    public void testMultiValued() throws Exception
+    {
         List<T> failed = testMatrix(multiValuedTests);
         List<T> expecting = Collections.emptyList();
-        assertArrayEquals("failed tests "+failed,
-                          expecting.toArray(), failed.toArray());
+        assertArrayEquals("failed tests " + failed, expecting.toArray(), failed.toArray());
     }
 
-    @Test public void testLists() throws Exception {
+    @Test
+    public void testLists() throws Exception
+    {
         List<T> failed = testMatrix(listTests);
         List<T> expecting = Collections.emptyList();
-        assertArrayEquals("failed tests "+failed,
-                          expecting.toArray(), failed.toArray());
+        assertArrayEquals("failed tests " + failed, expecting.toArray(), failed.toArray());
     }
 
-    public List<T> testMatrix(T[] tests) throws Exception {
+    public List<T> testMatrix(T[] tests) throws Exception
+    {
         List<T> failed = new ArrayList<T>();
-        for (T t : tests) {
+        for (T t : tests)
+        {
             T test = new T(t); // dup since we might mod with result
             STGroup group = new STGroup();
-//          System.out.println("running "+test);
             group.defineTemplate("t", "x", "<x>");
             group.defineTemplate("u", "x", "<x>");
             group.defineTemplate("test", "x", test.template);
             ST st = group.getInstanceOf("test");
-            if ( test.x!=UNDEF ) {
+            if (test.x != UNDEF)
+            {
                 st.add("x", test.x);
             }
             String result = st.render();
-            if ( !result.equals(test.expecting) ) {
+            if (!result.equals(test.expecting))
+            {
                 test.result = result;
                 failed.add(test);
             }
@@ -226,8 +239,9 @@ public class TestNullAndEmptyValues extends BaseTest {
         return failed;
     }
 
-
-    @Test public void testSeparatorWithNullFirstValue() throws Exception {
+    @Test
+    public void testSeparatorWithNullFirstValue() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "name", "hi <name; separator=\", \">!");
         ST st = group.getInstanceOf("test");
@@ -239,7 +253,9 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testTemplateAppliedToNullIsEmpty() throws Exception {
+    @Test
+    public void testTemplateAppliedToNullIsEmpty() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "name", "<name:t()>");
         group.defineTemplate("t", "x", "<x>");
@@ -250,7 +266,9 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testTemplateAppliedToMissingValueIsEmpty() throws Exception {
+    @Test
+    public void testTemplateAppliedToMissingValueIsEmpty() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "name", "<name:t()>");
         group.defineTemplate("t", "x", "<x>");
@@ -260,7 +278,9 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testSeparatorWithNull2ndValue() throws Exception {
+    @Test
+    public void testSeparatorWithNull2ndValue() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "name", "hi <name; separator=\", \">!");
         ST st = group.getInstanceOf("test");
@@ -272,7 +292,9 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testSeparatorWithNullLastValue() throws Exception {
+    @Test
+    public void testSeparatorWithNullLastValue() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "name", "hi <name; separator=\", \">!");
         ST st = group.getInstanceOf("test");
@@ -284,7 +306,9 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testSeparatorWithTwoNullValuesInRow() throws Exception {
+    @Test
+    public void testSeparatorWithTwoNullValuesInRow() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "name", "hi <name; separator=\", \">!");
         ST st = group.getInstanceOf("test");
@@ -298,7 +322,9 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testTwoNullValues() throws Exception {
+    @Test
+    public void testTwoNullValues() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "name", "hi <name; null=\"x\">!");
         ST st = group.getInstanceOf("test");
@@ -309,7 +335,9 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testNullListItemNotCountedForIteratorIndex() throws Exception {
+    @Test
+    public void testNullListItemNotCountedForIteratorIndex() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "name", "<name:{n | <i>:<n>}>");
         ST st = group.getInstanceOf("test");
@@ -322,81 +350,85 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testSizeZeroButNonNullListGetsNoOutput() throws Exception {
+    @Test
+    public void testSizeZeroButNonNullListGetsNoOutput() throws Exception
+    {
         STGroup group = new STGroup();
-        group.defineTemplate("test", "users",
-            "begin\n" +
-            "<users>\n" +
-            "end\n");
+        group.defineTemplate("test", "users", "begin\n" + "<users>\n" + "end\n");
         ST t = group.getInstanceOf("test");
         t.add("users", null);
-        String expecting="begin"+newline+"end";
+        String expecting = "begin" + newline + "end";
         String result = t.render();
         assertEquals(expecting, result);
     }
 
-    @Test public void testNullListGetsNoOutput() throws Exception {
+    @Test
+    public void testNullListGetsNoOutput() throws Exception
+    {
         STGroup group = new STGroup();
-        group.defineTemplate("test", "users",
-            "begin\n" +
-            "<users:{u | name: <u>}; separator=\", \">\n" +
-            "end\n");
+        group.defineTemplate("test", "users", "begin\n" + "<users:{u | name: <u>}; separator=\", \">\n" + "end\n");
         ST t = group.getInstanceOf("test");
-        String expecting="begin"+newline+"end";
+        String expecting = "begin" + newline + "end";
         String result = t.render();
         assertEquals(expecting, result);
     }
 
-    @Test public void testEmptyListGetsNoOutput() throws Exception {
+    @Test
+    public void testEmptyListGetsNoOutput() throws Exception
+    {
         STGroup group = new STGroup();
-        group.defineTemplate("test", "users",
-            "begin\n" +
-            "<users:{u | name: <u>}; separator=\", \">\n" +
-            "end\n");
+        group.defineTemplate("test", "users", "begin\n" + "<users:{u | name: <u>}; separator=\", \">\n" + "end\n");
         ST t = group.getInstanceOf("test");
         t.add("users", new ArrayList<Object>());
-        String expecting="begin"+newline+"end";
+        String expecting = "begin" + newline + "end";
         String result = t.render();
         assertEquals(expecting, result);
     }
 
-    @Test public void testMissingDictionaryValue() throws Exception {
+    @Test
+    public void testMissingDictionaryValue() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "m", "<m.foo>");
         ST t = group.getInstanceOf("test");
         t.add("m", new HashMap<Object, Object>());
-        String expecting="";
+        String expecting = "";
         String result = t.render();
         assertEquals(expecting, result);
     }
 
-    @Test public void testMissingDictionaryValue2() throws Exception {
+    @Test
+    public void testMissingDictionaryValue2() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "m", "<if(m.foo)>[<m.foo>]<endif>");
         ST t = group.getInstanceOf("test");
         t.add("m", new HashMap<Object, Object>());
-        String expecting="";
+        String expecting = "";
         String result = t.render();
         assertEquals(expecting, result);
     }
 
-    @Test public void testMissingDictionaryValue3() throws Exception {
+    @Test
+    public void testMissingDictionaryValue3() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "m", "<if(m.foo)>[<m.foo>]<endif>");
         ST t = group.getInstanceOf("test");
-        t.add("m", new HashMap<String, Object>() {{put("foo",null);}});
-        String expecting="";
+        t.add("m", new HashMap<String, Object>()
+        {{
+            put("foo", null);
+        }});
+        String expecting = "";
         String result = t.render();
         assertEquals(expecting, result);
     }
 
-    @Test public void TestSeparatorEmittedForEmptyIteratorValue()
-        throws IOException
+    @Test
+    public void TestSeparatorEmittedForEmptyIteratorValue() throws IOException
     {
-        ST st = new ST(
-            "<values:{v|<if(v)>x<endif>}; separator=\" \">"
-        );
-        st.add("values", new boolean[] {true, false, true});
+        ST st = new ST("<values:{v|<if(v)>x<endif>}; separator=\" \">");
+        st.add("values", new boolean[]{ true, false, true });
         StringWriter sw = new StringWriter();
         st.write(new AutoIndentWriter(sw));
         String result = sw.toString();
@@ -404,15 +436,14 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expecting, result);
     }
 
-    @Test public void TestSeparatorEmittedForEmptyIteratorValu3333e()
-        throws IOException
+    @Test
+    public void TestSeparatorEmittedForEmptyIteratorValu3333e() throws IOException
     {
         String dir = getRandomDir();
-        String groupFile =
-            "filter ::= [\"b\":, default: key]\n" +
+        String groupFile = "filter ::= [\"b\":, default: key]\n" +
             "t() ::= <%<[\"a\", \"b\", \"c\", \"b\"]:{it | <filter.(it)>}; separator=\",\">%>\n";
         writeFile(dir, "group.stg", groupFile);
-        STGroupFile group = new STGroupFile(dir+"/group.stg");
+        STGroupFile group = new STGroupFile(dir + "/group.stg");
 
         ST st = group.getInstanceOf("t");
         StringWriter sw = new StringWriter();
@@ -422,15 +453,11 @@ public class TestNullAndEmptyValues extends BaseTest {
         assertEquals(expecting, result);
     }
 
-
-
-    @Test public void TestSeparatorEmittedForEmptyIteratorValue2()
-        throws IOException
+    @Test
+    public void TestSeparatorEmittedForEmptyIteratorValue2() throws IOException
     {
-        ST st = new ST(
-            "<values; separator=\" \">"
-        );
-        st.add("values", new String[]{"x", "", "y"});
+        ST st = new ST("<values; separator=\" \">");
+        st.add("values", new String[]{ "x", "", "y" });
         StringWriter sw = new StringWriter();
         st.write(new AutoIndentWriter(sw));
         String result = sw.toString();

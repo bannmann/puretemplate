@@ -254,7 +254,8 @@ templateDef[String prefix]
     	    }
 	    )
 	    {
-	    if ( $name.index >= 0 ) { // if ID missing
+	    if ( $name.index >= 0 ) {
+            // if ID missing
 			template = Misc.strip(template, n);
 			String templateName = $name.text;
 			if ( prefix.length()>0 ) templateName = prefix+$name.text;

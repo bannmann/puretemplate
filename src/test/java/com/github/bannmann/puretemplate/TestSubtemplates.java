@@ -1,18 +1,21 @@
 package com.github.bannmann.puretemplate;
 
-import org.junit.*;
-
-import com.github.bannmann.puretemplate.misc.ErrorBuffer;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
-public class TestSubtemplates extends BaseTest {
+import com.github.bannmann.puretemplate.misc.ErrorBuffer;
 
-    @Test public void testSimpleIteration() throws Exception {
+public class TestSubtemplates extends BaseTest
+{
+
+    @Test
+    public void testSimpleIteration() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "names", "<names:{n|<n>}>!");
         ST st = group.getInstanceOf("test");
@@ -24,11 +27,13 @@ public class TestSubtemplates extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testMapIterationIsByKeys() throws Exception {
+    @Test
+    public void testMapIterationIsByKeys() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "emails", "<emails:{n|<n>}>!");
         ST st = group.getInstanceOf("test");
-        Map<String,String> emails = new LinkedHashMap<String,String>();
+        Map<String, String> emails = new LinkedHashMap<String, String>();
         emails.put("parrt", "Ter");
         emails.put("tombu", "Tom");
         emails.put("dmose", "Dan");
@@ -38,7 +43,9 @@ public class TestSubtemplates extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testSimpleIterationWithArg() throws Exception {
+    @Test
+    public void testSimpleIterationWithArg() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "names", "<names:{n | <n>}>!");
         ST st = group.getInstanceOf("test");
@@ -50,7 +57,9 @@ public class TestSubtemplates extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testNestedIterationWithArg() throws Exception {
+    @Test
+    public void testNestedIterationWithArg() throws Exception
+    {
         STGroup group = new STGroup();
         group.defineTemplate("test", "users", "<users:{u | <u.id:{id | <id>=}><u.name>}>!");
         ST st = group.getInstanceOf("test");
@@ -62,75 +71,71 @@ public class TestSubtemplates extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testSubtemplateAsDefaultArg() throws Exception {
-        String templates =
-            "t(x,y={<x:{s|<s><s>}>}) ::= <<\n" +
-            "x: <x>\n" +
-            "y: <y>\n" +
-            ">>"+newline
-            ;
+    @Test
+    public void testSubtemplateAsDefaultArg() throws Exception
+    {
+        String templates = "t(x,y={<x:{s|<s><s>}>}) ::= <<\n" + "x: <x>\n" + "y: <y>\n" + ">>" + newline;
         writeFile(tmpdir, "group.stg", templates);
-        STGroup group = new STGroupFile(tmpdir+"/group.stg");
+        STGroup group = new STGroupFile(tmpdir + "/group.stg");
         ST b = group.getInstanceOf("t");
         b.add("x", "a");
-        String expecting =
-            "x: a" +newline+
-            "y: aa";
+        String expecting = "x: a" + newline + "y: aa";
         String result = b.render();
         assertEquals(expecting, result);
     }
 
-    @Test public void testParallelAttributeIteration() throws Exception {
-        ST e = new ST(
-                "<names,phones,salaries:{n,p,s | <n>@<p>: <s>\n}>"
-            );
+    @Test
+    public void testParallelAttributeIteration() throws Exception
+    {
+        ST e = new ST("<names,phones,salaries:{n,p,s | <n>@<p>: <s>\n}>");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("phones", "1");
         e.add("phones", "2");
         e.add("salaries", "big");
         e.add("salaries", "huge");
-        String expecting = "Ter@1: big"+newline+"Tom@2: huge"+newline;
+        String expecting = "Ter@1: big" + newline + "Tom@2: huge" + newline;
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testParallelAttributeIterationWithNullValue() throws Exception {
-        ST e = new ST(
-                "<names,phones,salaries:{n,p,s | <n>@<p>: <s>\n}>"
-            );
+    @Test
+    public void testParallelAttributeIterationWithNullValue() throws Exception
+    {
+        ST e = new ST("<names,phones,salaries:{n,p,s | <n>@<p>: <s>\n}>");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("names", "Sriram");
-        e.add("phones", new ArrayList<String>() {{add("1"); add(null); add("3");}});
+        e.add("phones", new ArrayList<String>()
+        {{
+            add("1");
+            add(null);
+            add("3");
+        }});
         e.add("salaries", "big");
         e.add("salaries", "huge");
         e.add("salaries", "enormous");
-        String expecting = "Ter@1: big"+newline+
-                           "Tom@: huge"+newline+
-                           "Sriram@3: enormous"+newline;
+        String expecting = "Ter@1: big" + newline + "Tom@: huge" + newline + "Sriram@3: enormous" + newline;
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testParallelAttributeIterationHasI() throws Exception {
-        ST e = new ST(
-                "<names,phones,salaries:{n,p,s | <i0>. <n>@<p>: <s>\n}>"
-            );
+    @Test
+    public void testParallelAttributeIterationHasI() throws Exception
+    {
+        ST e = new ST("<names,phones,salaries:{n,p,s | <i0>. <n>@<p>: <s>\n}>");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("phones", "1");
         e.add("phones", "2");
         e.add("salaries", "big");
         e.add("salaries", "huge");
-        String expecting =
-            "0. Ter@1: big"+newline+
-            "1. Tom@2: huge"+newline;
+        String expecting = "0. Ter@1: big" + newline + "1. Tom@2: huge" + newline;
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testParallelAttributeIterationWithDifferentSizes() throws Exception {
-        ST e = new ST(
-                "<names,phones,salaries:{n,p,s | <n>@<p>: <s>}; separator=\", \">"
-            );
+    @Test
+    public void testParallelAttributeIterationWithDifferentSizes() throws Exception
+    {
+        ST e = new ST("<names,phones,salaries:{n,p,s | <n>@<p>: <s>}; separator=\", \">");
         e.add("names", "Ter");
         e.add("names", "Tom");
         e.add("names", "Sriram");
@@ -141,10 +146,10 @@ public class TestSubtemplates extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testParallelAttributeIterationWithSingletons() throws Exception {
-        ST e = new ST(
-                "<names,phones,salaries:{n,p,s | <n>@<p>: <s>}; separator=\", \">"
-            );
+    @Test
+    public void testParallelAttributeIterationWithSingletons() throws Exception
+    {
+        ST e = new ST("<names,phones,salaries:{n,p,s | <n>@<p>: <s>}; separator=\", \">");
         e.add("names", "Ter");
         e.add("phones", "1");
         e.add("salaries", "big");
@@ -152,14 +157,18 @@ public class TestSubtemplates extends BaseTest {
         assertEquals(expecting, e.render());
     }
 
-    @Test public void testParallelAttributeIterationWithDifferentSizesTemplateRefInsideToo() throws Exception {
-        String templates =
-                "page(names,phones,salaries) ::= "+newline+
-                "   << <names,phones,salaries:{n,p,s | <value(n)>@<value(p)>: <value(s)>}; separator=\", \"> >>"+newline +
-                "value(x) ::= \"<if(!x)>n/a<else><x><endif>\"" +newline;
+    @Test
+    public void testParallelAttributeIterationWithDifferentSizesTemplateRefInsideToo() throws Exception
+    {
+        String templates = "page(names,phones,salaries) ::= " +
+            newline +
+            "   << <names,phones,salaries:{n,p,s | <value(n)>@<value(p)>: <value(s)>}; separator=\", \"> >>" +
+            newline +
+            "value(x) ::= \"<if(!x)>n/a<else><x><endif>\"" +
+            newline;
         writeFile(tmpdir, "g.stg", templates);
 
-        STGroup group = new STGroupFile(tmpdir+"/g.stg");
+        STGroup group = new STGroupFile(tmpdir + "/g.stg");
         ST p = group.getInstanceOf("page");
         p.add("names", "Ter");
         p.add("names", "Tom");
@@ -171,14 +180,16 @@ public class TestSubtemplates extends BaseTest {
         assertEquals(expecting, p.render());
     }
 
-    @Test public void testEvalSTIteratingSubtemplateInSTFromAnotherGroup() throws Exception {
+    @Test
+    public void testEvalSTIteratingSubtemplateInSTFromAnotherGroup() throws Exception
+    {
         ErrorBuffer errors = new ErrorBuffer();
         STGroup innerGroup = new STGroup();
         innerGroup.setListener(errors);
         innerGroup.defineTemplate("test", "m", "<m:samegroup()>");
         innerGroup.defineTemplate("samegroup", "x", "hi ");
         ST st = innerGroup.getInstanceOf("test");
-        st.add("m", new int[] {1,2,3});
+        st.add("m", new int[]{ 1, 2, 3 });
 
         STGroup outerGroup = new STGroup();
         outerGroup.defineTemplate("errorMessage", "x", "<x>");
@@ -193,7 +204,9 @@ public class TestSubtemplates extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testEvalSTIteratingSubtemplateInSTFromAnotherGroupSingleValue() throws Exception {
+    @Test
+    public void testEvalSTIteratingSubtemplateInSTFromAnotherGroupSingleValue() throws Exception
+    {
         ErrorBuffer errors = new ErrorBuffer();
         STGroup innerGroup = new STGroup();
         innerGroup.setListener(errors);
@@ -215,7 +228,9 @@ public class TestSubtemplates extends BaseTest {
         assertEquals(expected, result);
     }
 
-    @Test public void testEvalSTFromAnotherGroup() throws Exception {
+    @Test
+    public void testEvalSTFromAnotherGroup() throws Exception
+    {
         ErrorBuffer errors = new ErrorBuffer();
         STGroup innerGroup = new STGroup();
         innerGroup.setListener(errors);
@@ -236,5 +251,4 @@ public class TestSubtemplates extends BaseTest {
 
         assertEquals(expected, result);
     }
-
 }

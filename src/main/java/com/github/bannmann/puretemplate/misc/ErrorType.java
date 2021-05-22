@@ -1,7 +1,10 @@
 package com.github.bannmann.puretemplate.misc;
 
-/** All the errors that can happen and how to generate a message. */
-public enum ErrorType {
+/**
+ * All the errors that can happen and how to generate a message.
+ */
+public enum ErrorType
+{
     // RUNTIME SEMANTIC ERRORS
     NO_SUCH_TEMPLATE("no such template: %s"),
     NO_IMPORTED_TEMPLATE("no such template: super.%s"),
@@ -42,5 +45,8 @@ public enum ErrorType {
 
     public String message;
 
-    ErrorType(String m) { message = m; }
+    ErrorType(String m)
+    {
+        message = m;
+    }
 }
