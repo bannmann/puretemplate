@@ -152,7 +152,9 @@ public class TestModelAdaptors extends BaseTest
         assertEquals(expecting, result);
     }
 
-    // https://github.com/antlr/stringtemplate4/issues/214
+    /**
+     * @see <a href="https://github.com/antlr/stringtemplate4/issues/214">antlr/stringtemplate4#214</a>
+     */
     @Test
     public void testHandlesNullKeys()
     {
@@ -167,7 +169,9 @@ public class TestModelAdaptors extends BaseTest
         assertEquals(expecting, result);
     }
 
-    // https://github.com/antlr/stringtemplate4/issues/214
+    /**
+     * @see <a href="https://github.com/antlr/stringtemplate4/issues/214">antlr/stringtemplate4#214</a>
+     */
     @Test
     public void testHandlesKeysNotComparableToString()
     {

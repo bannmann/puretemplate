@@ -7,12 +7,12 @@ import java.util.HashMap;
  *
  * <p>I often have lists of things that need to be formatted, but the list
  * items are actually pieces of data that are not already in an object.  I need ST to do something like:</p>
- * <p>
- * Ter=3432<br> Tom=32234<br> ....</p>
+ * <pre>{@code Ter=3432
+ * Tom=32234
+ * ....}</pre>
  * <p>
  * using template:</p>
- * <p>
- * {@code $items:{it.name$=$it.type$}$}</p>
+ * <pre>{@code $items:{it.name$=$it.type$}$}</pre>
  * <p>
  * This example will call {@code getName()} on the objects in items attribute, but what if they aren't objects?  I have
  * perhaps two parallel arrays instead of a single array of objects containing two fields.  One solution is allow {@code
@@ -21,8 +21,7 @@ import java.util.HashMap;
  * <p>
  * This very clean approach is espoused by some, but the problem is that it's a hole in my separation rules.  People can
  * put the logic in the view because you could say: "go get bob's data" in the view:</p>
- * <p>
- * Bob's Phone: {@code $db.bob.phone$}</p>
+ * <pre>{@code Bob's Phone: $db.bob.phone$}</pre>
  * <p>
  * A view should not be part of the program and hence should never be able to go ask for a specific person's data.</p>
  * <p>

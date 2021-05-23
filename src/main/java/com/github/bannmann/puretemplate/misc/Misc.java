@@ -201,9 +201,11 @@ public class Misc
     {
         try
         {
-            // In Spring Boot context the URL can be like this:
-            // jar:file:/path/to/myapp.jar!/BOOT-INF/lib/mylib.jar!/org/foo/templates/g.stg
-            // This url cannot be processed using standard URLClassLoader
+            /*
+             * In Spring Boot context the URL can be like this:
+             * jar:file:/path/to/myapp.jar!/BOOT-INF/lib/mylib.jar!/org/foo/templates/g.stg
+             * This url cannot be processed using standard URLClassLoader
+             */
             URLConnection con = url.openConnection();
             InputStream is = con.getInputStream();
             try
@@ -212,11 +214,12 @@ public class Misc
             }
             catch (Throwable e)
             {
-                // Closing the input stream may throw an exception. See bug below. Most probabaly it was
-                // the true reason for this commit: 
-                // https://github.com/antlr/stringtemplate4/commit/21484ed46f1b20b2cdaec49f9d5a626fb26a493c             
-                // https://bugs.openjdk.java.net/browse/JDK-8080094
-                //              e.printStackTrace();
+                /*
+                 * Closing the input stream may throw an exception. See bug below. Most probably it was the true reason
+                 * for this commit:
+                 * https://github.com/antlr/stringtemplate4/commit/21484ed46f1b20b2cdaec49f9d5a626fb26a493c
+                 * https://bugs.openjdk.java.net/browse/JDK-8080094
+                 */
             }
             return true;
         }

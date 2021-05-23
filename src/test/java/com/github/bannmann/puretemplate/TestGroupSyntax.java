@@ -96,7 +96,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     /**
-     * This is a regression test for antlr/stringtemplate4#131.
+     * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/131">antlr/stringtemplate4#131</a>.
      */
     @Test
     public void testSetDefaultDelimiters_STGroupString() throws Exception
@@ -137,7 +137,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     /**
-     * This is a regression test for antlr/stringtemplate4#84.
+     * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/84">antlr/stringtemplate4#84</a>.
      */
     @Test
     public void testSetUnsupportedDelimiters_At() throws Exception
@@ -328,7 +328,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     /**
-     * This is a regression test for antlr/stringtemplate4#138.
+     * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/138">antlr/stringtemplate4#138</a>.
      */
     @Test
     public void testIndentedComment() throws Exception

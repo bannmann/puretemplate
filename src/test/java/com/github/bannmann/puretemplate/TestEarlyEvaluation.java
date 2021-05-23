@@ -62,7 +62,8 @@ public class TestEarlyEvaluation extends BaseTest
     }
 
     /**
-     * see http://www.antlr3.org/pipermail/stringtemplate-interest/2011-May/003476.html
+     * @see <a href="http://www.antlr3.org/pipermail/stringtemplate-interest/2011-May/003476.html">stringtemplate-interest
+     * post 3476</a>
      */
     @Test
     public void testEarlyEval() throws Exception
@@ -93,7 +94,8 @@ public class TestEarlyEvaluation extends BaseTest
     }
 
     /**
-     * see http://www.antlr.org/pipermail/stringtemplate-interest/2011-May/003476.html
+     * @see <a href="http://www.antlr3.org/pipermail/stringtemplate-interest/2011-May/003476.html">stringtemplate-interest
+     * post 3476</a>
      */
     @Test
     public void testEarlyEval2() throws Exception
@@ -124,7 +126,8 @@ public class TestEarlyEvaluation extends BaseTest
     }
 
     /**
-     * see http://www.antlr3.org/pipermail/stringtemplate-interest/2011-August/003758.html
+     * @see <a href="http://www.antlr3.org/pipermail/stringtemplate-interest/2011-August/003758.html">stringtemplate-interest
+     * post 3758</a>
      */
     @Test
     public void testBugArrayIndexOutOfBoundsExceptionInSTRuntimeMessage_getSourceLocation() throws Exception

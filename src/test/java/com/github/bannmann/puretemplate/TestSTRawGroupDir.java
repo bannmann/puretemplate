@@ -110,8 +110,7 @@ public class TestSTRawGroupDir extends BaseTest
     }
 
     /**
-     * This is a regression test for antlr/stringtemplate4#70. "Argument initialization for sub-template in template
-     * with STRawGroupDir doesn't recognize valid parameters" https://github.com/antlr/stringtemplate4/issues/70
+     * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/70">antlr/stringtemplate4#70</a>.
      */
     @Test
     public void testRawArgumentPassing()

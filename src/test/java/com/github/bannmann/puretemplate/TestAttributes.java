@@ -21,7 +21,8 @@ public class TestAttributes extends BaseTest
     }
 
     /**
-     * See https://github.com/antlr/stringtemplate4/issues/72 and https://github.com/antlr/stringtemplate4/issues/98
+     * @see <a href="https://github.com/antlr/stringtemplate4/issues/72">antlr/stringtemplate4#72</a>
+     * @see <a href="https://github.com/antlr/stringtemplate4/issues/98">antlr/stringtemplate4#98</a>
      */
     @Test
     public void testRedefOfKeyInCloneAfterAddingAttribute()

@@ -71,7 +71,7 @@ public class TestDollarDelimiters extends BaseTest
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#46. https://github.com/antlr/stringtemplate4/issues/46
+     * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/46">antlr/stringtemplate4#46</a>.
      */
     @Test
     public void testDelimitersClause() throws Exception
@@ -96,7 +96,7 @@ public class TestDollarDelimiters extends BaseTest
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#46. https://github.com/antlr/stringtemplate4/issues/46
+     * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/46">antlr/stringtemplate4#46</a>.
      */
     @Test
     public void testDelimitersClauseInGroupString() throws Exception
@@ -120,7 +120,7 @@ public class TestDollarDelimiters extends BaseTest
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#66. https://github.com/antlr/stringtemplate4/issues/66
+     * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/66">antlr/stringtemplate4#66</a>.
      */
     @Test
     public void testImportTemplatePreservesDelimiters()
@@ -159,7 +159,7 @@ public class TestDollarDelimiters extends BaseTest
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#66. https://github.com/antlr/stringtemplate4/issues/66
+     * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/66">antlr/stringtemplate4#66</a>.
      */
     @Test
     public void testImportGroupPreservesDelimiters()
@@ -198,7 +198,7 @@ public class TestDollarDelimiters extends BaseTest
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#66. https://github.com/antlr/stringtemplate4/issues/66
+     * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/66">antlr/stringtemplate4#66</a>.
      */
     @Test
     public void testDelimitersClauseOverridesConstructorDelimiters()
@@ -239,7 +239,7 @@ public class TestDollarDelimiters extends BaseTest
     }
 
     /**
-     * This is part of a regression test for antlr/stringtemplate4#66. https://github.com/antlr/stringtemplate4/issues/66
+     * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/66">antlr/stringtemplate4#66</a>.
      */
     @Test
     public void testDelimitersClauseOverridesInheritedDelimiters()

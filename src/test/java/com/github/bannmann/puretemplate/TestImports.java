@@ -109,7 +109,7 @@ public class TestImports extends BaseTest
     }
 
     /**
-     * A test for https://github.com/antlr/stringtemplate4/issues/124
+     * A test for <a href="https://github.com/antlr/stringtemplate4/issues/124">antlr/stringtemplate4#124</a>
      */
     @Test
     public void testImportGroupAtTopLevelInJar() throws Exception

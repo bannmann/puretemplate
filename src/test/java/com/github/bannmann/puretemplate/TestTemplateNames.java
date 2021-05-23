@@ -142,7 +142,7 @@ public class TestTemplateNames extends BaseTest
     }
 
     /**
-     * This is a regression test for antlr/stringtemplate4#94.
+     * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/94">antlr/stringtemplate4#94</a>.
      */
     @Test
     public void testIdWithHyphens() throws Exception

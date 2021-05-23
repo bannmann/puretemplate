@@ -489,8 +489,8 @@ public class TestDictionaries extends BaseTest
     }
 
     /**
-     * This is a regression test for antlr/stringtemplate4#114. "dictionary value using <% %> is broken" Before the fix
-     * the following test would return %hi% https://github.com/antlr/stringtemplate4/issues/114
+     * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/114">antlr/stringtemplate4#114</a>.
+     * Before the fix the following test would return %hi%
      */
     @Test
     public void testDictionaryBehaviorNoNewlineTemplate() throws Exception

@@ -35,7 +35,7 @@ public class TestWhitespace extends BaseTest
     }
 
     /**
-     * This is a regression test for antlr/stringtemplate4#93.
+     * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/93">antlr/stringtemplate4#93</a>.
      */
     @Test
     public void testNoTrimmedNewlinesBeforeAfterInCodedTemplate() throws Exception

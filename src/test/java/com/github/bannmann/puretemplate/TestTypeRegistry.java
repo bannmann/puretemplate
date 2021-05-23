@@ -7,10 +7,11 @@ import org.junit.Test;
 
 import com.github.bannmann.puretemplate.misc.TypeRegistry;
 
+/**
+ * @see <a href="https://github.com/antlr/stringtemplate4/issues/122">antlr/stringtemplate4#122</a>
+ */
 public class TestTypeRegistry
 {
-    // https://github.com/antlr/stringtemplate4/issues/122
-
     static class A
     {
     }
