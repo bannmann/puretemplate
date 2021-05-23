@@ -26,10 +26,10 @@ public class BytecodeDisassembler
                 buf.append(", ");
             }
             int opcode = code.instrs[ip];
-            Bytecode.Instruction I = Bytecode.instructions[opcode];
-            buf.append(I.name);
+            Bytecode.Instruction I = Bytecode.INSTRUCTIONS[opcode];
+            buf.append(I.formalName);
             ip++;
-            for (int opnd = 0; opnd < I.nopnds; opnd++)
+            for (int operand = 0; operand < I.operandTypes.length; operand++)
             {
                 buf.append(' ');
                 buf.append(getShort(code.instrs, ip));
@@ -58,25 +58,25 @@ public class BytecodeDisassembler
         {
             throw new IllegalArgumentException("ip out of range: " + ip);
         }
-        Bytecode.Instruction I = Bytecode.instructions[opcode];
+        Bytecode.Instruction I = Bytecode.INSTRUCTIONS[opcode];
         if (I == null)
         {
             throw new IllegalArgumentException("no such instruction " + opcode + " at address " + ip);
         }
-        String instrName = I.name;
+        String instrName = I.formalName;
         buf.append(String.format("%04d:\t%-14s", ip, instrName));
         ip++;
-        if (I.nopnds == 0)
+        if (I.operandTypes.length == 0)
         {
             buf.append("  ");
             return ip;
         }
         List<String> operands = new ArrayList<String>();
-        for (int i = 0; i < I.nopnds; i++)
+        for (int i = 0; i < I.operandTypes.length; i++) // TODO foreach
         {
             int opnd = getShort(code.instrs, ip);
             ip += Bytecode.OPND_SIZE_IN_BYTES;
-            switch (I.type[i])
+            switch (I.operandTypes[i])
             {
                 case STRING:
                     operands.add(showConstPoolOperand(opnd));

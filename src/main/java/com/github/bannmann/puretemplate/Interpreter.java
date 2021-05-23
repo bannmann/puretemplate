@@ -193,7 +193,7 @@ public class Interpreter
     {
         final ST self = scope.st;
         int start = out.index(); // track char we're about to write
-        int prevOpcode = 0;
+        Bytecode.Instruction prevOpcode = null;
         int n = 0; // how many char we write out
         int nargs;
         int nameIndex;
@@ -210,18 +210,18 @@ public class Interpreter
             {
                 trace(scope, ip);
             }
-            short opcode = code[ip];
+            Bytecode.Instruction opcode = Bytecode.INSTRUCTIONS[code[ip]];
             //count[opcode]++;
             scope.ip = ip;
             ip++; //jump to next instruction or first byte of operand
             switch (opcode)
             {
-                case Bytecode.INSTR_LOAD_STR:
+                case LOAD_STR:
                     // just testing...
                     load_str(self, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     break;
-                case Bytecode.INSTR_LOAD_ATTR:
+                case LOAD_ATTR:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     name = self.impl.strings[nameIndex];
@@ -240,7 +240,7 @@ public class Interpreter
                     }
                     operands[++sp] = o;
                     break;
-                case Bytecode.INSTR_LOAD_LOCAL:
+                case LOAD_LOCAL:
                     int valueIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     o = self.locals[valueIndex];
@@ -250,19 +250,19 @@ public class Interpreter
                     }
                     operands[++sp] = o;
                     break;
-                case Bytecode.INSTR_LOAD_PROP:
+                case LOAD_PROP:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     o = operands[sp--];
                     name = self.impl.strings[nameIndex];
                     operands[++sp] = getObjectProperty(out, scope, o, name);
                     break;
-                case Bytecode.INSTR_LOAD_PROP_IND:
+                case LOAD_PROP_IND:
                     Object propName = operands[sp--];
                     o = operands[sp];
                     operands[sp] = getObjectProperty(out, scope, o, propName);
                     break;
-                case Bytecode.INSTR_NEW:
+                case NEW:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     name = self.impl.strings[nameIndex];
@@ -276,7 +276,7 @@ public class Interpreter
                     sp -= nargs;
                     operands[++sp] = st;
                     break;
-                case Bytecode.INSTR_NEW_IND:
+                case NEW_IND:
                     nargs = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     name = (String) operands[sp - nargs];
@@ -286,7 +286,7 @@ public class Interpreter
                     sp--; // pop template name
                     operands[++sp] = st;
                     break;
-                case Bytecode.INSTR_NEW_BOX_ARGS:
+                case NEW_BOX_ARGS:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     name = self.impl.strings[nameIndex];
@@ -298,7 +298,7 @@ public class Interpreter
                     storeArgs(scope, attrs, st);
                     operands[++sp] = st;
                     break;
-                case Bytecode.INSTR_SUPER_NEW:
+                case SUPER_NEW:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     name = self.impl.strings[nameIndex];
@@ -306,21 +306,21 @@ public class Interpreter
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     super_new(scope, name, nargs);
                     break;
-                case Bytecode.INSTR_SUPER_NEW_BOX_ARGS:
+                case SUPER_NEW_BOX_ARGS:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     name = self.impl.strings[nameIndex];
                     attrs = (ArgumentsMap) operands[sp--];
                     super_new(scope, name, attrs);
                     break;
-                case Bytecode.INSTR_STORE_OPTION:
+                case STORE_OPTION:
                     int optionIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     o = operands[sp--];    // value to store
                     options = (Object[]) operands[sp]; // get options
                     options[optionIndex] = o; // store value into options on stack
                     break;
-                case Bytecode.INSTR_STORE_ARG:
+                case STORE_ARG:
                     nameIndex = getShort(code, ip);
                     name = self.impl.strings[nameIndex];
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
@@ -328,25 +328,25 @@ public class Interpreter
                     attrs = (ArgumentsMap) operands[sp];
                     attrs.put(name, o); // leave attrs on stack
                     break;
-                case Bytecode.INSTR_WRITE:
+                case WRITE:
                     o = operands[sp--];
                     int n1 = writeObjectNoOptions(out, scope, o);
                     n += n1;
                     nwline += n1;
                     break;
-                case Bytecode.INSTR_WRITE_OPT:
+                case WRITE_OPT:
                     options = (Object[]) operands[sp--]; // get options
                     o = operands[sp--];                 // get option to write
                     int n2 = writeObjectWithOptions(out, scope, o, options);
                     n += n2;
                     nwline += n2;
                     break;
-                case Bytecode.INSTR_MAP:
+                case MAP:
                     st = (ST) operands[sp--]; // get prototype off stack
                     o = operands[sp--];      // get object to map prototype across
                     map(scope, o, st);
                     break;
-                case Bytecode.INSTR_ROT_MAP:
+                case ROT_MAP:
                     int nmaps = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     List<ST> templates = new ArrayList<ST>();
@@ -361,7 +361,7 @@ public class Interpreter
                         rot_map(scope, o, templates);
                     }
                     break;
-                case Bytecode.INSTR_ZIP_MAP:
+                case ZIP_MAP:
                     st = (ST) operands[sp--];
                     nmaps = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
@@ -373,10 +373,10 @@ public class Interpreter
                     sp -= nmaps;
                     operands[++sp] = zip_map(scope, exprs, st);
                     break;
-                case Bytecode.INSTR_BR:
+                case BR:
                     ip = getShort(code, ip);
                     break;
-                case Bytecode.INSTR_BRF:
+                case BRF:
                     addr = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     o = operands[sp--]; // <if(expr)>...<endif>
@@ -385,47 +385,47 @@ public class Interpreter
                         ip = addr; // jump
                     }
                     break;
-                case Bytecode.INSTR_OPTIONS:
+                case OPTIONS:
                     operands[++sp] = new Object[Compiler.NUM_OPTIONS];
                     break;
-                case Bytecode.INSTR_ARGS:
+                case ARGS:
                     operands[++sp] = new ArgumentsMap();
                     break;
-                case Bytecode.INSTR_PASSTHRU:
+                case PASSTHRU:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     name = self.impl.strings[nameIndex];
                     attrs = (ArgumentsMap) operands[sp];
                     passthru(scope, name, attrs);
                     break;
-                case Bytecode.INSTR_LIST:
+                case LIST:
                     operands[++sp] = new ObjectList();
                     break;
-                case Bytecode.INSTR_ADD:
+                case ADD:
                     o = operands[sp--];             // pop value
                     List<Object> list = (ObjectList) operands[sp]; // don't pop list
                     addToList(scope, list, o);
                     break;
-                case Bytecode.INSTR_TOSTR:
+                case TOSTR:
                     // replace with string value; early eval
                     operands[sp] = toString(out, scope, operands[sp]);
                     break;
-                case Bytecode.INSTR_FIRST:
+                case FIRST:
                     operands[sp] = first(scope, operands[sp]);
                     break;
-                case Bytecode.INSTR_LAST:
+                case LAST:
                     operands[sp] = last(scope, operands[sp]);
                     break;
-                case Bytecode.INSTR_REST:
+                case REST:
                     operands[sp] = rest(scope, operands[sp]);
                     break;
-                case Bytecode.INSTR_TRUNC:
+                case TRUNC:
                     operands[sp] = trunc(scope, operands[sp]);
                     break;
-                case Bytecode.INSTR_STRIP:
+                case STRIP:
                     operands[sp] = strip(scope, operands[sp]);
                     break;
-                case Bytecode.INSTR_TRIM:
+                case TRIM:
                     o = operands[sp--];
                     if (o.getClass() == String.class)
                     {
@@ -442,10 +442,10 @@ public class Interpreter
                         operands[++sp] = o;
                     }
                     break;
-                case Bytecode.INSTR_LENGTH:
+                case LENGTH:
                     operands[sp] = length(operands[sp]);
                     break;
-                case Bytecode.INSTR_STRLEN:
+                case STRLEN:
                     o = operands[sp--];
                     if (o.getClass() == String.class)
                     {
@@ -462,36 +462,36 @@ public class Interpreter
                         operands[++sp] = 0;
                     }
                     break;
-                case Bytecode.INSTR_REVERSE:
+                case REVERSE:
                     operands[sp] = reverse(scope, operands[sp]);
                     break;
-                case Bytecode.INSTR_NOT:
+                case NOT:
                     operands[sp] = !testAttributeTrue(operands[sp]);
                     break;
-                case Bytecode.INSTR_OR:
+                case OR:
                     right = operands[sp--];
                     left = operands[sp--];
                     operands[++sp] = testAttributeTrue(left) || testAttributeTrue(right);
                     break;
-                case Bytecode.INSTR_AND:
+                case AND:
                     right = operands[sp--];
                     left = operands[sp--];
                     operands[++sp] = testAttributeTrue(left) && testAttributeTrue(right);
                     break;
-                case Bytecode.INSTR_INDENT:
+                case INDENT:
                     int strIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     indent(out, scope, strIndex);
                     break;
-                case Bytecode.INSTR_DEDENT:
+                case DEDENT:
                     out.popIndentation();
                     break;
-                case Bytecode.INSTR_NEWLINE:
+                case NEWLINE:
                     try
                     {
-                        if ((prevOpcode == 0 && !self.isAnonSubtemplate() && !self.impl.isRegion) ||
-                            prevOpcode == Bytecode.INSTR_NEWLINE ||
-                            prevOpcode == Bytecode.INSTR_INDENT ||
+                        if ((prevOpcode == null && !self.isAnonSubtemplate() && !self.impl.isRegion) ||
+                            prevOpcode == Bytecode.Instruction.NEWLINE ||
+                            prevOpcode == Bytecode.Instruction.INDENT ||
                             nwline > 0)
                         {
                             out.write(Misc.newline);
@@ -503,21 +503,21 @@ public class Interpreter
                         errMgr.IOError(self, ErrorType.WRITE_IO_ERROR, ioe);
                     }
                     break;
-                case Bytecode.INSTR_NOOP:
+                case NOOP:
                     break;
-                case Bytecode.INSTR_POP:
+                case POP:
                     sp--; // throw away top of stack
                     break;
-                case Bytecode.INSTR_NULL:
+                case NULL:
                     operands[++sp] = null;
                     break;
-                case Bytecode.INSTR_TRUE:
+                case TRUE:
                     operands[++sp] = true;
                     break;
-                case Bytecode.INSTR_FALSE:
+                case FALSE:
                     operands[++sp] = false;
                     break;
-                case Bytecode.INSTR_WRITE_STR:
+                case WRITE_STR:
                     strIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     o = self.impl.strings[strIndex];
@@ -526,7 +526,7 @@ public class Interpreter
                     nwline += n1;
                     break;
                 // TODO: generate this optimization
-                //              case Bytecode.INSTR_WRITE_LOCAL:
+                //              case Bytecode.Instruction.WRITE_LOCAL:
                 //                  valueIndex = getShort(code, ip);
                 //                  ip += Bytecode.OPND_SIZE_IN_BYTES;
                 //                  o = self.locals[valueIndex];

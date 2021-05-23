@@ -104,12 +104,17 @@ public class CompiledST implements Cloneable
     public String[] strings;
 
     /**
-     * byte-addressable code memory
+     * byte-addressable code memory. For efficiency, this stores opcodes instead of references to the {@link
+     * Bytecode.Instruction} enum.
      */
     public byte[] instrs;
 
     public int codeSize;
-    public Interval[] sourceMap; // maps IP to range in template pattern
+
+    /**
+     * maps IP to range in template pattern
+     */
+    public Interval[] sourceMap;
 
     public CompiledST()
     {

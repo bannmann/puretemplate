@@ -54,21 +54,24 @@ public class Compiler
         defaultOptionValues = Collections.unmodifiableMap(map);
     }
 
-    public static Map<String, Short> funcs;
+    public static Map<String, Bytecode.Instruction> functions = createLookupMap(Bytecode.Instruction.FIRST,
+        Bytecode.Instruction.LAST,
+        Bytecode.Instruction.REST,
+        Bytecode.Instruction.TRUNC,
+        Bytecode.Instruction.STRIP,
+        Bytecode.Instruction.TRIM,
+        Bytecode.Instruction.LENGTH,
+        Bytecode.Instruction.STRLEN,
+        Bytecode.Instruction.REVERSE);
 
-    static
+    private static Map<String, Bytecode.Instruction> createLookupMap(Bytecode.Instruction... instructions)
     {
-        final Map<String, Short> map = new HashMap<String, Short>();
-        map.put("first", Bytecode.INSTR_FIRST);
-        map.put("last", Bytecode.INSTR_LAST);
-        map.put("rest", Bytecode.INSTR_REST);
-        map.put("trunc", Bytecode.INSTR_TRUNC);
-        map.put("strip", Bytecode.INSTR_STRIP);
-        map.put("trim", Bytecode.INSTR_TRIM);
-        map.put("length", Bytecode.INSTR_LENGTH);
-        map.put("strlen", Bytecode.INSTR_STRLEN);
-        map.put("reverse", Bytecode.INSTR_REVERSE);
-        funcs = Collections.unmodifiableMap(map);
+        Map<String, Bytecode.Instruction> result = new HashMap<>();
+        for (Bytecode.Instruction instruction : instructions)
+        {
+            result.put(instruction.formalName, instruction);
+        }
+        return Collections.unmodifiableMap(result);
     }
 
     /**

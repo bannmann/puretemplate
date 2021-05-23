@@ -221,7 +221,7 @@ memberExpr
 
 includeExpr
 options {k=2;} // prevent full LL(*), which fails, falling back on k=1; need k=2
-	:	{Compiler.funcs.containsKey(input.LT(1).getText())}? // predefined function
+	:	{Compiler.functions.containsKey(input.LT(1).getText())}? // predefined function
 		ID '(' expr? ')'						-> ^(EXEC_FUNC ID expr?)
 	|	'super' '.' ID '(' args ')'				-> ^(INCLUDE_SUPER ID args?)
 	|	qualifiedId '(' args ')'				-> ^(INCLUDE qualifiedId args?)
