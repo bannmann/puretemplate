@@ -1,16 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
+        <groupId>com.github.bannmann</groupId>
+        <artifactId>base</artifactId>
+        <version>1.3</version>
     </parent>
 
     <groupId>com.github.bannmann.puretemplate</groupId>
     <artifactId>puretemplate</artifactId>
-    <packaging>jar</packaging>
 
     <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <name>PureTemplate</name>
 
@@ -21,6 +22,21 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/bannmann/puretemplate.git</connection>
+        <developerConnection>scm:git:git@github.com:bannmann/puretemplate.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/bannmann/puretemplate/tree/master</url>
+    </scm>
+
+    <properties>
+        <maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <mizool.version>0.45</mizool.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -37,37 +53,8 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <additionalOptions>-Xdoclint:none</additionalOptions>
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.8</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.4</version>
-                <configuration>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr3-maven-plugin</artifactId>
@@ -80,13 +67,30 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <additionalOptions>-Xdoclint:none</additionalOptions>
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                </configuration>
+                <dependencies>
+                    <!-- Force Surefire to (only) run JUnit tests despite our inherited TestNG dependency. -->
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
-
-    <scm>
-        <url>https://github.com/bannmann/puretemplate/tree/master</url>
-        <connection>scm:git:git://github.com/bannmann/puretemplate.git</connection>
-        <developerConnection>scm:git:git@github.com:bannmann/puretemplate.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
 </project>
