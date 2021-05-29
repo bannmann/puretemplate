@@ -14,7 +14,7 @@ import org.antlr.runtime.Token;
  * Note: originally, I tracked cardinality as well as the name of an attribute. I'm leaving the code here as I suspect
  * something may come of it later. Currently, though, cardinality is not used.</p>
  */
-public class FormalArgument
+public final class FormalArgument
 {
 /*
     // the following represent bit positions emulating a cardinality bitset.
@@ -79,7 +79,7 @@ public class FormalArgument
     @Override
     public boolean equals(Object o)
     {
-        if (o == null || !(o instanceof FormalArgument))
+        if (!(o instanceof FormalArgument))
         {
             return false;
         }
@@ -90,8 +90,8 @@ public class FormalArgument
         }
         // only check if there is a default value; that's all
         return !(
-            (this.defaultValueToken != null && other.defaultValueToken == null) ||
-                (this.defaultValueToken == null && other.defaultValueToken != null));
+            this.defaultValueToken != null && other.defaultValueToken == null ||
+                this.defaultValueToken == null && other.defaultValueToken != null);
     }
 
     @Override
