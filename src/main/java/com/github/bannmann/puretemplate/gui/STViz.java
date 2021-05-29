@@ -2,9 +2,6 @@ package com.github.bannmann.puretemplate.gui;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +34,6 @@ import com.github.bannmann.puretemplate.InstanceScope;
 import com.github.bannmann.puretemplate.Interpreter;
 import com.github.bannmann.puretemplate.ST;
 import com.github.bannmann.puretemplate.STGroup;
-import com.github.bannmann.puretemplate.STGroupFile;
 import com.github.bannmann.puretemplate.STGroupString;
 import com.github.bannmann.puretemplate.debug.EvalExprEvent;
 import com.github.bannmann.puretemplate.debug.EvalTemplateEvent;
@@ -546,7 +542,7 @@ public class STViz
         }
     }
 
-    public static void test1() throws IOException
+    public static void test1()
     {
         // test rig
         String templates = "method(type,name,locals,args,stats) ::= <<\n" +
@@ -559,9 +555,7 @@ public class STViz
             "return(x) ::= <<return <x>;>>\n" +
             "paren(x) ::= \"(<x>)\"\n";
 
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
+        STGroup group = new STGroupString(templates);
         ST st = group.getInstanceOf("method");
         st.impl.dump();
         st.add("type", "float");
@@ -603,9 +597,7 @@ public class STViz
             "START-<t2(p1=\"Some\\nText\")>-END\n" +
             ">>\n";
 
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
+        STGroup group = new STGroupString(templates);
         ST st = group.getInstanceOf("main");
         STViz viz = st.inspect();
     }
@@ -614,9 +606,7 @@ public class STViz
     {
         String templates = "main() ::= <<\n" + "Foo: <{bar};format=\"lower\">\n" + ">>\n";
 
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
+        STGroup group = new STGroupString(templates);
         ST st = group.getInstanceOf("main");
         st.inspect();
     }
@@ -638,29 +628,5 @@ public class STViz
         ignore.add("m", foo); // embed foo twice!
         st.inspect();
         st.render();
-    }
-
-    public static void writeFile(String dir, String fileName, String content)
-    {
-        try
-        {
-            File f = new File(dir, fileName);
-            if (!f.getParentFile()
-                .exists())
-            {
-                f.getParentFile()
-                    .mkdirs();
-            }
-            FileWriter w = new FileWriter(f);
-            BufferedWriter bw = new BufferedWriter(w);
-            bw.write(content);
-            bw.close();
-            w.close();
-        }
-        catch (IOException ioe)
-        {
-            System.err.println("can't write file");
-            ioe.printStackTrace(System.err);
-        }
     }
 }
