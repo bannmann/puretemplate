@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BooleanSupplier;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -43,6 +44,7 @@ import com.github.bannmann.puretemplate.misc.Interval;
 import com.github.bannmann.puretemplate.misc.Misc;
 import com.github.bannmann.puretemplate.misc.STMessage;
 import com.github.bannmann.puretemplate.misc.STRuntimeMessage;
+import com.github.mizool.core.concurrent.Synchronizer;
 
 public class STViz
 {
@@ -283,47 +285,34 @@ public class STViz
         viewFrame.setVisible(true);
     }
 
-    public void waitForClose() throws InterruptedException
+    /**
+     * @throws com.github.mizool.core.exception.UncheckedInterruptedException if the thread was interrupted while waiting
+     */
+    public void waitForClose()
     {
-        final Object lock = new Object();
-
-        Thread t = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                synchronized (lock)
-                {
-                    while (viewFrame.isVisible())
-                    {
-                        try
-                        {
-                            lock.wait();
-                        }
-                        catch (InterruptedException e)
-                        {
-                        }
-                    }
-                }
-            }
-        };
-
-        t.start();
+        Synchronizer synchronizer = new Synchronizer();
 
         viewFrame.addWindowListener(new WindowAdapter()
         {
             @Override
             public void windowClosing(WindowEvent arg0)
             {
-                synchronized (lock)
-                {
-                    viewFrame.setVisible(false);
-                    lock.notify();
-                }
+                synchronizer.run(() -> viewFrame.setVisible(false))
+                    .andWakeOthers()
+                    .invoke();
             }
         });
 
-        t.join();
+        synchronizer.sleepUntil(not(viewFrame::isVisible)).run(this::noop).invoke();
+    }
+
+    private BooleanSupplier not(BooleanSupplier supplier)
+    {
+        return () -> !supplier.getAsBoolean();
+    }
+
+    private void noop()
+    {
     }
 
     private void updateCurrentST(STViewFrame m)
