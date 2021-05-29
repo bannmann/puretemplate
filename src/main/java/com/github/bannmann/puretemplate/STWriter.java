@@ -1,5 +1,6 @@
 package com.github.bannmann.puretemplate;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import com.github.bannmann.puretemplate.compiler.Bytecode;
@@ -11,7 +12,7 @@ import com.github.bannmann.puretemplate.compiler.Bytecode;
  * #writeSeparator(String)} because they must be handled specially when wrapping lines (we don't want to wrap in between
  * an element and it's separator).</p>
  */
-public interface STWriter
+public interface STWriter extends Closeable
 {
     int NO_WRAP = -1;
 
