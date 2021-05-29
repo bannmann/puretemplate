@@ -13,6 +13,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -329,18 +332,13 @@ public abstract class BaseTest
     {
         try
         {
-            File f = new File(dir, fileName);
-            if (!f.getParentFile()
-                .exists())
+            Path file = Path.of(dir, fileName);
+            Files.createDirectories(file.getParent());
+
+            try (BufferedWriter writer = Files.newBufferedWriter(file))
             {
-                f.getParentFile()
-                    .mkdirs();
+                writer.write(content);
             }
-            FileWriter w = new FileWriter(f);
-            BufferedWriter bw = new BufferedWriter(w);
-            bw.write(content);
-            bw.close();
-            w.close();
         }
         catch (IOException ioe)
         {

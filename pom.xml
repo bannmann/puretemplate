@@ -32,7 +32,7 @@
     </scm>
 
     <properties>
-        <maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <mizool.version>0.45</mizool.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -80,9 +80,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
-                <configuration>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
-                </configuration>
                 <dependencies>
                     <!-- Force Surefire to (only) run JUnit tests despite our inherited TestNG dependency. -->
                     <dependency>

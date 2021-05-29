@@ -734,7 +734,7 @@ public class TestImports extends BaseTest
         writeFile(dir, "group.stg", groupFile);
         writeFile(dir, "c.st", "c() ::= \"2∏r\"\n");
 
-        STGroup group = new STGroupFile(dir + "/group.stg");
+        STGroup group = new STGroupFile(dir + "/group.stg", "UTF-8");
         ST st = group.getInstanceOf("c"); // should see c()
         String expected = "2∏r";
         String result = st.render();
