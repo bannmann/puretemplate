@@ -19,6 +19,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.NonNull;
+
 import com.github.bannmann.puretemplate.compiler.Bytecode;
 import com.github.bannmann.puretemplate.compiler.BytecodeDisassembler;
 import com.github.bannmann.puretemplate.compiler.CompiledST;
@@ -166,7 +168,7 @@ public class Interpreter
      *
      * @return the number of characters written to {@code out}
      */
-    public int exec(STWriter out, InstanceScope scope)
+    public int exec(@NonNull STWriter out, @NonNull InstanceScope scope)
     {
         final ST self = scope.st;
         if (trace)
@@ -1586,7 +1588,7 @@ public class Interpreter
      * <p>
      * Return {@link ST#EMPTY_ATTR} if found definition but no value.</p>
      */
-    public Object getAttribute(InstanceScope scope, String name)
+    public Object getAttribute(@NonNull InstanceScope scope, String name)
     {
         InstanceScope current = scope;
         while (current != null)
