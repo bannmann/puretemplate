@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Prepare directories
+        run: mkdir -p /home/runner/work/_temp/_github_home/talos-m2-repository
+
+      - name: Maven Repo Cache
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/work/_temp/_github_home/talos-m2-repository
+          key: talos-maven-repo
+
+      - name: Build
+        uses: docker://incub8softwarelabs/talos:preview
+        env:
+          # Talos-specific variables
+          TALOS_MAVEN_DEBUG: ${{ secrets.TALOS_MAVEN_DEBUG }}
+          TALOS_PARAMETERS: ${{ secrets.TALOS_PARAMETERS }}
+          TALOS_RELEASE_REPO_ENABLED: ${{ secrets.TALOS_RELEASE_REPO_ENABLED }}
+          TALOS_RELEASE_REPO_ID: ${{ secrets.TALOS_RELEASE_REPO_ID }}
+          TALOS_RELEASE_REPO_URL: ${{ secrets.TALOS_RELEASE_REPO_URL }}
+          TALOS_SERVER1_ID: ${{ secrets.TALOS_SERVER1_ID }}
+          TALOS_SERVER1_PASSWORD: ${{ secrets.TALOS_SERVER1_PASSWORD }}
+          TALOS_SERVER1_USERNAME: ${{ secrets.TALOS_SERVER1_USERNAME }}
+          TALOS_SERVER2_ID: ${{ secrets.TALOS_SERVER2_ID }}
+          TALOS_SERVER2_PASSWORD: ${{ secrets.TALOS_SERVER2_PASSWORD }}
+          TALOS_SERVER2_USERNAME: ${{ secrets.TALOS_SERVER2_USERNAME }}
+          TALOS_SERVER3_ID: ${{ secrets.TALOS_SERVER3_ID }}
+          TALOS_SERVER3_PASSWORD: ${{ secrets.TALOS_SERVER3_PASSWORD }}
+          TALOS_SERVER3_USERNAME: ${{ secrets.TALOS_SERVER3_USERNAME }}
+          TALOS_SIGNING_ENABLED: ${{ secrets.TALOS_SIGNING_ENABLED }}
+          TALOS_SIGNING_KEY: ${{ secrets.TALOS_SIGNING_KEY }}
+          TALOS_SIGNING_PROFILE: ${{ secrets.TALOS_SIGNING_PROFILE }}
+          TALOS_SNAPSHOT_REPO_ENABLED: ${{ secrets.TALOS_SNAPSHOT_REPO_ENABLED }}
+          TALOS_SNAPSHOT_REPO_ID: ${{ secrets.TALOS_SNAPSHOT_REPO_ID }}
+          TALOS_SNAPSHOT_REPO_URL: ${{ secrets.TALOS_SNAPSHOT_REPO_URL }}
+          TALOS_SONAR_ENABLED: ${{ secrets.TALOS_SONAR_ENABLED }}
+          TALOS_SONAR_HOST: ${{ secrets.TALOS_SONAR_HOST }}
+          TALOS_SONAR_LOGIN: ${{ secrets.TALOS_SONAR_LOGIN }}
+          TALOS_SONAR_ORGANIZATION: ${{ secrets.TALOS_SONAR_ORGANIZATION }}
+
+          # Token to use when SonarScanner invokes Github APIs
+          # https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
