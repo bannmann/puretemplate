@@ -14,7 +14,7 @@ public class JTreeSTModel implements TreeModel
     public Interpreter interp;
     public Wrapper root;
 
-    public static class Wrapper
+    public static final class Wrapper
     {
         EvalTemplateEvent event;
 
@@ -32,7 +32,7 @@ public class JTreeSTModel implements TreeModel
         @Override
         public boolean equals(Object o)
         {
-            if (o == null)
+            if (!(o instanceof Wrapper))
             {
                 return false;
             }

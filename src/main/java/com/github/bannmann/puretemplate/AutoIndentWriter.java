@@ -69,6 +69,12 @@ public class AutoIndentWriter implements STWriter
     }
 
     @Override
+    public void close() throws IOException
+    {
+        this.out.close();
+    }
+
+    @Override
     public void setLineWidth(int lineWidth)
     {
         this.lineWidth = lineWidth;

@@ -2,14 +2,12 @@ package com.github.bannmann.puretemplate.gui;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BooleanSupplier;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -37,7 +35,6 @@ import com.github.bannmann.puretemplate.InstanceScope;
 import com.github.bannmann.puretemplate.Interpreter;
 import com.github.bannmann.puretemplate.ST;
 import com.github.bannmann.puretemplate.STGroup;
-import com.github.bannmann.puretemplate.STGroupFile;
 import com.github.bannmann.puretemplate.STGroupString;
 import com.github.bannmann.puretemplate.debug.EvalExprEvent;
 import com.github.bannmann.puretemplate.debug.EvalTemplateEvent;
@@ -47,6 +44,7 @@ import com.github.bannmann.puretemplate.misc.Interval;
 import com.github.bannmann.puretemplate.misc.Misc;
 import com.github.bannmann.puretemplate.misc.STMessage;
 import com.github.bannmann.puretemplate.misc.STRuntimeMessage;
+import com.github.mizool.core.concurrent.Synchronizer;
 
 public class STViz
 {
@@ -287,47 +285,34 @@ public class STViz
         viewFrame.setVisible(true);
     }
 
-    public void waitForClose() throws InterruptedException
+    /**
+     * @throws com.github.mizool.core.exception.UncheckedInterruptedException if the thread was interrupted while waiting
+     */
+    public void waitForClose()
     {
-        final Object lock = new Object();
-
-        Thread t = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                synchronized (lock)
-                {
-                    while (viewFrame.isVisible())
-                    {
-                        try
-                        {
-                            lock.wait();
-                        }
-                        catch (InterruptedException e)
-                        {
-                        }
-                    }
-                }
-            }
-        };
-
-        t.start();
+        Synchronizer synchronizer = new Synchronizer();
 
         viewFrame.addWindowListener(new WindowAdapter()
         {
             @Override
             public void windowClosing(WindowEvent arg0)
             {
-                synchronized (lock)
-                {
-                    viewFrame.setVisible(false);
-                    lock.notify();
-                }
+                synchronizer.run(() -> viewFrame.setVisible(false))
+                    .andWakeOthers()
+                    .invoke();
             }
         });
 
-        t.join();
+        synchronizer.sleepUntil(not(viewFrame::isVisible)).run(this::noop).invoke();
+    }
+
+    private BooleanSupplier not(BooleanSupplier supplier)
+    {
+        return () -> !supplier.getAsBoolean();
+    }
+
+    private void noop()
+    {
     }
 
     private void updateCurrentST(STViewFrame m)
@@ -546,7 +531,7 @@ public class STViz
         }
     }
 
-    public static void test1() throws IOException
+    public static void test1()
     {
         // test rig
         String templates = "method(type,name,locals,args,stats) ::= <<\n" +
@@ -559,9 +544,7 @@ public class STViz
             "return(x) ::= <<return <x>;>>\n" +
             "paren(x) ::= \"(<x>)\"\n";
 
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
+        STGroup group = new STGroupString(templates);
         ST st = group.getInstanceOf("method");
         st.impl.dump();
         st.add("type", "float");
@@ -603,9 +586,7 @@ public class STViz
             "START-<t2(p1=\"Some\\nText\")>-END\n" +
             ">>\n";
 
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
+        STGroup group = new STGroupString(templates);
         ST st = group.getInstanceOf("main");
         STViz viz = st.inspect();
     }
@@ -614,9 +595,7 @@ public class STViz
     {
         String templates = "main() ::= <<\n" + "Foo: <{bar};format=\"lower\">\n" + ">>\n";
 
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        writeFile(tmpdir, "t.stg", templates);
-        STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
+        STGroup group = new STGroupString(templates);
         ST st = group.getInstanceOf("main");
         st.inspect();
     }
@@ -638,29 +617,5 @@ public class STViz
         ignore.add("m", foo); // embed foo twice!
         st.inspect();
         st.render();
-    }
-
-    public static void writeFile(String dir, String fileName, String content)
-    {
-        try
-        {
-            File f = new File(dir, fileName);
-            if (!f.getParentFile()
-                .exists())
-            {
-                f.getParentFile()
-                    .mkdirs();
-            }
-            FileWriter w = new FileWriter(f);
-            BufferedWriter bw = new BufferedWriter(w);
-            bw.write(content);
-            bw.close();
-            w.close();
-        }
-        catch (IOException ioe)
-        {
-            System.err.println("can't write file");
-            ioe.printStackTrace(System.err);
-        }
     }
 }

@@ -553,25 +553,13 @@ public class ST
     public int write(File outputFile, STErrorListener listener, String encoding, Locale locale, int lineWidth)
         throws IOException
     {
-        Writer bw = null;
-        try
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
+             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, encoding);
+             Writer bufferedWriter = new BufferedWriter(outputStreamWriter);
+             AutoIndentWriter autoIndentWriter = new AutoIndentWriter(bufferedWriter))
         {
-            FileOutputStream fos = new FileOutputStream(outputFile);
-            OutputStreamWriter osw = new OutputStreamWriter(fos, encoding);
-            bw = new BufferedWriter(osw);
-            AutoIndentWriter w = new AutoIndentWriter(bw);
-            w.setLineWidth(lineWidth);
-            int n = write(w, locale, listener);
-            bw.close();
-            bw = null;
-            return n;
-        }
-        finally
-        {
-            if (bw != null)
-            {
-                bw.close();
-            }
+            autoIndentWriter.setLineWidth(lineWidth);
+            return write(autoIndentWriter, locale, listener);
         }
     }
 
