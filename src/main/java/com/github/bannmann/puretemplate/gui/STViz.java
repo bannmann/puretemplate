@@ -286,7 +286,8 @@ public class STViz
     }
 
     /**
-     * @throws com.github.mizool.core.exception.UncheckedInterruptedException if the thread was interrupted while waiting
+     * @throws com.github.mizool.core.exception.UncheckedInterruptedException if the thread was interrupted while
+     * waiting
      */
     public void waitForClose()
     {
@@ -303,7 +304,9 @@ public class STViz
             }
         });
 
-        synchronizer.sleepUntil(not(viewFrame::isVisible)).run(this::noop).invoke();
+        synchronizer.sleepUntil(not(viewFrame::isVisible))
+            .run(this::noop)
+            .invoke();
     }
 
     private BooleanSupplier not(BooleanSupplier supplier)
