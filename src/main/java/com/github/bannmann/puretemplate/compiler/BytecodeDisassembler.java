@@ -71,7 +71,7 @@ public class BytecodeDisassembler
             buf.append("  ");
             return ip;
         }
-        List<String> operands = new ArrayList<String>();
+        List<String> operands = new ArrayList<>();
         for (int i = 0; i < I.operandTypes.length; i++) // TODO foreach
         {
             int opnd = getShort(code.instrs, ip);

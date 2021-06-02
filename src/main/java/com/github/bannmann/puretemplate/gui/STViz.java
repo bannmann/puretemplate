@@ -364,7 +364,7 @@ public class STViz
 
     protected void setText(JEditorPane component, String text)
     {
-        List<Integer> windowsLineEndingsList = new ArrayList<Integer>();
+        List<Integer> windowsLineEndingsList = new ArrayList<>();
         for (int i = 0; i < text.length(); i += 2)
         {
             i = text.indexOf("\r\n", i);

@@ -174,7 +174,7 @@ public class STLexer implements TokenSource
     /**
      * Our lexer routines might have to emit more than a single token. We buffer everything through this list.
      */
-    List<Token> tokens = new ArrayList<Token>();
+    List<Token> tokens = new ArrayList<>();
 
     public STLexer(CharStream input)
     {
@@ -447,10 +447,11 @@ public class STLexer implements TokenSource
         int curlyStartChar = startCharIndex;
         int curlyLine = startLine;
         int curlyPos = startCharPositionInLine;
-        List<Token> argTokens = new ArrayList<Token>();
         consume();
         Token curly = newTokenFromPreviousChar(LCURLY);
         WS();
+
+        List<Token> argTokens = new ArrayList<>();
         argTokens.add(mID());
         WS();
         while (c == ',')

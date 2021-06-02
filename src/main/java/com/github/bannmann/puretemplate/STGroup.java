@@ -101,9 +101,9 @@ public class STGroup
      * Every group can import templates/dictionaries from other groups. The list must be synchronized (see {@link
      * STGroup#importTemplates}).
      */
-    protected final List<STGroup> imports = Collections.synchronizedList(new ArrayList<STGroup>());
+    protected final List<STGroup> imports = Collections.synchronizedList(new ArrayList<>());
 
-    protected final List<STGroup> importsToClearOnUnload = Collections.synchronizedList(new ArrayList<STGroup>());
+    protected final List<STGroup> importsToClearOnUnload = Collections.synchronizedList(new ArrayList<>());
 
     public char delimiterStartChar = '<'; // Use <expr> by default
     public char delimiterStopChar = '>';
@@ -111,15 +111,13 @@ public class STGroup
     /**
      * Maps template name to {@link CompiledST} object. This map is synchronized.
      */
-    protected Map<String, CompiledST> templates = Collections.synchronizedMap(new LinkedHashMap<String, CompiledST>());
+    protected Map<String, CompiledST> templates = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Maps dictionary names to {@link Map} objects representing the dictionaries defined by the user like {@code
      * typeInitMap ::= ["int":"0"]}.
      */
-    protected Map<String, Map<String, Object>>
-        dictionaries
-        = Collections.synchronizedMap(new HashMap<String, Map<String, Object>>());
+    protected Map<String, Map<String, Object>> dictionaries = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * A dictionary that allows people to register a renderer for a particular kind of object for any template evaluated
@@ -152,8 +150,8 @@ public class STGroup
     protected final Map<Class<?>, ModelAdaptor<?>> adaptors;
 
     {
-        TypeRegistry<ModelAdaptor<?>> registry = new TypeRegistry<ModelAdaptor<?>>();
-        registry.put(Object.class, new ObjectModelAdaptor<Object>());
+        TypeRegistry<ModelAdaptor<?>> registry = new TypeRegistry<>();
+        registry.put(Object.class, new ObjectModelAdaptor<>());
         registry.put(ST.class, new STModelAdaptor());
         registry.put(Map.class, new MapModelAdaptor());
         registry.put(Aggregate.class, new AggregateModelAdaptor());
@@ -466,7 +464,7 @@ public class STGroup
             name = "/" + name;
         }
         String[] args = argsS.split(",");
-        List<FormalArgument> a = new ArrayList<FormalArgument>();
+        List<FormalArgument> a = new ArrayList<>();
         for (String arg : args)
         {
             a.add(new FormalArgument(arg));
@@ -1082,7 +1080,7 @@ public class STGroup
     public Set<String> getTemplateNames()
     {
         load();
-        HashSet<String> result = new HashSet<String>();
+        HashSet<String> result = new HashSet<>();
         for (Map.Entry<String, CompiledST> e : templates.entrySet())
         {
             if (e.getValue() != NOT_FOUND_ST)

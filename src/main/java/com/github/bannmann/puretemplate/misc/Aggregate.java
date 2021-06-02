@@ -34,7 +34,7 @@ import java.util.HashMap;
  */
 public class Aggregate
 {
-    public HashMap<String, Object> properties = new HashMap<String, Object>();
+    public HashMap<String, Object> properties = new HashMap<>();
 
     /**
      * Allow StringTemplate to add values, but prevent the end user from doing so.

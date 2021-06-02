@@ -80,10 +80,12 @@ public class Interpreter
      * Operand stack, grows upwards.
      */
     Object[] operands = new Object[DEFAULT_OPERAND_STACK_SIZE];
+
     /**
      * Stack pointer register.
      */
     int sp = -1;
+
     /**
      * The number of characters written on this template line so far.
      */
@@ -149,8 +151,8 @@ public class Interpreter
         this.debug = debug;
         if (debug)
         {
-            events = new ArrayList<InterpEvent>();
-            executeTrace = new ArrayList<String>();
+            events = new ArrayList<>();
+            executeTrace = new ArrayList<>();
         }
     }
 
@@ -341,7 +343,7 @@ public class Interpreter
                 case ROT_MAP:
                     int nmaps = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    List<ST> templates = new ArrayList<ST>();
+                    List<ST> templates = new ArrayList<>();
                     for (int i = nmaps - 1; i >= 0; i--)
                     {
                         templates.add((ST) operands[sp - i]);
@@ -1026,7 +1028,7 @@ public class Interpreter
 
     protected List<ST> rot_map_iterator(InstanceScope scope, Iterator<?> attr, List<ST> prototypes)
     {
-        List<ST> mapped = new ArrayList<ST>();
+        List<ST> mapped = new ArrayList<>();
         Iterator<?> iter = attr;
         int i0 = 0;
         int i = 1;
@@ -1258,7 +1260,7 @@ public class Interpreter
         v = convertAnythingIteratableToIterator(scope, v);
         if (v instanceof Iterator)
         {
-            List<Object> a = new ArrayList<Object>();
+            List<Object> a = new ArrayList<>();
             Iterator<?> it = (Iterator<?>) v;
             if (!it.hasNext())
             {
@@ -1297,7 +1299,7 @@ public class Interpreter
         v = convertAnythingIteratableToIterator(scope, v);
         if (v instanceof Iterator)
         {
-            List<Object> a = new ArrayList<Object>();
+            List<Object> a = new ArrayList<>();
             Iterator<?> it = (Iterator<?>) v;
             while (it.hasNext())
             {
@@ -1324,7 +1326,7 @@ public class Interpreter
         v = convertAnythingIteratableToIterator(scope, v);
         if (v instanceof Iterator)
         {
-            List<Object> a = new ArrayList<Object>();
+            List<Object> a = new ArrayList<>();
             Iterator<?> it = (Iterator<?>) v;
             while (it.hasNext())
             {
@@ -1353,7 +1355,7 @@ public class Interpreter
         v = convertAnythingIteratableToIterator(scope, v);
         if (v instanceof Iterator)
         {
-            List<Object> a = new LinkedList<Object>();
+            List<Object> a = new LinkedList<>();
             Iterator<?> it = (Iterator<?>) v;
             while (it.hasNext())
             {
@@ -1693,7 +1695,7 @@ public class Interpreter
 
     public static List<ST> getEnclosingInstanceStack(InstanceScope scope, boolean topdown)
     {
-        List<ST> stack = new LinkedList<ST>();
+        List<ST> stack = new LinkedList<>();
         InstanceScope p = scope;
         while (p != null)
         {
@@ -1712,7 +1714,7 @@ public class Interpreter
 
     public static List<InstanceScope> getScopeStack(InstanceScope scope, boolean topdown)
     {
-        List<InstanceScope> stack = new LinkedList<InstanceScope>();
+        List<InstanceScope> stack = new LinkedList<>();
         InstanceScope p = scope;
         while (p != null)
         {
@@ -1731,7 +1733,7 @@ public class Interpreter
 
     public static List<EvalTemplateEvent> getEvalTemplateEventStack(InstanceScope scope, boolean topdown)
     {
-        List<EvalTemplateEvent> stack = new LinkedList<EvalTemplateEvent>();
+        List<EvalTemplateEvent> stack = new LinkedList<>();
         InstanceScope p = scope;
         while (p != null)
         {

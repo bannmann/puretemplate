@@ -26,7 +26,7 @@ public class AutoIndentWriter implements STWriter
     /**
      * Stack of indents. Use {@link List} as it's much faster than {@link Stack}. Grows from 0..n-1.
      */
-    public List<String> indents = new ArrayList<String>();
+    public List<String> indents = new ArrayList<>();
 
     /**
      * Stack of integer anchors (char positions in line); avoid {@link Integer} creation overhead.

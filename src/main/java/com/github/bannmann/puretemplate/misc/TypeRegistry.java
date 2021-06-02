@@ -41,9 +41,8 @@ import java.util.Set;
  */
 public class TypeRegistry<V> implements Map<Class<?>, V>
 {
-
-    private final Map<Class<?>, V> backingStore = new HashMap<Class<?>, V>();
-    private final Map<Class<?>, Class<?>> cache = new HashMap<Class<?>, Class<?>>();
+    private final Map<Class<?>, V> backingStore = new HashMap<>();
+    private final Map<Class<?>, Class<?>> cache = new HashMap<>();
 
     public int size()
     {
@@ -109,7 +108,7 @@ public class TypeRegistry<V> implements Map<Class<?>, V>
         }
 
         Class<?> keyClass = (Class<?>) key;
-        List<Class<?>> candidates = new ArrayList<Class<?>>();
+        List<Class<?>> candidates = new ArrayList<>();
         for (Class<?> clazz : backingStore.keySet())
         {
             if (clazz.isAssignableFrom(keyClass))

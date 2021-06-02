@@ -153,7 +153,7 @@ public class CompiledST implements Cloneable
         }
         if (implicitlyDefinedTemplates == null)
         {
-            implicitlyDefinedTemplates = new ArrayList<CompiledST>();
+            implicitlyDefinedTemplates = new ArrayList<>();
         }
         implicitlyDefinedTemplates.add(sub);
     }

@@ -33,9 +33,7 @@ public class ObjectModelAdaptor<T> implements ModelAdaptor<T>
         INVALID_MEMBER = invalidMember;
     }
 
-    protected static final Map<Class<?>, Map<String, Member>>
-        membersCache
-        = new HashMap<Class<?>, Map<String, Member>>();
+    protected static final Map<Class<?>, Map<String, Member>> membersCache = new HashMap<>();
 
     @Override
     public synchronized Object getProperty(Interpreter interp, ST self, T model, Object property, String propertyName)
@@ -103,7 +101,7 @@ public class ObjectModelAdaptor<T> implements ModelAdaptor<T>
             }
             else
             {
-                members = new HashMap<String, Member>();
+                members = new HashMap<>();
                 membersCache.put(clazz, members);
             }
 

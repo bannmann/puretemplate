@@ -434,7 +434,7 @@ public class ST
         {
             return null;
         }
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
         for (FormalArgument a : impl.formalArguments.values())
         {
             Object o = locals[a.index];
