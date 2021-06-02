@@ -200,17 +200,14 @@ public class STLexer implements TokenSource
     @Override
     public Token nextToken()
     {
-        Token t;
-        if (tokens.size() > 0)
+        if (!tokens.isEmpty())
         {
-            t = tokens.remove(0);
+            return tokens.remove(0);
         }
         else
         {
-            t = _nextToken();
+            return _nextToken();
         }
-        //      System.out.println(t);
-        return t;
     }
 
     /**
@@ -655,7 +652,6 @@ public class STLexer implements TokenSource
      */
     Token mSTRING()
     {
-        //{setText(getText().substring(1, getText().length()-1));}
         boolean sawEscape = false;
         StringBuilder buf = new StringBuilder();
         buf.append(c);
@@ -827,10 +823,6 @@ public class STLexer implements TokenSource
         return t;
     }
 
-    //    public String getErrorHeader() {
-    //        return startLine+":"+startCharPositionInLine;
-    //    }
-    //
     @Override
     public String getSourceName()
     {

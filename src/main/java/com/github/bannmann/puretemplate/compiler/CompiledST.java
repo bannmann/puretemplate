@@ -96,7 +96,7 @@ public class CompiledST implements Cloneable
      */
     public ST.RegionType regionDefType;
 
-    public boolean isAnonSubtemplate; // {...}
+    public boolean isAnonSubtemplate;
 
     /**
      * string operands of instructions

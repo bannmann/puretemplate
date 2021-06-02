@@ -154,15 +154,6 @@ public class Interpreter
         }
     }
 
-    //  public static int[] count = new int[Bytecode.MAX_BYTECODE+1];
-
-    //  public static void dumpOpcodeFreq() {
-    //      System.out.println("#### instr freq:");
-    //      for (int i=1; i<=Bytecode.MAX_BYTECODE; i++) {
-    //          System.out.println(count[i]+" "+Bytecode.instructions[i].name);
-    //      }
-    //  }
-
     /**
      * Execute template {@code self} and return how many characters it wrote to {@code out}.
      *
@@ -213,7 +204,6 @@ public class Interpreter
                 trace(scope, ip);
             }
             Bytecode.Instruction opcode = Bytecode.INSTRUCTIONS[code[ip]];
-            //count[opcode]++;
             scope.ip = ip;
             ip++; //jump to next instruction or first byte of operand
             switch (opcode)
@@ -527,16 +517,6 @@ public class Interpreter
                     n += n1;
                     nwline += n1;
                     break;
-                // TODO: generate this optimization
-                //              case Bytecode.Instruction.WRITE_LOCAL:
-                //                  valueIndex = getShort(code, ip);
-                //                  ip += Bytecode.OPND_SIZE_IN_BYTES;
-                //                  o = self.locals[valueIndex];
-                //                  if ( o==ST.EMPTY_ATTR ) o = null;
-                //                  n1 = writeObjectNoOptions(out, self, o);
-                //                  n += n1;
-                //                  nwline += n1;
-                //                  break;
                 default:
                     errMgr.internalError(self, "invalid bytecode @ " + (ip - 1) + ": " + opcode, null);
                     self.impl.dump();
@@ -1503,10 +1483,6 @@ public class Interpreter
                     .iterator();
             }
         }
-        //// this is implied by the following line
-        //else if ( o instanceof Iterator ) {
-        //  iter = (Iterator<?>)o;
-        //}
         if (iter == null)
         {
             return o;
@@ -1850,7 +1826,6 @@ public class Interpreter
      */
     protected void trackDebugEvent(InstanceScope scope, InterpEvent e)
     {
-        //      System.out.println(e);
         this.events.add(e);
         scope.events.add(e);
         if (e instanceof EvalTemplateEvent)
@@ -1858,7 +1833,6 @@ public class Interpreter
             InstanceScope parent = scope.parent;
             if (parent != null)
             {
-                // System.out.println("add eval "+e.self.getName()+" to children of "+parent.getName());
                 scope.parent.childEvalTemplateEvents.add((EvalTemplateEvent) e);
             }
         }

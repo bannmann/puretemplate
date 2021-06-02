@@ -34,23 +34,10 @@ public class Misc
         return buf.toString();
     }
 
-    //    public static String join(Object[] a, String separator, int start, int stop) {
-    //        StringBuilder buf = new StringBuilder();
-    //        for (int i = start; i < stop; i++) {
-    //            if ( i>start ) buf.append(separator);
-    //            buf.append(a[i].toString());
-    //        }
-    //        return buf.toString();
-    //    }
-
     public static String strip(String s, int n)
     {
         return s.substring(n, s.length() - n);
     }
-
-    //    public static String stripRight(String s, int n) {
-    //        return s.substring(0, s.length()-n);
-    //    }
 
     /**
      * Strip a single newline character from the front of {@code s}.

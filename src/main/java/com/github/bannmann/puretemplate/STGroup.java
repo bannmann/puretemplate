@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CharStream;
@@ -46,6 +48,7 @@ import com.github.bannmann.puretemplate.misc.TypeRegistry;
  * template. ST v3 had just the pure template inside, not the template name and header. Name inside must match filename
  * (minus suffix).
  */
+@Slf4j
 public class STGroup
 {
     public static final String GROUP_FILE_EXTENSION;
@@ -682,6 +685,7 @@ public class STGroup
             System.out.println("importTemplates(" + fileNameToken.getText() + ")");
         }
         String fileName = fileNameToken.getText();
+
         // do nothing upon syntax error
         if (fileName == null || fileName.equals("<missing STRING>"))
         {
@@ -689,16 +693,10 @@ public class STGroup
         }
         fileName = Misc.strip(fileName, 1);
 
-        boolean isGroupFile = fileName.endsWith(GROUP_FILE_EXTENSION);
-        boolean isTemplateFile = fileName.endsWith(TEMPLATE_FILE_EXTENSION);
-        boolean isGroupDir = !(isGroupFile || isTemplateFile);
-
-        STGroup g = null;
-
         // search path is: working dir, g.stg's dir, CLASSPATH
         URL thisRoot = getRootDirURL();
         URL fileUnderRoot;
-        //      System.out.println("thisRoot="+thisRoot);
+        log.debug("thisRoot={}", thisRoot);
         try
         {
             fileUnderRoot = new URL(thisRoot + "/" + fileName);
@@ -708,6 +706,10 @@ public class STGroup
             errMgr.internalError(null, "can't build URL for " + thisRoot + "/" + fileName, mfe);
             return;
         }
+
+        STGroup g;
+        boolean isTemplateFile = fileName.endsWith(TEMPLATE_FILE_EXTENSION);
+        boolean isGroupFile = fileName.endsWith(GROUP_FILE_EXTENSION);
         if (isTemplateFile)
         {
             g = new STGroup(delimiterStartChar, delimiterStopChar);
@@ -758,21 +760,19 @@ public class STGroup
                 g.setListener(this.getListener());
             }
         }
-        else if (isGroupDir)
+        else
         {
-            //          System.out.println("try dir "+fileUnderRoot);
+            log.debug("try dir {}", fileUnderRoot);
             if (Misc.urlExists(fileUnderRoot))
             {
                 g = new STGroupDir(fileUnderRoot, encoding, delimiterStartChar, delimiterStopChar);
-                g.setListener(this.getListener());
             }
             else
             {
-                // try in CLASSPATH
-                //              System.out.println("try dir in CLASSPATH "+fileName);
+                log.debug("try dir in CLASSPATH {}", fileName);
                 g = new STGroupDir(fileName, delimiterStartChar, delimiterStopChar);
-                g.setListener(this.getListener());
             }
+            g.setListener(this.getListener());
         }
 
         if (g == null)

@@ -4,6 +4,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.github.bannmann.puretemplate.compiler.CompiledST;
 import com.github.bannmann.puretemplate.compiler.STException;
 import com.github.bannmann.puretemplate.misc.ErrorType;
@@ -13,6 +15,7 @@ import com.github.bannmann.puretemplate.misc.Misc;
  * The internal representation of a single group file (which must end in ".stg").  If we fail to find a group file, look
  * for it via the CLASSPATH as a resource.  Templates are only looked up in this file or an import.
  */
+@Slf4j
 public class STGroupFile extends STGroup
 {
     /**
@@ -45,7 +48,6 @@ public class STGroupFile extends STGroup
         {
             throw new IllegalArgumentException("Group file names must end in .stg: " + fileName);
         }
-        //try {
         File f = new File(fileName);
         if (f.exists())
         {
@@ -206,22 +208,24 @@ public class STGroupFile extends STGroup
     @Override
     public URL getRootDirURL()
     {
-        //      System.out.println("url of "+fileName+" is "+url.toString());
+        log.debug("url of {} is {}", fileName, url);
+
         String parent = Misc.stripLastPathElement(url.toString());
         if (parent.endsWith(".jar!"))
         {
             parent = parent + "/."; // whooops. at the root so add "current dir" after jar spec
         }
+
         try
         {
             URL parentURL = new URL(parent);
-            //          System.out.println("parent URL "+parentURL.toString());
+            log.debug("parent URL {}", parentURL);
             return parentURL;
         }
         catch (MalformedURLException mue)
         {
             errMgr.runTimeError(null, null, ErrorType.INVALID_TEMPLATE_NAME, mue, parent);
+            return null;
         }
-        return null;
     }
 }

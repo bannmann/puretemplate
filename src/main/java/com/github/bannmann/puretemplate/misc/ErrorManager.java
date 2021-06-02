@@ -39,7 +39,6 @@ public class ErrorManager
         public void internalError(STMessage msg)
         {
             System.err.println(msg);
-            // throw new Error("internal error", msg.cause);
         }
 
         public void error(String s)

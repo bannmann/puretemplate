@@ -320,7 +320,6 @@ public class STViz
 
     private void updateCurrentST(STViewFrame m)
     {
-        //      System.out.println("updateCurrentST(): currentScope.st="+currentScope.st);
         // update all views according to currentScope.st
         updateStack(currentScope, m);                      // STACK
         updateAttributes(currentScope, m);                 // ATTRIBUTES
@@ -358,7 +357,6 @@ public class STViz
             if (currentScope.st.isAnonSubtemplate())
             {
                 Interval r = currentScope.st.impl.getTemplateRange();
-                //m.template.moveCaretPosition(r.a);
                 highlight(m.template, r.a, r.b);
             }
         }
@@ -453,47 +451,12 @@ public class STViz
         m.attributes.setModel(new JTreeScopeStackModel(scope));
         m.attributes.setRootVisible(false);
         m.attributes.setShowsRootHandles(true);
-        //      ST st = scope.st;
-        //      final DefaultListModel attrModel = new DefaultListModel();
-        //      final Map<String,Object> attrs = st.getAttributes();
-        //      if ( attrs!=null ) {
-        //          for (String a : attrs.keySet()) {
-        //              if ( st.debugState!=null && st.debugState.addAttrEvents!=null ) {
-        //                  List<AddAttributeEvent> events = st.debugState.addAttrEvents.get(a);
-        //                  StringBuilder locations = new StringBuilder();
-        //                  int i = 0;
-        //                  if ( events!=null ) {
-        //                      for (AddAttributeEvent ae : events) {
-        //                          if ( i>0 ) locations.append(", ");
-        //                          locations.append(ae.getFileName()+":"+ae.getLine());
-        //                          i++;
-        //                      }
-        //                  }
-        //                  if ( locations.length()>0 ) {
-        //                      attrModel.addElement(a+" = "+attrs.get(a)+" @ "+locations.toString());
-        //                  }
-        //                  else {
-        //                      attrModel.addElement(a+" = "+attrs.get(a));
-        //                  }
-        //              }
-        //              else {
-        //                  attrModel.addElement(a+" = "+attrs.get(a));
-        //              }
-        //          }
-        //      }
-        //      m.attributes.setModel(attrModel);
     }
 
     protected void updateStack(InstanceScope scope, STViewFrame m)
     {
         List<ST> stack = Interpreter.getEnclosingInstanceStack(scope, true);
         m.setTitle("STViz - [" + Misc.join(stack.iterator(), " ") + "]");
-        //        // also do source stack
-        //        StackTraceElement[] trace = st.newSTEvent.stack.getStackTrace();
-        //        StringWriter sw = new StringWriter();
-        //        for (StackTraceElement e : trace) {
-        //            sw.write(e.toString()+"\n");
-        //        }
     }
 
     public InterpEvent findEventAtOutputLocation(List<InterpEvent> events, int charIndex)

@@ -12,12 +12,13 @@ public class STRuntimeMessage extends STMessage
      * Which interpreter was executing?  If {@code null}, can be IO error or bad URL etc...
      */
     final Interpreter interp;
+
     /**
      * Where error occurred in bytecode memory.
      */
     public final int ip;
+
     public final InstanceScope scope;
-    //List<ST> enclosingStack;
 
     public STRuntimeMessage(Interpreter interp, ErrorType error, int ip)
     {

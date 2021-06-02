@@ -93,8 +93,6 @@ public class JTreeSTModel implements TreeModel
         {
             if (e.scope.st == c.scope.st)
             {
-                //              System.out.println(i);
-                //              System.out.println("found "+e.self+" as child of "+parentST);
                 return i;
             }
             i++;
