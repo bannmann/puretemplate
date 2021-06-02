@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,15 +65,7 @@ public class Interpreter
 
     public static final int DEFAULT_OPERAND_STACK_SIZE = 100;
 
-    public static final Set<String> predefinedAnonSubtemplateAttributes;
-
-    static
-    {
-        final Set<String> set = new HashSet<String>();
-        set.add("i");
-        set.add("i0");
-        predefinedAnonSubtemplateAttributes = Collections.unmodifiableSet(set);
-    }
+    public static final Set<String> predefinedAnonSubtemplateAttributes = Set.of("i", "i0");
 
     /**
      * Operand stack, grows upwards.
