@@ -59,7 +59,7 @@ public class AutoIndentWriter implements STWriter
     public AutoIndentWriter(Writer out, String newline)
     {
         this.out = out;
-        indents.add(null); // s oftart with no indent
+        indents.add(null); // start with no indent
         this.newline = newline;
     }
 
