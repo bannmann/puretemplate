@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import lombok.NonNull;
+
 import com.github.bannmann.puretemplate.compiler.CompiledST;
 import com.github.bannmann.puretemplate.compiler.FormalArgument;
 import com.github.bannmann.puretemplate.debug.AddAttributeEvent;
@@ -231,12 +233,8 @@ public class ST
      * <p>
      * {@code t.add("x", 1).add("y", "hi")}</p>
      */
-    public synchronized ST add(String name, Object value)
+    public synchronized ST add(@NonNull String name, Object value)
     {
-        if (name == null)
-        {
-            throw new NullPointerException("null attribute name");
-        }
         if (name.indexOf('.') >= 0)
         {
             throw new IllegalArgumentException("cannot have '.' in attribute names");
