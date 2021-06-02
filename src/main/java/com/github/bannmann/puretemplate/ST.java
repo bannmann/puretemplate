@@ -25,7 +25,8 @@ import com.github.bannmann.puretemplate.gui.STViz;
 import com.github.bannmann.puretemplate.misc.Aggregate;
 import com.github.bannmann.puretemplate.misc.ErrorBuffer;
 import com.github.bannmann.puretemplate.misc.ErrorManager;
-import com.github.bannmann.puretemplate.misc.MultiMap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 
 /**
  * An instance of the StringTemplate. It consists primarily of a {@linkplain ST#impl reference} to its implementation
@@ -74,7 +75,9 @@ public class ST
         /**
          * Track construction-time add attribute "events"; used for ST user-level debugging
          */
-        public MultiMap<String, AddAttributeEvent> addAttrEvents = new MultiMap<String, AddAttributeEvent>();
+        public Multimap<String, AddAttributeEvent> addAttrEvents = MultimapBuilder.linkedHashKeys()
+            .arrayListValues()
+            .build();
     }
 
     public static final String UNKNOWN_NAME = "anonymous";
@@ -245,7 +248,7 @@ public class ST
             {
                 debugState = new ST.DebugState();
             }
-            debugState.addAttrEvents.map(name, new AddAttributeEvent(name, value));
+            debugState.addAttrEvents.put(name, new AddAttributeEvent(name, value));
         }
 
         FormalArgument arg = null;

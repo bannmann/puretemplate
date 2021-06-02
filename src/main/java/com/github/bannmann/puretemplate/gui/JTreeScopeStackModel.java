@@ -1,5 +1,6 @@
 package com.github.bannmann.puretemplate.gui;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -77,20 +78,16 @@ public class JTreeScopeStackModel implements TreeModel
             String descr;
             if (st.debugState != null && st.debugState.addAttrEvents != null)
             {
-                List<AddAttributeEvent> events = st.debugState.addAttrEvents.get(a);
                 StringBuilder locations = new StringBuilder();
                 int i = 0;
-                if (events != null)
+                for (AddAttributeEvent ae : st.debugState.addAttrEvents.get(a))
                 {
-                    for (AddAttributeEvent ae : events)
+                    if (i > 0)
                     {
-                        if (i > 0)
-                        {
-                            locations.append(", ");
-                        }
-                        locations.append(ae.getFileName() + ":" + ae.getLine());
-                        i++;
+                        locations.append(", ");
                     }
+                    locations.append(ae.getFileName() + ":" + ae.getLine());
+                    i++;
                 }
                 if (locations.length() > 0)
                 {
