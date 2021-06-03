@@ -843,8 +843,7 @@ public class STGroup
         }
         catch (IOException ioe)
         {
-            // doesn't exist
-            //errMgr.IOError(null, ErrorType.NO_SUCH_TEMPLATE, ioe, fileName);
+            errMgr.IOError(null, ErrorType.NO_SUCH_TEMPLATE, ioe, fileName);
             return null;
         }
         return loadTemplateFile("", fileName, fs);

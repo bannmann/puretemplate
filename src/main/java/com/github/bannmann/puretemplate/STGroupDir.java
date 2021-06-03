@@ -204,7 +204,7 @@ public class STGroupDir extends STGroup
             {
                 System.out.println(root + "/" + unqualifiedFileName + " doesn't exist");
             }
-            //errMgr.IOError(null, ErrorType.NO_SUCH_TEMPLATE, ioe, unqualifiedFileName);
+            errMgr.IOError(null, ErrorType.NO_SUCH_TEMPLATE, ioe, unqualifiedFileName);
             return null;
         }
 
