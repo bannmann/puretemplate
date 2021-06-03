@@ -143,17 +143,16 @@ public class BytecodeDisassembler
         int addr = 0;
         if (code.strings != null)
         {
-            for (Object o : code.strings)
+            for (String s: code.strings)
             {
-                if (o instanceof String)
+                if (s != null)
                 {
-                    String s = (String) o;
                     s = Misc.replaceEscapes(s);
                     buf.append(String.format("%04d: \"%s\"\n", addr, s));
                 }
                 else
                 {
-                    buf.append(String.format("%04d: %s\n", addr, o));
+                    buf.append(String.format("%04d: null\n", addr));
                 }
                 addr++;
             }
