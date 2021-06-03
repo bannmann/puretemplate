@@ -389,18 +389,4 @@ public class TestRegions extends BaseTest
         String result = st.render();
         assertEquals(expected, result);
     }
-
-    @Ignore("will revisit the behavior of indented expressions spanning multiple lines for a future release")
-    @Test
-    public void testEmbeddedSubtemplate() throws Exception
-    {
-        String dir = getRandomDir();
-        String groupFile = "a() ::= <<\n" + "[\n" + "  <{\n" + "  bar\n" + "  }>\n" + "]\n" + ">>\n";
-        writeFile(dir, "group.stg", groupFile);
-        STGroup group = new STGroupFile(dir + "/group.stg");
-        ST st = group.getInstanceOf("a");
-        String expected = "[" + newline + "  bar" + newline + "]";
-        String result = st.render();
-        assertEquals(expected, result);
-    }
 }

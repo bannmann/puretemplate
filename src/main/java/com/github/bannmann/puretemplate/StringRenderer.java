@@ -1,7 +1,7 @@
 package com.github.bannmann.puretemplate;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 /**
@@ -14,18 +14,9 @@ import java.util.Locale;
  *  <li>{@code xml-encode}:</li>
  * </ul>
  */
-public class StringRenderer implements AttributeRenderer<Object>
+public class StringRenderer implements AttributeRenderer<String>
 {
-    // accepts Object for backward compatibility,
-    // but fails when value is not a String at runtime
-
     @Override
-    public String toString(Object value, String formatString, Locale locale)
-    {
-        return toString((String) value, formatString, locale);
-    }
-
-    // trim(s) and strlen(s) built-in funcs; these are format options
     public String toString(String value, String formatString, Locale locale)
     {
         if (formatString == null)
@@ -48,14 +39,7 @@ public class StringRenderer implements AttributeRenderer<Object>
         }
         if (formatString.equals("url-encode"))
         {
-            try
-            {
-                return URLEncoder.encode(value, "UTF-8");
-            }
-            catch (UnsupportedEncodingException ex)
-            {
-                // UTF-8 is standard, should always be available
-            }
+            return URLEncoder.encode(value, StandardCharsets.UTF_8);
         }
         if (formatString.equals("xml-encode"))
         {

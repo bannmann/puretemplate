@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,24 +65,18 @@ public class Interpreter
 
     public static final int DEFAULT_OPERAND_STACK_SIZE = 100;
 
-    public static final Set<String> predefinedAnonSubtemplateAttributes;
-
-    static
-    {
-        final Set<String> set = new HashSet<String>();
-        set.add("i");
-        set.add("i0");
-        predefinedAnonSubtemplateAttributes = Collections.unmodifiableSet(set);
-    }
+    public static final Set<String> predefinedAnonSubtemplateAttributes = Set.of("i", "i0");
 
     /**
      * Operand stack, grows upwards.
      */
     Object[] operands = new Object[DEFAULT_OPERAND_STACK_SIZE];
+
     /**
      * Stack pointer register.
      */
     int sp = -1;
+
     /**
      * The number of characters written on this template line so far.
      */
@@ -149,19 +142,10 @@ public class Interpreter
         this.debug = debug;
         if (debug)
         {
-            events = new ArrayList<InterpEvent>();
-            executeTrace = new ArrayList<String>();
+            events = new ArrayList<>();
+            executeTrace = new ArrayList<>();
         }
     }
-
-    //  public static int[] count = new int[Bytecode.MAX_BYTECODE+1];
-
-    //  public static void dumpOpcodeFreq() {
-    //      System.out.println("#### instr freq:");
-    //      for (int i=1; i<=Bytecode.MAX_BYTECODE; i++) {
-    //          System.out.println(count[i]+" "+Bytecode.instructions[i].name);
-    //      }
-    //  }
 
     /**
      * Execute template {@code self} and return how many characters it wrote to {@code out}.
@@ -213,7 +197,6 @@ public class Interpreter
                 trace(scope, ip);
             }
             Bytecode.Instruction opcode = Bytecode.INSTRUCTIONS[code[ip]];
-            //count[opcode]++;
             scope.ip = ip;
             ip++; //jump to next instruction or first byte of operand
             switch (opcode)
@@ -351,7 +334,7 @@ public class Interpreter
                 case ROT_MAP:
                     int nmaps = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    List<ST> templates = new ArrayList<ST>();
+                    List<ST> templates = new ArrayList<>();
                     for (int i = nmaps - 1; i >= 0; i--)
                     {
                         templates.add((ST) operands[sp - i]);
@@ -527,16 +510,6 @@ public class Interpreter
                     n += n1;
                     nwline += n1;
                     break;
-                // TODO: generate this optimization
-                //              case Bytecode.Instruction.WRITE_LOCAL:
-                //                  valueIndex = getShort(code, ip);
-                //                  ip += Bytecode.OPND_SIZE_IN_BYTES;
-                //                  o = self.locals[valueIndex];
-                //                  if ( o==ST.EMPTY_ATTR ) o = null;
-                //                  n1 = writeObjectNoOptions(out, self, o);
-                //                  n += n1;
-                //                  nwline += n1;
-                //                  break;
                 default:
                     errMgr.internalError(self, "invalid bytecode @ " + (ip - 1) + ": " + opcode, null);
                     self.impl.dump();
@@ -555,7 +528,6 @@ public class Interpreter
     void load_str(ST self, int ip)
     {
         int strIndex = getShort(self.impl.instrs, ip);
-        ip += Bytecode.OPND_SIZE_IN_BYTES;
         operands[++sp] = self.impl.strings[strIndex];
     }
 
@@ -1046,7 +1018,7 @@ public class Interpreter
 
     protected List<ST> rot_map_iterator(InstanceScope scope, Iterator<?> attr, List<ST> prototypes)
     {
-        List<ST> mapped = new ArrayList<ST>();
+        List<ST> mapped = new ArrayList<>();
         Iterator<?> iter = attr;
         int i0 = 0;
         int i = 1;
@@ -1278,7 +1250,7 @@ public class Interpreter
         v = convertAnythingIteratableToIterator(scope, v);
         if (v instanceof Iterator)
         {
-            List<Object> a = new ArrayList<Object>();
+            List<Object> a = new ArrayList<>();
             Iterator<?> it = (Iterator<?>) v;
             if (!it.hasNext())
             {
@@ -1317,7 +1289,7 @@ public class Interpreter
         v = convertAnythingIteratableToIterator(scope, v);
         if (v instanceof Iterator)
         {
-            List<Object> a = new ArrayList<Object>();
+            List<Object> a = new ArrayList<>();
             Iterator<?> it = (Iterator<?>) v;
             while (it.hasNext())
             {
@@ -1344,7 +1316,7 @@ public class Interpreter
         v = convertAnythingIteratableToIterator(scope, v);
         if (v instanceof Iterator)
         {
-            List<Object> a = new ArrayList<Object>();
+            List<Object> a = new ArrayList<>();
             Iterator<?> it = (Iterator<?>) v;
             while (it.hasNext())
             {
@@ -1373,7 +1345,7 @@ public class Interpreter
         v = convertAnythingIteratableToIterator(scope, v);
         if (v instanceof Iterator)
         {
-            List<Object> a = new LinkedList<Object>();
+            List<Object> a = new LinkedList<>();
             Iterator<?> it = (Iterator<?>) v;
             while (it.hasNext())
             {
@@ -1503,10 +1475,6 @@ public class Interpreter
                     .iterator();
             }
         }
-        //// this is implied by the following line
-        //else if ( o instanceof Iterator ) {
-        //  iter = (Iterator<?>)o;
-        //}
         if (iter == null)
         {
             return o;
@@ -1717,7 +1685,7 @@ public class Interpreter
 
     public static List<ST> getEnclosingInstanceStack(InstanceScope scope, boolean topdown)
     {
-        List<ST> stack = new LinkedList<ST>();
+        List<ST> stack = new LinkedList<>();
         InstanceScope p = scope;
         while (p != null)
         {
@@ -1736,7 +1704,7 @@ public class Interpreter
 
     public static List<InstanceScope> getScopeStack(InstanceScope scope, boolean topdown)
     {
-        List<InstanceScope> stack = new LinkedList<InstanceScope>();
+        List<InstanceScope> stack = new LinkedList<>();
         InstanceScope p = scope;
         while (p != null)
         {
@@ -1755,7 +1723,7 @@ public class Interpreter
 
     public static List<EvalTemplateEvent> getEvalTemplateEventStack(InstanceScope scope, boolean topdown)
     {
-        List<EvalTemplateEvent> stack = new LinkedList<EvalTemplateEvent>();
+        List<EvalTemplateEvent> stack = new LinkedList<>();
         InstanceScope p = scope;
         while (p != null)
         {
@@ -1850,7 +1818,6 @@ public class Interpreter
      */
     protected void trackDebugEvent(InstanceScope scope, InterpEvent e)
     {
-        //      System.out.println(e);
         this.events.add(e);
         scope.events.add(e);
         if (e instanceof EvalTemplateEvent)
@@ -1858,7 +1825,6 @@ public class Interpreter
             InstanceScope parent = scope.parent;
             if (parent != null)
             {
-                // System.out.println("add eval "+e.self.getName()+" to children of "+parent.getName());
                 scope.parent.childEvalTemplateEvents.add((EvalTemplateEvent) e);
             }
         }

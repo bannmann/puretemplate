@@ -18,10 +18,10 @@ import com.github.bannmann.puretemplate.StringRenderer;
 import com.github.bannmann.puretemplate.debug.AddAttributeEvent;
 
 /**
- * From a scope, get stack of enclosing scopes in order from root down to scope.  Then show each scope's (ST's)
+ * From a scope, get stack of enclosing scopes in order from root down to scope. Then show each scope's (ST's)
  * attributes as children.
  */
-public class JTreeScopeStackModel implements TreeModel
+public final class JTreeScopeStackModel implements TreeModel
 {
     CommonTree root;
 
@@ -54,12 +54,13 @@ public class JTreeScopeStackModel implements TreeModel
     public JTreeScopeStackModel(InstanceScope scope)
     {
         root = new StringTree("Scope stack:");
-        Set<String> names = new HashSet<String>();
         List<InstanceScope> stack = Interpreter.getScopeStack(scope, false);
         for (InstanceScope s : stack)
         {
             StringTree templateNode = new StringTree(s.st.getName());
             root.insertChild(0, templateNode);
+
+            Set<String> names = new HashSet<>();
             addAttributeDescriptions(s.st, templateNode, names);
         }
     }
@@ -71,50 +72,45 @@ public class JTreeScopeStackModel implements TreeModel
         {
             return;
         }
-        for (String a : attrs.keySet())
+        for (Map.Entry<String, Object> entry : attrs.entrySet())
         {
-            String descr;
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            String description;
             if (st.debugState != null && st.debugState.addAttrEvents != null)
             {
-                List<AddAttributeEvent> events = st.debugState.addAttrEvents.get(a);
                 StringBuilder locations = new StringBuilder();
                 int i = 0;
-                if (events != null)
+                for (AddAttributeEvent ae : st.debugState.addAttrEvents.get(name))
                 {
-                    for (AddAttributeEvent ae : events)
+                    if (i > 0)
                     {
-                        if (i > 0)
-                        {
-                            locations.append(", ");
-                        }
-                        locations.append(ae.getFileName() + ":" + ae.getLine());
-                        i++;
+                        locations.append(", ");
                     }
+                    locations.append(ae.getFileName() + ":" + ae.getLine());
+                    i++;
                 }
                 if (locations.length() > 0)
                 {
-                    descr = a + " = " + attrs.get(a) + " @ " + locations.toString();
+                    description = name + " = " + value + " @ " + locations.toString();
                 }
                 else
                 {
-                    descr = a + " = " + attrs.get(a);
+                    description = name + " = " + value;
                 }
             }
             else
             {
-                descr = a + " = " + attrs.get(a);
+                description = name + " = " + value;
             }
 
-            if (!names.add(a))
+            if (!names.add(name))
             {
-                StringBuilder builder = new StringBuilder();
-                builder.append("<html><font color=\"gray\">");
-                builder.append(StringRenderer.escapeHTML(descr));
-                builder.append("</font></html>");
-                descr = builder.toString();
+                description = String.format("<html><font color=\"gray\">%s</font></html>",
+                    StringRenderer.escapeHTML(description));
             }
 
-            node.addChild(new StringTree(descr));
+            node.addChild(new StringTree(description));
         }
     }
 

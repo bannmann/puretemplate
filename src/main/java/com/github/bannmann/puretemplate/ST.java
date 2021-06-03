@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import lombok.NonNull;
+
 import com.github.bannmann.puretemplate.compiler.CompiledST;
 import com.github.bannmann.puretemplate.compiler.FormalArgument;
 import com.github.bannmann.puretemplate.debug.AddAttributeEvent;
@@ -25,7 +27,8 @@ import com.github.bannmann.puretemplate.gui.STViz;
 import com.github.bannmann.puretemplate.misc.Aggregate;
 import com.github.bannmann.puretemplate.misc.ErrorBuffer;
 import com.github.bannmann.puretemplate.misc.ErrorManager;
-import com.github.bannmann.puretemplate.misc.MultiMap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 
 /**
  * An instance of the StringTemplate. It consists primarily of a {@linkplain ST#impl reference} to its implementation
@@ -74,7 +77,9 @@ public class ST
         /**
          * Track construction-time add attribute "events"; used for ST user-level debugging
          */
-        public MultiMap<String, AddAttributeEvent> addAttrEvents = new MultiMap<String, AddAttributeEvent>();
+        public Multimap<String, AddAttributeEvent> addAttrEvents = MultimapBuilder.linkedHashKeys()
+            .arrayListValues()
+            .build();
     }
 
     public static final String UNKNOWN_NAME = "anonymous";
@@ -228,12 +233,8 @@ public class ST
      * <p>
      * {@code t.add("x", 1).add("y", "hi")}</p>
      */
-    public synchronized ST add(String name, Object value)
+    public synchronized ST add(@NonNull String name, Object value)
     {
-        if (name == null)
-        {
-            throw new NullPointerException("null attribute name");
-        }
         if (name.indexOf('.') >= 0)
         {
             throw new IllegalArgumentException("cannot have '.' in attribute names");
@@ -245,7 +246,7 @@ public class ST
             {
                 debugState = new ST.DebugState();
             }
-            debugState.addAttrEvents.map(name, new AddAttributeEvent(name, value));
+            debugState.addAttrEvents.put(name, new AddAttributeEvent(name, value));
         }
 
         FormalArgument arg = null;
@@ -434,7 +435,7 @@ public class ST
         {
             return null;
         }
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
         for (FormalArgument a : impl.formalArguments.values())
         {
             Object o = locals[a.index];

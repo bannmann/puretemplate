@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.NonNull;
+
 import com.github.bannmann.puretemplate.Interpreter;
 import com.github.bannmann.puretemplate.ModelAdaptor;
 import com.github.bannmann.puretemplate.ST;
@@ -21,11 +23,7 @@ public class ObjectModelAdaptor<T> implements ModelAdaptor<T>
         {
             invalidMember = ObjectModelAdaptor.class.getDeclaredField("INVALID_MEMBER");
         }
-        catch (NoSuchFieldException ex)
-        {
-            invalidMember = null;
-        }
-        catch (SecurityException ex)
+        catch (NoSuchFieldException | SecurityException ex)
         {
             invalidMember = null;
         }
@@ -33,19 +31,13 @@ public class ObjectModelAdaptor<T> implements ModelAdaptor<T>
         INVALID_MEMBER = invalidMember;
     }
 
-    protected static final Map<Class<?>, Map<String, Member>>
-        membersCache
-        = new HashMap<Class<?>, Map<String, Member>>();
+    protected static final Map<Class<?>, Map<String, Member>> membersCache = new HashMap<>();
 
     @Override
-    public synchronized Object getProperty(Interpreter interp, ST self, T model, Object property, String propertyName)
+    public synchronized Object getProperty(
+        Interpreter interp, ST self, @NonNull T model, Object property, String propertyName)
         throws STNoSuchPropertyException
     {
-        if (model == null)
-        {
-            throw new NullPointerException("o");
-        }
-
         Class<?> c = model.getClass();
 
         if (property == null)
@@ -76,17 +68,8 @@ public class ObjectModelAdaptor<T> implements ModelAdaptor<T>
         return throwNoSuchProperty(c, propertyName, null);
     }
 
-    protected static Member findMember(Class<?> clazz, String memberName)
+    protected static Member findMember(@NonNull Class<?> clazz, @NonNull String memberName)
     {
-        if (clazz == null)
-        {
-            throw new NullPointerException("clazz");
-        }
-        if (memberName == null)
-        {
-            throw new NullPointerException("memberName");
-        }
-
         synchronized (membersCache)
         {
             Map<String, Member> members = membersCache.get(clazz);
@@ -103,7 +86,7 @@ public class ObjectModelAdaptor<T> implements ModelAdaptor<T>
             }
             else
             {
-                members = new HashMap<String, Member>();
+                members = new HashMap<>();
                 membersCache.put(clazz, members);
             }
 

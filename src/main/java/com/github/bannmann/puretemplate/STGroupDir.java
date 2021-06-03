@@ -116,12 +116,8 @@ public class STGroupDir extends STGroup
         {
             System.out.println("STGroupDir.load(" + name + ")");
         }
+
         String parent = Misc.getParent(name); // must have parent; it's fully-qualified
-        String prefix = Misc.getPrefix(name);
-        //      if (parent.isEmpty()) {
-        //          // no need to check for a group file as name has no parent
-        //            return loadTemplateFile("/", name+TEMPLATE_FILE_EXTENSION); // load t.st file
-        //      }
 
         URL groupFileURL;
         try
@@ -135,6 +131,7 @@ public class STGroupDir extends STGroup
             return null;
         }
 
+        String prefix = Misc.getPrefix(name);
         InputStream is = null;
         try
         {
@@ -204,7 +201,7 @@ public class STGroupDir extends STGroup
             {
                 System.out.println(root + "/" + unqualifiedFileName + " doesn't exist");
             }
-            //errMgr.IOError(null, ErrorType.NO_SUCH_TEMPLATE, ioe, unqualifiedFileName);
+            errMgr.IOError(null, ErrorType.NO_SUCH_TEMPLATE, ioe, unqualifiedFileName);
             return null;
         }
 

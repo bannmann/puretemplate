@@ -10,7 +10,7 @@ import com.github.bannmann.puretemplate.STErrorListener;
  */
 public class ErrorBuffer implements STErrorListener
 {
-    public List<STMessage> errors = new ArrayList<STMessage>();
+    public List<STMessage> errors = new ArrayList<>();
 
     @Override
     public void compileTimeError(STMessage msg)

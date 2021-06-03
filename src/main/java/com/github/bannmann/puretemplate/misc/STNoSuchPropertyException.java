@@ -7,8 +7,8 @@ import com.github.bannmann.puretemplate.compiler.STException;
  */
 public class STNoSuchPropertyException extends STException
 {
-    public Object o;
-    public String propertyName;
+    public final Object o;
+    public final String propertyName;
 
     public STNoSuchPropertyException(Exception e, Object o, String propertyName)
     {

@@ -96,7 +96,7 @@ public class CompiledST implements Cloneable
      */
     public ST.RegionType regionDefType;
 
-    public boolean isAnonSubtemplate; // {...}
+    public boolean isAnonSubtemplate;
 
     /**
      * string operands of instructions
@@ -153,7 +153,7 @@ public class CompiledST implements Cloneable
         }
         if (implicitlyDefinedTemplates == null)
         {
-            implicitlyDefinedTemplates = new ArrayList<CompiledST>();
+            implicitlyDefinedTemplates = new ArrayList<>();
         }
         implicitlyDefinedTemplates.add(sub);
     }
@@ -164,38 +164,37 @@ public class CompiledST implements Cloneable
         {
             return;
         }
-        for (String a : formalArguments.keySet())
+        for (FormalArgument argument : formalArguments.values())
         {
-            FormalArgument fa = formalArguments.get(a);
-            if (fa.defaultValueToken != null)
+            if (argument.defaultValueToken != null)
             {
                 numberOfArgsWithDefaultValues++;
-                switch (fa.defaultValueToken.getType())
+                switch (argument.defaultValueToken.getType())
                 {
                     case GroupParser.ANONYMOUS_TEMPLATE:
-                        String argSTname = fa.name + "_default_value";
+                        String argSTname = argument.name + "_default_value";
                         Compiler c2 = new Compiler(group);
-                        String defArgTemplate = Misc.strip(fa.defaultValueToken.getText(), 1);
-                        fa.compiledDefaultValue = c2.compile(group.getFileName(),
+                        String defArgTemplate = Misc.strip(argument.defaultValueToken.getText(), 1);
+                        argument.compiledDefaultValue = c2.compile(group.getFileName(),
                             argSTname,
                             null,
                             defArgTemplate,
-                            fa.defaultValueToken);
-                        fa.compiledDefaultValue.name = argSTname;
-                        fa.compiledDefaultValue.defineImplicitlyDefinedTemplates(group);
+                            argument.defaultValueToken);
+                        argument.compiledDefaultValue.name = argSTname;
+                        argument.compiledDefaultValue.defineImplicitlyDefinedTemplates(group);
                         break;
 
                     case GroupParser.STRING:
-                        fa.defaultValue = Misc.strip(fa.defaultValueToken.getText(), 1);
+                        argument.defaultValue = Misc.strip(argument.defaultValueToken.getText(), 1);
                         break;
 
                     case GroupParser.LBRACK:
-                        fa.defaultValue = Collections.emptyList();
+                        argument.defaultValue = Collections.emptyList();
                         break;
 
                     case GroupParser.TRUE:
                     case GroupParser.FALSE:
-                        fa.defaultValue = fa.defaultValueToken.getType() == GroupParser.TRUE;
+                        argument.defaultValue = argument.defaultValueToken.getType() == GroupParser.TRUE;
                         break;
 
                     default:

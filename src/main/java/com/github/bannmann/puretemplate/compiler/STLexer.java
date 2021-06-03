@@ -174,7 +174,7 @@ public class STLexer implements TokenSource
     /**
      * Our lexer routines might have to emit more than a single token. We buffer everything through this list.
      */
-    List<Token> tokens = new ArrayList<Token>();
+    List<Token> tokens = new ArrayList<>();
 
     public STLexer(CharStream input)
     {
@@ -200,17 +200,14 @@ public class STLexer implements TokenSource
     @Override
     public Token nextToken()
     {
-        Token t;
-        if (tokens.size() > 0)
+        if (!tokens.isEmpty())
         {
-            t = tokens.remove(0);
+            return tokens.remove(0);
         }
         else
         {
-            t = _nextToken();
+            return _nextToken();
         }
-        //      System.out.println(t);
-        return t;
     }
 
     /**
@@ -450,10 +447,11 @@ public class STLexer implements TokenSource
         int curlyStartChar = startCharIndex;
         int curlyLine = startLine;
         int curlyPos = startCharPositionInLine;
-        List<Token> argTokens = new ArrayList<Token>();
         consume();
         Token curly = newTokenFromPreviousChar(LCURLY);
         WS();
+
+        List<Token> argTokens = new ArrayList<>();
         argTokens.add(mID());
         WS();
         while (c == ',')
@@ -655,7 +653,6 @@ public class STLexer implements TokenSource
      */
     Token mSTRING()
     {
-        //{setText(getText().substring(1, getText().length()-1));}
         boolean sawEscape = false;
         StringBuilder buf = new StringBuilder();
         buf.append(c);
@@ -827,10 +824,6 @@ public class STLexer implements TokenSource
         return t;
     }
 
-    //    public String getErrorHeader() {
-    //        return startLine+":"+startCharPositionInLine;
-    //    }
-    //
     @Override
     public String getSourceName()
     {

@@ -36,12 +36,12 @@ public class InstanceScope
      * <p>
      * All events get added to the {@link #parent}'s event list.</p>
      */
-    public List<InterpEvent> events = new ArrayList<InterpEvent>();
+    public List<InterpEvent> events = new ArrayList<>();
 
     /**
      * All templates evaluated and embedded in this {@link ST}. Used for tree view in {@link STViz}.
      */
-    public List<EvalTemplateEvent> childEvalTemplateEvents = new ArrayList<EvalTemplateEvent>();
+    public List<EvalTemplateEvent> childEvalTemplateEvents = new ArrayList<>();
 
     public boolean earlyEval;
 

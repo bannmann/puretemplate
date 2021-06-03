@@ -1,5 +1,7 @@
 package com.github.bannmann.puretemplate.compiler;
 
+import static java.util.Map.entry;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,30 +31,17 @@ public class Compiler
 
     public static final int TEMPLATE_INITIAL_CODE_SIZE = 15;
 
-    public static final Map<String, Interpreter.Option> supportedOptions;
-
-    static
-    {
-        final Map<String, Interpreter.Option> map = new HashMap<String, Interpreter.Option>();
-        map.put("anchor", Interpreter.Option.ANCHOR);
-        map.put("format", Interpreter.Option.FORMAT);
-        map.put("null", Interpreter.Option.NULL);
-        map.put("separator", Interpreter.Option.SEPARATOR);
-        map.put("wrap", Interpreter.Option.WRAP);
-        supportedOptions = Collections.unmodifiableMap(map);
-    }
+    public static final Map<String, Interpreter.Option> supportedOptions = Map.ofEntries(entry("anchor",
+        Interpreter.Option.ANCHOR),
+        entry("format", Interpreter.Option.FORMAT),
+        entry("null", Interpreter.Option.NULL),
+        entry("separator", Interpreter.Option.SEPARATOR),
+        entry("wrap", Interpreter.Option.WRAP));
 
     public static final int NUM_OPTIONS = supportedOptions.size();
 
-    public static final Map<String, String> defaultOptionValues;
-
-    static
-    {
-        final Map<String, String> map = new HashMap<String, String>();
-        map.put("anchor", "true");
-        map.put("wrap", "\n");
-        defaultOptionValues = Collections.unmodifiableMap(map);
-    }
+    public static final Map<String, String> defaultOptionValues = Map.ofEntries(entry("anchor", "true"),
+        entry("wrap", "\n"));
 
     public static Map<String, Bytecode.Instruction> functions = createLookupMap(Bytecode.Instruction.FIRST,
         Bytecode.Instruction.LAST,

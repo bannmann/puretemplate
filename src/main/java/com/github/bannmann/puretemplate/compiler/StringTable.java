@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
  */
 public class StringTable
 {
-    protected LinkedHashMap<String, Integer> table = new LinkedHashMap<String, Integer>();
+    protected LinkedHashMap<String, Integer> table = new LinkedHashMap<>();
     protected int i = -1;
 
     public int add(String s)
