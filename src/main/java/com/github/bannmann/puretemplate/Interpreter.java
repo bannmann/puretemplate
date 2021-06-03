@@ -528,7 +528,6 @@ public class Interpreter
     void load_str(ST self, int ip)
     {
         int strIndex = getShort(self.impl.instrs, ip);
-        ip += Bytecode.OPND_SIZE_IN_BYTES;
         operands[++sp] = self.impl.strings[strIndex];
     }
 

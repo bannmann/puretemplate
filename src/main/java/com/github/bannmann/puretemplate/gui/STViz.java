@@ -531,7 +531,7 @@ public class STViz
         st.add("stats", s2);
         st.add("stats", s3);
 
-        STViz viz = st.inspect();
+        st.inspect();
         System.out.println(st.render()); // should not mess up ST event lists
     }
 
@@ -554,7 +554,7 @@ public class STViz
 
         STGroup group = new STGroupString(templates);
         ST st = group.getInstanceOf("main");
-        STViz viz = st.inspect();
+        st.inspect();
     }
 
     public static void test3() throws IOException
