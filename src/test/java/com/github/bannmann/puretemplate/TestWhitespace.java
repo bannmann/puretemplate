@@ -125,22 +125,6 @@ public class TestWhitespace extends BaseTest
         assertEquals(expected, result);
     }
 
-    @Ignore("will revisit the behavior of indented expressions spanning multiple lines for a future release")
-    @Test
-    public void testTabBeforeEndInSubtemplates() throws Exception
-    {
-        STGroup group = new STGroup();
-        group.defineTemplate("test", "names", "  <names:{n |\n" + "    <n>\n" + "  }>!");
-        ST st = group.getInstanceOf("test");
-        st.add("names", "Ter");
-        st.add("names", "Tom");
-        st.add("names", "Sumana");
-        String expected = "    Ter" + newline + "    Tom" + newline + "    Sumana" + newline + "!";
-        String result = st.render();
-        st.impl.dump();
-        assertEquals(expected, result);
-    }
-
     @Test
     public void testEmptyExprAsFirstLineGetsNoOutput() throws Exception
     {
