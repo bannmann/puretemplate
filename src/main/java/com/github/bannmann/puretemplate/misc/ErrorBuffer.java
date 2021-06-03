@@ -46,7 +46,7 @@ public class ErrorBuffer implements STErrorListener
         StringBuilder buf = new StringBuilder();
         for (STMessage m : errors)
         {
-            buf.append(m.toString() + Misc.newline);
+            buf.append(m.toString() + Misc.NEWLINE);
         }
         return buf.toString();
     }

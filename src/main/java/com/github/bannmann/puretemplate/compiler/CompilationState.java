@@ -61,7 +61,7 @@ public class CompilationState
         }
         else
         {
-            if (Interpreter.predefinedAnonSubtemplateAttributes.contains(name))
+            if (Misc.PREDEFINED_ANON_SUBTEMPLATE_ATTRIBUTES.contains(name))
             {
                 errMgr.compileTimeError(ErrorType.REF_TO_IMPLICIT_ATTRIBUTE_OUT_OF_SCOPE, templateToken, id.token);
                 emit(id, Bytecode.Instruction.NULL);

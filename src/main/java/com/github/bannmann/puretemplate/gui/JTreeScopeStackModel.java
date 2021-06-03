@@ -12,7 +12,7 @@ import javax.swing.tree.TreePath;
 import org.antlr.runtime.tree.CommonTree;
 
 import com.github.bannmann.puretemplate.InstanceScope;
-import com.github.bannmann.puretemplate.Interpreter;
+import com.github.bannmann.puretemplate.InstanceScopes;
 import com.github.bannmann.puretemplate.ST;
 import com.github.bannmann.puretemplate.StringRenderer;
 import com.github.bannmann.puretemplate.debug.AddAttributeEvent;
@@ -54,7 +54,7 @@ public final class JTreeScopeStackModel implements TreeModel
     public JTreeScopeStackModel(InstanceScope scope)
     {
         root = new StringTree("Scope stack:");
-        List<InstanceScope> stack = Interpreter.getScopeStack(scope, false);
+        List<InstanceScope> stack = InstanceScopes.getScopeStack(scope, false);
         for (InstanceScope s : stack)
         {
             StringTree templateNode = new StringTree(s.st.getName());
@@ -92,7 +92,7 @@ public final class JTreeScopeStackModel implements TreeModel
                 }
                 if (locations.length() > 0)
                 {
-                    description = name + " = " + value + " @ " + locations.toString();
+                    description = name + " = " + value + " @ " + locations;
                 }
                 else
                 {

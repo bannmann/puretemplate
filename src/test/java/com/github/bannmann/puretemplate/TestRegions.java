@@ -2,7 +2,6 @@ package com.github.bannmann.puretemplate;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.bannmann.puretemplate.misc.ErrorBuffer;

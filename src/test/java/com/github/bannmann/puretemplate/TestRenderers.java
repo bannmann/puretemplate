@@ -398,4 +398,37 @@ public class TestRenderers extends BaseTest
         }
         assertEquals(expected, st.render(new Locale("pt")));
     }
+
+    @Test
+    public void testDefaultRenderingBypassesAttributeRendererForText()
+    {
+        String templates = "foo(x) ::= << begin <x> end >>\n";
+
+        STGroup group = new STGroupString(templates);
+
+        group.registerRenderer(String.class, (value, formatString, locale) -> value.toUpperCase());
+
+        ST st = group.getInstanceOf("foo");
+        st.add("x", "attribute");
+        String expecting = " begin ATTRIBUTE end ";
+        String result = st.render();
+        assertEquals(expecting, result);
+    }
+
+    @Test
+    public void testLegacyRenderingUsesAttributeRendererForText()
+    {
+        String templates = "foo(x) ::= << begin <x> end >>\n";
+
+        STGroup group = new STGroupString(templates);
+        group.setLegacyRendering(true);
+
+        group.registerRenderer(String.class, (value, formatString, locale) -> value.toUpperCase());
+
+        ST st = group.getInstanceOf("foo");
+        st.add("x", "attribute");
+        String expecting = " BEGIN ATTRIBUTE END ";
+        String result = st.render();
+        assertEquals(expecting, result);
+    }
 }

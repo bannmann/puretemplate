@@ -9,11 +9,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -41,7 +39,7 @@ public abstract class BaseTest
 {
     public static final String pathSep = System.getProperty("path.separator");
     public static final boolean interactive = Boolean.parseBoolean(System.getProperty("test.interactive"));
-    public static final String newline = Misc.newline;
+    public static final String newline = Misc.NEWLINE;
 
     public String tmpdir = null;
 

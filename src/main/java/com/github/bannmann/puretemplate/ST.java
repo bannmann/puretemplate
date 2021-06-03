@@ -510,30 +510,27 @@ public class ST
 
     public int write(STWriter out) throws IOException
     {
-        Interpreter interp = new Interpreter(groupThatCreatedThisInstance, impl.nativeGroup.errMgr, false);
-        InstanceScope scope = new InstanceScope(null, this);
-        return interp.exec(out, scope);
+        Interpreter interp = groupThatCreatedThisInstance.createInterpreter(Locale.getDefault(),
+            impl.nativeGroup.errMgr);
+        return interp.exec(this, out);
     }
 
     public int write(STWriter out, Locale locale)
     {
-        Interpreter interp = new Interpreter(groupThatCreatedThisInstance, locale, impl.nativeGroup.errMgr, false);
-        InstanceScope scope = new InstanceScope(null, this);
-        return interp.exec(out, scope);
+        Interpreter interp = groupThatCreatedThisInstance.createInterpreter(locale, impl.nativeGroup.errMgr);
+        return interp.exec(this, out);
     }
 
     public int write(STWriter out, STErrorListener listener)
     {
-        Interpreter interp = new Interpreter(groupThatCreatedThisInstance, new ErrorManager(listener), false);
-        InstanceScope scope = new InstanceScope(null, this);
-        return interp.exec(out, scope);
+        Interpreter interp = groupThatCreatedThisInstance.createInterpreter(Locale.getDefault(), listener);
+        return interp.exec(this, out);
     }
 
     public int write(STWriter out, Locale locale, STErrorListener listener)
     {
-        Interpreter interp = new Interpreter(groupThatCreatedThisInstance, locale, new ErrorManager(listener), false);
-        InstanceScope scope = new InstanceScope(null, this);
-        return interp.exec(out, scope);
+        Interpreter interp = groupThatCreatedThisInstance.createInterpreter(locale, listener);
+        return interp.exec(this, out);
     }
 
     public int write(File outputFile, STErrorListener listener) throws IOException
@@ -612,9 +609,8 @@ public class ST
         StringWriter out = new StringWriter();
         STWriter wr = new AutoIndentWriter(out);
         wr.setLineWidth(lineWidth);
-        Interpreter interp = new Interpreter(groupThatCreatedThisInstance, locale, true);
-        InstanceScope scope = new InstanceScope(null, this);
-        interp.exec(wr, scope); // render and track events
+        Interpreter interp = groupThatCreatedThisInstance.createDebuggingInterpreter(locale);
+        interp.exec(this, wr); // render and track events
         List<InterpEvent> events = interp.getEvents();
         EvalTemplateEvent overallTemplateEval = (EvalTemplateEvent) events.get(events.size() - 1);
         STViz viz = new STViz(errMgr,
@@ -649,9 +645,8 @@ public class ST
         StringWriter out = new StringWriter();
         STWriter wr = new AutoIndentWriter(out);
         wr.setLineWidth(lineWidth);
-        Interpreter interp = new Interpreter(groupThatCreatedThisInstance, locale, true);
-        InstanceScope scope = new InstanceScope(null, this);
-        interp.exec(wr, scope); // render and track events
+        Interpreter interp = groupThatCreatedThisInstance.createDebuggingInterpreter(locale);
+        interp.exec(this, wr); // render and track events
         return interp.getEvents();
     }
 

@@ -148,15 +148,15 @@ public class TestTemplateNames extends BaseTest
     public void testIdWithHyphens() throws Exception
     {
         String templates = "template-a(x-1) ::= \"[<x-1>]\"" +
-            Misc.newline +
+            Misc.NEWLINE +
             "template-b(x-2) ::= <<" +
-            Misc.newline +
+            Misc.NEWLINE +
             "<template-a(x-2)>" +
-            Misc.newline +
+            Misc.NEWLINE +
             ">>" +
-            Misc.newline +
+            Misc.NEWLINE +
             "t-entry(x-3) ::= <<[<template-b(x-3)>]>>" +
-            Misc.newline;
+            Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         ErrorBuffer errors = new ErrorBuffer();

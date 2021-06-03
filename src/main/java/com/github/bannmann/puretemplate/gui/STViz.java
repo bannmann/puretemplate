@@ -32,6 +32,7 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 
 import com.github.bannmann.puretemplate.InstanceScope;
+import com.github.bannmann.puretemplate.InstanceScopes;
 import com.github.bannmann.puretemplate.Interpreter;
 import com.github.bannmann.puretemplate.ST;
 import com.github.bannmann.puretemplate.STGroup;
@@ -176,7 +177,7 @@ public class STViz
 
                     // update tree view of template hierarchy
                     // compute path from root to currentST, create TreePath for tree widget
-                    List<EvalTemplateEvent> stack = Interpreter.getEvalTemplateEventStack(currentScope, true);
+                    List<EvalTemplateEvent> stack = InstanceScopes.getEvalTemplateEventStack(currentScope, true);
                     Object[] path = new Object[stack.size()];
                     int j = 0;
                     for (EvalTemplateEvent s : stack)
@@ -455,7 +456,7 @@ public class STViz
 
     protected void updateStack(InstanceScope scope, STViewFrame m)
     {
-        List<ST> stack = Interpreter.getEnclosingInstanceStack(scope, true);
+        List<ST> stack = InstanceScopes.getEnclosingInstanceStack(scope, true);
         m.setTitle("STViz - [" + Misc.join(stack.iterator(), " ") + "]");
     }
 

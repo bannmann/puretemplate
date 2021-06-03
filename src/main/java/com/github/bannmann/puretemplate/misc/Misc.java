@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Iterator;
+import java.util.Set;
 
 public class Misc
 {
-    public static final String newline = System.getProperty("line.separator");
+    public static final String NEWLINE = System.getProperty("line.separator");
+    public static final Set<String> PREDEFINED_ANON_SUBTEMPLATE_ATTRIBUTES = Set.of("i", "i0");
 
     /**
      * Makes it clear when a comparison is intended as reference equality.

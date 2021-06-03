@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.StringWriter;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestWhitespace extends BaseTest

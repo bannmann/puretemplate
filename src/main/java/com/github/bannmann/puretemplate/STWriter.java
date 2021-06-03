@@ -3,8 +3,6 @@ package com.github.bannmann.puretemplate;
 import java.io.Closeable;
 import java.io.IOException;
 
-import com.github.bannmann.puretemplate.compiler.Bytecode;
-
 /**
  * Generic StringTemplate output writer filter.
  * <p>
@@ -38,12 +36,13 @@ public interface STWriter extends Closeable
     int write(String str, String wrap) throws IOException;
 
     /**
-     * Because we evaluate ST instance by invoking {@link Interpreter#exec(STWriter, InstanceScope)} again, we can't
-     * pass options in. So the {@link Bytecode#INSTR_WRITE} instruction of an applied template (such as when we wrap in
-     * between template applications like {@code <data:{v|[<v>]}; wrap>}) we need to write the {@code wrap} string
-     * before calling {@link Interpreter#exec}. We expose just like for the separator. See {@link
-     * Interpreter#writeObject} where it checks for ST instance. If POJO, {@link Interpreter#writePOJO} passes {@code
-     * wrap} to {@link STWriter#write(String str, String wrap)}. Can't pass to {@link Interpreter#exec}.
+     * Because we evaluate ST instance by invoking {@link AbstractInterpreter#exec(STWriter, InstanceScope)} again, we
+     * can't pass options in. So the {@link com.github.bannmann.puretemplate.compiler.Bytecode.Instruction#WRITE}
+     * instruction of an applied template (such as when we wrap in between template applications like {@code
+     * <data:{v|[<v>]}; wrap>}) we need to write the {@code wrap} string before calling {@link Interpreter#exec}. We
+     * expose just like for the separator. See {@link AbstractInterpreter#writeObject} where it checks for ST instance.
+     * If POJO, {@link AbstractInterpreter#writePOJO} passes {@code wrap} to {@link STWriter#write(String str, String
+     * wrap)}. Can't pass to {@link Interpreter#exec}.
      */
     int writeWrap(String wrap) throws IOException;
 
@@ -54,7 +53,7 @@ public interface STWriter extends Closeable
     int writeSeparator(String str) throws IOException;
 
     /**
-     * Return the absolute char index into the output of the char we're about to write.  Returns 0 if no char written
+     * Return the absolute char index into the output of the char we're about to write. Returns 0 if no char written
      * yet.
      */
     int index();

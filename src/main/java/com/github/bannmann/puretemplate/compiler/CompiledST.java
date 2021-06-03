@@ -12,7 +12,6 @@ import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
 
-import com.github.bannmann.puretemplate.Interpreter;
 import com.github.bannmann.puretemplate.ST;
 import com.github.bannmann.puretemplate.STGroup;
 import com.github.bannmann.puretemplate.misc.Interval;
@@ -76,7 +75,8 @@ public class CompiledST implements Cloneable
 
     /**
      * The group that physically defines this {@link ST} definition. We use it to initiate interpretation via {@link
-     * ST#toString}. From there, it becomes field {@link Interpreter#group} and is fixed until rendering completes.
+     * ST#toString}. From there, it becomes field {@code AbstractInterpreter.group} and is fixed until rendering
+     * completes.
      */
     public STGroup nativeGroup = STGroup.defaultGroup;
 

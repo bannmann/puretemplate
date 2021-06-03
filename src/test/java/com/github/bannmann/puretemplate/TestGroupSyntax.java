@@ -15,11 +15,11 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testSimpleGroup() throws Exception
     {
-        String templates = "t() ::= <<foo>>" + Misc.newline;
+        String templates = "t() ::= <<foo>>" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
-        String expected = "t() ::= <<" + Misc.newline + "foo" + Misc.newline + ">>" + Misc.newline;
+        String expected = "t() ::= <<" + Misc.NEWLINE + "foo" + Misc.NEWLINE + ">>" + Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -29,16 +29,16 @@ public class TestGroupSyntax extends BaseTest
     {
         // setTest(ranges) ::= "<ranges; separator=\"||\">"
         // has to unescape the strings.
-        String templates = "setTest(ranges) ::= \"<ranges; separator=\\\"||\\\">\"" + Misc.newline;
+        String templates = "setTest(ranges) ::= \"<ranges; separator=\\\"||\\\">\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         String expected = "setTest(ranges) ::= <<" +
-            Misc.newline +
+            Misc.NEWLINE +
             "<ranges; separator=\"||\">" +
-            Misc.newline +
+            Misc.NEWLINE +
             ">>" +
-            Misc.newline;
+            Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -47,32 +47,32 @@ public class TestGroupSyntax extends BaseTest
     public void testMultiTemplates() throws Exception
     {
         String templates = "ta(x) ::= \"[<x>]\"" +
-            Misc.newline +
+            Misc.NEWLINE +
             "duh() ::= <<hi there>>" +
-            Misc.newline +
+            Misc.NEWLINE +
             "wow() ::= <<last>>" +
-            Misc.newline;
+            Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         String expected = "ta(x) ::= <<" +
-            Misc.newline +
+            Misc.NEWLINE +
             "[<x>]" +
-            Misc.newline +
+            Misc.NEWLINE +
             ">>" +
-            Misc.newline +
+            Misc.NEWLINE +
             "duh() ::= <<" +
-            Misc.newline +
+            Misc.NEWLINE +
             "hi there" +
-            Misc.newline +
+            Misc.NEWLINE +
             ">>" +
-            Misc.newline +
+            Misc.NEWLINE +
             "wow() ::= <<" +
-            Misc.newline +
+            Misc.NEWLINE +
             "last" +
-            Misc.newline +
+            Misc.NEWLINE +
             ">>" +
-            Misc.newline;
+            Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -80,7 +80,7 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testSetDefaultDelimiters() throws Exception
     {
-        String templates = "delimiters \"<\", \">\"" + Misc.newline + "ta(x) ::= \"[<x>]\"" + Misc.newline;
+        String templates = "delimiters \"<\", \">\"" + Misc.NEWLINE + "ta(x) ::= \"[<x>]\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         ErrorBuffer errors = new ErrorBuffer();
@@ -102,13 +102,13 @@ public class TestGroupSyntax extends BaseTest
     public void testSetDefaultDelimiters_STGroupString() throws Exception
     {
         String templates = "delimiters \"<\", \">\"" +
-            Misc.newline +
+            Misc.NEWLINE +
             "chapter(title) ::= <<" +
-            Misc.newline +
+            Misc.NEWLINE +
             "chapter <title>" +
-            Misc.newline +
+            Misc.NEWLINE +
             ">>" +
-            Misc.newline;
+            Misc.NEWLINE;
 
         ErrorBuffer errors = new ErrorBuffer();
         STGroup group = new STGroupString(templates);
@@ -125,7 +125,7 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testSetNonDefaultDelimiters() throws Exception
     {
-        String templates = "delimiters \"%\", \"%\"" + Misc.newline + "ta(x) ::= \"[%x%]\"" + Misc.newline;
+        String templates = "delimiters \"%\", \"%\"" + Misc.NEWLINE + "ta(x) ::= \"[%x%]\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
@@ -142,7 +142,7 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testSetUnsupportedDelimiters_At() throws Exception
     {
-        String templates = "delimiters \"@\", \"@\"" + Misc.newline + "ta(x) ::= \"[<x>]\"" + Misc.newline;
+        String templates = "delimiters \"@\", \"@\"" + Misc.NEWLINE + "ta(x) ::= \"[<x>]\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         ErrorBuffer errors = new ErrorBuffer();
@@ -163,11 +163,11 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testSingleTemplateWithArgs() throws Exception
     {
-        String templates = "t(a,b) ::= \"[<a>]\"" + Misc.newline;
+        String templates = "t(a,b) ::= \"[<a>]\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
-        String expected = "t(a,b) ::= <<" + Misc.newline + "[<a>]" + Misc.newline + ">>" + Misc.newline;
+        String expected = "t(a,b) ::= <<" + Misc.NEWLINE + "[<a>]" + Misc.NEWLINE + ">>" + Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -175,11 +175,11 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testDefaultValues() throws Exception
     {
-        String templates = "t(a={def1},b=\"def2\") ::= \"[<a>]\"" + Misc.newline;
+        String templates = "t(a={def1},b=\"def2\") ::= \"[<a>]\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
-        String expected = "t(a={def1},b=\"def2\") ::= <<" + Misc.newline + "[<a>]" + Misc.newline + ">>" + Misc.newline;
+        String expected = "t(a={def1},b=\"def2\") ::= <<" + Misc.NEWLINE + "[<a>]" + Misc.NEWLINE + ">>" + Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -187,16 +187,16 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testDefaultValues2() throws Exception
     {
-        String templates = "t(x, y, a={def1}, b=\"def2\") ::= \"[<a>]\"" + Misc.newline;
+        String templates = "t(x, y, a={def1}, b=\"def2\") ::= \"[<a>]\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         String expected = "t(x,y,a={def1},b=\"def2\") ::= <<" +
-            Misc.newline +
+            Misc.NEWLINE +
             "[<a>]" +
-            Misc.newline +
+            Misc.NEWLINE +
             ">>" +
-            Misc.newline;
+            Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -204,11 +204,11 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testDefaultValueTemplateWithArg() throws Exception
     {
-        String templates = "t(a={x | 2*<x>}) ::= \"[<a>]\"" + Misc.newline;
+        String templates = "t(a={x | 2*<x>}) ::= \"[<a>]\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
-        String expected = "t(a={x | 2*<x>}) ::= <<" + Misc.newline + "[<a>]" + Misc.newline + ">>" + Misc.newline;
+        String expected = "t(a={x | 2*<x>}) ::= <<" + Misc.NEWLINE + "[<a>]" + Misc.NEWLINE + ">>" + Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -268,11 +268,11 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testNestedTemplateInGroupFile() throws Exception
     {
-        String templates = "t(a) ::= \"<a:{x | <x:{y | <y>}>}>\"" + Misc.newline;
+        String templates = "t(a) ::= \"<a:{x | <x:{y | <y>}>}>\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
-        String expected = "t(a) ::= <<" + newline + "<a:{x | <x:{y | <y>}>}>" + newline + ">>" + Misc.newline;
+        String expected = "t(a) ::= <<" + newline + "<a:{x | <x:{y | <y>}>}>" + newline + ">>" + Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -280,12 +280,12 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testNestedDefaultValueTemplate() throws Exception
     {
-        String templates = "t(a={x | <x:{y|<y>}>}) ::= \"ick\"" + Misc.newline;
+        String templates = "t(a={x | <x:{y|<y>}>}) ::= \"ick\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         group.load();
-        String expected = "t(a={x | <x:{y|<y>}>}) ::= <<" + newline + "ick" + newline + ">>" + Misc.newline;
+        String expected = "t(a={x | <x:{y|<y>}>}) ::= <<" + newline + "ick" + newline + ">>" + Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -293,16 +293,16 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testNestedDefaultValueTemplateWithEscapes() throws Exception
     {
-        String templates = "t(a={x | \\< <x:{y|<y>\\}}>}) ::= \"[<a>]\"" + Misc.newline;
+        String templates = "t(a={x | \\< <x:{y|<y>\\}}>}) ::= \"[<a>]\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         String expected = "t(a={x | \\< <x:{y|<y>\\}}>}) ::= <<" +
-            Misc.newline +
+            Misc.NEWLINE +
             "[<a>]" +
-            Misc.newline +
+            Misc.NEWLINE +
             ">>" +
-            Misc.newline;
+            Misc.NEWLINE;
         String result = group.show();
         assertEquals(expected, result);
     }
@@ -333,7 +333,7 @@ public class TestGroupSyntax extends BaseTest
     @Test
     public void testIndentedComment() throws Exception
     {
-        String templates = "t() ::= <<" + Misc.newline + "  <! a comment !>" + Misc.newline + ">>" + Misc.newline;
+        String templates = "t() ::= <<" + Misc.NEWLINE + "  <! a comment !>" + Misc.NEWLINE + ">>" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         ErrorBuffer errors = new ErrorBuffer();

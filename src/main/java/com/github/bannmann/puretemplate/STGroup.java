@@ -12,9 +12,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.antlr.runtime.ANTLRFileStream;
@@ -137,6 +139,9 @@ public class STGroup
      * This structure is synchronized.</p>
      */
     protected Map<Class<?>, AttributeRenderer<?>> renderers;
+
+    @Getter
+    private boolean legacyRendering;
 
     /**
      * A dictionary that allows people to register a model adaptor for a particular kind of object (subclass or
@@ -1060,9 +1065,9 @@ public class STGroup
                     .iterator(), ","));
             }
             buf.append(')');
-            buf.append(" ::= <<" + Misc.newline);
-            buf.append(c.template + Misc.newline);
-            buf.append(">>" + Misc.newline);
+            buf.append(" ::= <<" + Misc.NEWLINE);
+            buf.append(c.template + Misc.NEWLINE);
+            buf.append(">>" + Misc.NEWLINE);
         }
         return buf.toString();
     }
@@ -1089,5 +1094,46 @@ public class STGroup
             }
         }
         return result;
+    }
+
+    /**
+     * Sets whether attribute renderers should be applied to text elements. The default behavior of PureTemplate is to
+     * apply registered renderers (e.g. {@link StringRenderer}) to attribute expressions only. StringTemplate, however,
+     * always applied attribute renderers to text elements, as well. If you need backwards compatibility, use this
+     * method to revert to the classic behavior.
+     *
+     * @param legacyRendering {@code true} to also apply attribute renderers to text elements, {@code false} (the
+     * default) to render text elements directly.
+     */
+    public void setLegacyRendering(boolean legacyRendering)
+    {
+        this.legacyRendering = legacyRendering;
+    }
+
+    Interpreter createInterpreter(Locale locale, STErrorListener listener)
+    {
+        return createInterpreterInternal(locale, new ErrorManager(listener), false);
+    }
+
+    Interpreter createInterpreter(Locale locale, ErrorManager errorManager)
+    {
+        return createInterpreterInternal(locale, errorManager, false);
+    }
+
+    Interpreter createDebuggingInterpreter(Locale locale)
+    {
+        return createInterpreterInternal(locale, errMgr, true);
+    }
+
+    private Interpreter createInterpreterInternal(Locale locale, ErrorManager errorManager, boolean debug)
+    {
+        if (isLegacyRendering())
+        {
+            return new LegacyInterpreter(this, locale, errorManager, debug);
+        }
+        else
+        {
+            return new DefaultInterpreter(this, locale, errorManager, debug);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.github.bannmann.puretemplate.misc;
 
 import com.github.bannmann.puretemplate.InstanceScope;
+import com.github.bannmann.puretemplate.InstanceScopes;
 import com.github.bannmann.puretemplate.Interpreter;
 
 /**
@@ -100,7 +101,7 @@ public class STRuntimeMessage extends STMessage
             buf.append("context [");
             if (interp != null)
             {
-                buf.append(Interpreter.getEnclosingInstanceStackString(scope));
+                buf.append(InstanceScopes.getEnclosingInstanceStackString(scope));
             }
             buf.append("]");
         }

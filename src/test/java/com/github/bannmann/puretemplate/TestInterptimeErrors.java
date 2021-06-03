@@ -39,7 +39,7 @@ public class TestInterptimeErrors extends BaseTest
     {
         ErrorBuffer errors = new ErrorBuffer();
 
-        String templates = "t() ::= \"<foo()>\"" + Misc.newline;
+        String templates = "t() ::= \"<foo()>\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
@@ -56,12 +56,12 @@ public class TestInterptimeErrors extends BaseTest
     {
         ErrorBuffer errors = new ErrorBuffer();
 
-        String templates = "t() ::= \"<super.t()>\"" + Misc.newline;
+        String templates = "t() ::= \"<super.t()>\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
         group.setListener(errors);
-        String templates2 = "u() ::= \"blech\"" + Misc.newline;
+        String templates2 = "u() ::= \"blech\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t2.stg", templates2);
         STGroup group2 = new STGroupFile(tmpdir + "/" + "t2.stg");
@@ -78,7 +78,7 @@ public class TestInterptimeErrors extends BaseTest
     {
         ErrorBuffer errors = new ErrorBuffer();
 
-        String templates = "t(u) ::= \"<u.x>\"" + Misc.newline;
+        String templates = "t(u) ::= \"<u.x>\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
@@ -96,7 +96,7 @@ public class TestInterptimeErrors extends BaseTest
     {
         ErrorBuffer errors = new ErrorBuffer();
 
-        String templates = "t(u) ::= \"<u.name>\"" + Misc.newline;
+        String templates = "t(u) ::= \"<u.name>\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");
@@ -114,7 +114,7 @@ public class TestInterptimeErrors extends BaseTest
     {
         ErrorBuffer errors = new ErrorBuffer();
 
-        String templates = "t(u) ::= \"<u.name>\"" + Misc.newline;
+        String templates = "t(u) ::= \"<u.name>\"" + Misc.NEWLINE;
 
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = new STGroupFile(tmpdir + "/" + "t.stg");

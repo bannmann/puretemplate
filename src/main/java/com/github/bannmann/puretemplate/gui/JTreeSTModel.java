@@ -49,7 +49,7 @@ public class JTreeSTModel implements TreeModel
             }
             if (st.debugState != null && st.debugState.newSTEvent != null)
             {
-                String label = st.toString() +
+                String label = st +
                     " @ " +
                     st.debugState.newSTEvent.getFileName() +
                     ":" +

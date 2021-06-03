@@ -143,7 +143,7 @@ public class BytecodeDisassembler
         int addr = 0;
         if (code.strings != null)
         {
-            for (String s: code.strings)
+            for (String s : code.strings)
             {
                 if (s != null)
                 {
