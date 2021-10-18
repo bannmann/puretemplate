@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Group;

@@ -4,12 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.antlr.runtime.RuleReturnScope;
 import org.antlr.runtime.tree.Tree;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestTreeConstruction extends org.puretemplate.gUnitBase
 {
-    @Before
+    @BeforeEach
     public void setup()
     {
         lexerClassName = "org.puretemplate.STLexer";

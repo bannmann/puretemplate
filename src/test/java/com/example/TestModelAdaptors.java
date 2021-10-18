@@ -7,7 +7,7 @@ import java.util.TreeMap;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.error.RuntimeMessage;

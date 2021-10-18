@@ -12,7 +12,9 @@ import java.util.TimeZone;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Group;
@@ -48,7 +50,7 @@ public class TestRenderers extends BaseTest
     // Make sure to use the US Locale during the tests
     private Locale origLocale;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp()
     {
@@ -57,7 +59,7 @@ public class TestRenderers extends BaseTest
         Locale.setDefault(Locale.US);
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         Locale.setDefault(origLocale);

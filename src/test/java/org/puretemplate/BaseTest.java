@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.NonNull;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
 
@@ -62,7 +62,7 @@ public abstract class BaseTest
         assertThrowsExceptionOfType(invocation, IllegalArgumentException.class);
     }
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         loader = new Loader();

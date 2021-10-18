@@ -3,7 +3,7 @@ package org.puretemplate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see <a href="https://github.com/antlr/stringtemplate4/issues/122">antlr/stringtemplate4#122</a>

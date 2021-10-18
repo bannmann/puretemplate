@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Group;

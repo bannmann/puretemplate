@@ -7,7 +7,7 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.error.RuntimeMessage;
 import org.puretemplate.exception.NoSuchPropertyException;
 import org.puretemplate.misc.ErrorBufferAllErrors;

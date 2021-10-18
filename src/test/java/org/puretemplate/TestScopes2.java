@@ -2,7 +2,7 @@ package org.puretemplate;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.misc.ErrorBuffer;
 
 public class TestScopes2 extends BaseTest

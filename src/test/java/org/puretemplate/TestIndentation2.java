@@ -2,7 +2,7 @@ package org.puretemplate;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestIndentation2 extends BaseTest
 {

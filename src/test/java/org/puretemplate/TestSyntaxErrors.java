@@ -2,7 +2,7 @@ package org.puretemplate;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.exception.TemplateException;
 import org.puretemplate.misc.ErrorBuffer;
