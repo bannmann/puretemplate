@@ -39,32 +39,87 @@
     </distributionManagement>
 
     <properties>
+        <javadoc.output.directory.final>${project.build.directory}/apidocs</javadoc.output.directory.final>
+        <javadoc.output.directory.temp>${project.build.directory}/apidocs-temp</javadoc.output.directory.temp>
+        <javadoc.sources.directory>${project.build.directory}/generated-sources/delombok-for-javadoc</javadoc.sources.directory>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <mizool.version>0.45</mizool.version>
         <ossrh.host>s01.oss.sonatype.org</ossrh.host>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <silverchain.outputDirectory>${project.build.directory}/generated-sources/silverchain</silverchain.outputDirectory>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.mizool</groupId>
+                <artifactId>mizool-core</artifactId>
+                <version>${mizool.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.antlr</groupId>
+                        <artifactId>ST4</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr-runtime</artifactId>
+                <version>3.5.2</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>1.8</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
-            <version>3.5.2</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
         </dependency>
     </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>com.google.code.maven-replacer-plugin</groupId>
+                    <artifactId>maven-replacer-plugin</artifactId>
+                    <version>1.4.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <sourcepath>${javadoc.sources.directory};${silverchain.outputDirectory}</sourcepath>
+                        <doclint>none</doclint>
+                        <reportOutputDirectory>${javadoc.output.directory.final}</reportOutputDirectory>
+
+                        <!-- see https://stackoverflow.com/a/52603413/7641 -->
+                        <additionalJOption>--no-module-directories</additionalJOption>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -75,6 +130,21 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>com.github.bannmann.maven.silverchain</groupId>
+                <artifactId>silverchain-maven-plugin</artifactId>
+                <version>0.1</version>
+                <configuration>
+                    <inputFile>src/main/silverchain/puretemplate.ag</inputFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr3-maven-plugin</artifactId>
@@ -89,14 +159,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <additionalOptions>-Xdoclint:none</additionalOptions>
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <dependencies>
@@ -108,9 +170,208 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <configuration>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
     <profiles>
+        <profile>
+            <id>hack-javadoc</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>delombok</goal>
+                                    </goals>
+                                    <phase>process-sources</phase>
+                                    <configuration>
+                                        <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+                                        <outputDirectory>${javadoc.sources.directory}</outputDirectory>
+                                        <addOutputDirectory>false</addOutputDirectory>
+                                        <formatPreferences>
+                                            <javaLangAsFQN>skip</javaLangAsFQN>
+                                        </formatPreferences>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>maven-replacer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>hack-antlr-output</id>
+                                <!--
+                                    Work around the fact that ANTLR doesn't support generating non-public classes.
+                                    See https://github.com/antlr/antlr4/issues/972
+                                -->
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                                <phase>process-sources</phase>
+                                <configuration>
+                                    <includes>
+                                        <include>target/generated-sources/antlr3/org/puretemplate/*.java</include>
+                                    </includes>
+                                    <variableTokenValueMap>public class=class</variableTokenValueMap>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-modified-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <classifier>javadoc</classifier>
+                                    <classesDirectory>${javadoc.output.directory.final}</classesDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <!-- also see copy-resources execution "overwrite-javadoc-indexes" -->
+                            <execution>
+                                <id>generate-main-api-indexes</id>
+                                <goals>
+                                    <goal>javadoc-no-fork</goal>
+                                </goals>
+                                <phase>prepare-package</phase>
+                                <configuration>
+                                    <reportOutputDirectory>${javadoc.output.directory.temp}</reportOutputDirectory>
+                                    <sourceFileExcludes>
+                                        <sourceFileExclude>org/puretemplate/Parsing.java</sourceFileExclude>
+                                        <sourceFileExclude>org/puretemplate/fs/*.java</sourceFileExclude>
+                                        <sourceFileExclude>**/state*/*.java</sourceFileExclude>
+                                    </sourceFileExcludes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>generate-normal</id>
+                                <goals>
+                                    <goal>javadoc-no-fork</goal>
+                                </goals>
+                                <phase>prepare-package</phase>
+                            </execution>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <configuration>
+                                    <!--
+                                        This execution is inherited from the super POM. It invokes Javadoc another time,
+                                        negating the "overwrite-javadoc-indexes" hack, so we need to disable it. Our replacement
+                                        is the maven-jar-plugin execution "attach-modified-javadocs".
+                                    -->
+                                    <skip>true</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>overwrite-javadoc-indexes</id>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <phase>prepare-package</phase>
+                                <configuration>
+                                    <!--
+                                        By overwriting the overview page and various indexes, we avoid spamming lists with
+                                        dozens of 'stateXX' packages, but still keep the docs for all state classes fully linked
+                                        between each other and available to IDEs.
+                                        Similarly, "technically public but not our official API" classes get Javadoc for IDEs,
+                                        but don't appear in any lists.
+                                    -->
+                                    <overwrite>true</overwrite>
+                                    <outputDirectory>${javadoc.output.directory.final}</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${javadoc.output.directory.temp}/apidocs</directory>
+                                            <includes>
+                                                <include>/*</include>
+                                                <include>**/package-*.html</include>
+                                                <include>**/class-use/*</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release-profile</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.ekryd.sortpom</groupId>
+                        <artifactId>sortpom-maven-plugin</artifactId>
+                        <configuration>
+                            <verifyFail>Stop</verifyFail>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                                <phase>validate</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>sign</id>
             <build>

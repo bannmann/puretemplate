@@ -1,0 +1,61 @@
+/* https://www.w3.org/TR/xml/#sec-notation */
+
+getTemplate ::=
+(
+    ('fromString' | 'fromReader')
+    |
+    (
+        ('fromInputStream' | 'fromResourceFile' | 'fromFile')
+
+        'usingCharset'
+        ?
+    )
+)
+
+(
+    'withDelimiters'
+    |
+    'attachedToGroup'
+)
+?
+
+'build'
+
+
+getGroup ::=
+(
+    ('fromString' | 'fromReader')
+    |
+    (
+        (
+            ('fromInputStream' | 'fromResourceFile' | 'fromFile')
+            |
+            'fromDirectory'
+            |
+            'fromResourceDirectory'
+        )
+
+        'usingCharset'
+        ?
+    )
+    |
+    'blank'
+)
+
+/* The three "with*" methods can be called only once. As we cannot express that limitation here, add '¹' as a hint. */
+(
+    'withDelimiters¹'
+    |
+    'withErrorListener¹'
+    |
+    'withLegacyRendering¹'
+    |
+    'importTemplates'
+    |
+    'registerModelAdaptor'
+    |
+    'registerAttributeRenderer'
+)
+*
+
+'build'
