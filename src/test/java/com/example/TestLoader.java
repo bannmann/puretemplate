@@ -1,24 +1,24 @@
 package com.example;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Group;
 import org.puretemplate.Template;
 
-public class TestLoader extends BaseTest
+class TestLoader extends BaseTest
 {
     public static final String GREETING_TEMPLATE = "hi <name>!";
 
     @Test
-    public void testFromString()
+    void testFromString()
     {
         Template template = loader.getTemplate()
             .fromString(GREETING_TEMPLATE)
@@ -27,7 +27,7 @@ public class TestLoader extends BaseTest
     }
 
     @Test
-    public void testFromStringWithDelimiters()
+    void testFromStringWithDelimiters()
     {
         Template template = loader.getTemplate()
             .fromString("hi $name$!")
@@ -45,7 +45,7 @@ public class TestLoader extends BaseTest
     }
 
     @Test
-    public void testFromInputStream()
+    void testFromInputStream()
     {
         byte[] bytes = GREETING_TEMPLATE.getBytes(StandardCharsets.UTF_8);
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
@@ -58,7 +58,7 @@ public class TestLoader extends BaseTest
     }
 
     @Test
-    public void testGroupFromString()
+    void testGroupFromString()
     {
         Group group = loadGroupFromString("a(x) ::= <<foo>>\n" + "b() ::= <<bar>>\n");
 
@@ -67,7 +67,7 @@ public class TestLoader extends BaseTest
     }
 
     @Test
-    public void testGroupFromResourceFile()
+    void testGroupFromResourceFile()
     {
         Group group = loader.getGroup()
             .fromResourceFile(getClass(), "simple.stg")
@@ -81,7 +81,7 @@ public class TestLoader extends BaseTest
     }
 
     @Test
-    public void testGroupFromResourceDirectory()
+    void testGroupFromResourceDirectory()
     {
         Group group = loader.getGroup()
             .fromResourceDirectory(getClass(), "groupdir")
@@ -93,7 +93,7 @@ public class TestLoader extends BaseTest
     }
 
     @Test
-    public void testGroupFromDirectory() throws IOException
+    void testGroupFromDirectory() throws IOException
     {
         Path baseDir = getRandomDirPath();
         Path groupDir = baseDir.resolve("groupdir");
@@ -110,7 +110,7 @@ public class TestLoader extends BaseTest
     }
 
     @Test
-    public void testGroupFileInDir() throws IOException
+    void testGroupFileInDir() throws IOException
     {
         String dir = getRandomDir();
         writeFile(dir, "group.stg", "a() ::= <<awesome>>\n");

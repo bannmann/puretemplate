@@ -1,11 +1,11 @@
 package org.puretemplate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TestLexer extends BaseTest
+class TestLexer extends BaseTest
 {
     @Test
-    public void testOneExpr()
+    void testOneExpr()
     {
         String template = "<name>";
         String expected = "[[@0,0:0='<',<LDELIM>,1:0], [@1,1:4='name',<ID>,1:1], " + "[@2,5:5='>',<RDELIM>,1:5]]";
@@ -13,7 +13,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testOneExprSurrounded()
+    void testOneExprSurrounded()
     {
         String template = "hi <name> mom";
         String expected = "[[@0,0:2='hi ',<TEXT>,1:0], [@1,3:3='<',<LDELIM>,1:3], " +
@@ -23,7 +23,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testEscDelim()
+    void testEscDelim()
     {
         String template = "hi \\<name>";
         String expected = "[[@0,0:9='hi <name>',<TEXT>,1:0]]";
@@ -31,7 +31,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testEscEsc()
+    void testEscEsc()
     {
         String template = "hi \\\\ foo";
         String expected = "[[@0,0:8='hi \\ foo',<TEXT>,1:0]]";
@@ -39,7 +39,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testEscDelimHasCorrectStartChar()
+    void testEscDelimHasCorrectStartChar()
     {
         String template = "<a>\\<dog";
         String expected = "[[@0,0:0='<',<LDELIM>,1:0], [@1,1:1='a',<ID>,1:1], [@2,2:2='>',<RDELIM>,1:2], " +
@@ -48,7 +48,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testEscChar()
+    void testEscChar()
     {
         String template = "hi \\x";
         String expected = "[[@0,0:4='hi \\x',<TEXT>,1:0]]";
@@ -56,7 +56,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testString()
+    void testString()
     {
         String template = "hi <foo(a=\">\")>";
         String expected = "[[@0,0:2='hi ',<TEXT>,1:0], [@1,3:3='<',<LDELIM>,1:3], " +
@@ -68,7 +68,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testEscInString()
+    void testEscInString()
     {
         String template = "hi <foo(a=\">\\\"\")>";
         String expected = "[[@0,0:2='hi ',<TEXT>,1:0], [@1,3:3='<',<LDELIM>,1:3], [@2,4:6='foo',<ID>,1:4], " +
@@ -79,7 +79,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testSubtemplate()
+    void testSubtemplate()
     {
         String template = "hi <names:{n | <n>}>";
         String
@@ -89,7 +89,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testSubtemplateNoArg()
+    void testSubtemplateNoArg()
     {
         String template = "hi <names:{n | <n>}>";
         String
@@ -99,7 +99,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testSubtemplateMultiArgs()
+    void testSubtemplateMultiArgs()
     {
         String template = "hi <names:{x,y | <x><y>}>"; // semantically bogus
         String
@@ -109,7 +109,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testNestedSubtemplate()
+    void testNestedSubtemplate()
     {
         String template = "hi <names:{n | <n:{x|<x>}>}>";
         String
@@ -119,7 +119,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testNestedList()
+    void testNestedList()
     {
         String template = "*<[names, [\"foo\",\"bar\"]:{x|<x>!},phones]; separator=\", \">*";
         //01234567890123456
@@ -130,7 +130,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testIF()
+    void testIF()
     {
         String template = "<if(!name)>works<endif>";
         String expected = "[[@0,0:0='<',<LDELIM>,1:0], [@1,1:2='if',<IF>,1:1], [@2,3:3='(',<LPAREN>,1:3], " +
@@ -142,7 +142,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testIFNot()
+    void testIFNot()
     {
         String template = "<if(!name)>works<endif>";
         String expected = "[[@0,0:0='<',<LDELIM>,1:0], [@1,1:2='if',<IF>,1:1], [@2,3:3='(',<LPAREN>,1:3], " +
@@ -154,7 +154,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testIFELSE()
+    void testIFELSE()
     {
         String template = "<if(name)>works<else>fail<endif>";
         String expected = "[[@0,0:0='<',<LDELIM>,1:0], [@1,1:2='if',<IF>,1:1], [@2,3:3='(',<LPAREN>,1:3], " +
@@ -167,7 +167,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testELSEIF()
+    void testELSEIF()
     {
         String template = "<if(name)>fail<elseif(id)>works<else>fail<endif>";
         String expected = "[[@0,0:0='<',<LDELIM>,1:0], [@1,1:2='if',<IF>,1:1], [@2,3:3='(',<LPAREN>,1:3], " +
@@ -184,7 +184,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testEmbeddedRegion()
+    void testEmbeddedRegion()
     {
         String template = "<@r>foo<@end>";
         String expected = "[[@0,0:0='<',<LDELIM>,1:0], [@1,1:1='@',<AT>,1:1], [@2,2:2='r',<ID>,1:2], " +
@@ -194,7 +194,7 @@ public class TestLexer extends BaseTest
     }
 
     @Test
-    public void testRegion()
+    void testRegion()
     {
         String template = "<@r()>";
         String expected = "[[@0,0:0='<',<LDELIM>,1:0], [@1,1:1='@',<AT>,1:1], [@2,2:2='r',<ID>,1:2], " +

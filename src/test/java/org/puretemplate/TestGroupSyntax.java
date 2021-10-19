@@ -1,18 +1,18 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestGroupSyntax extends BaseTest
+class TestGroupSyntax extends BaseTest
 {
     @Test
-    public void testSimpleGroup()
+    void testSimpleGroup()
     {
         String templates = "t() ::= <<foo>>" + NEWLINE;
 
@@ -22,7 +22,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testEscapedQuote()
+    void testEscapedQuote()
     {
         // setTest(ranges) ::= "<ranges; separator=\"||\">"
         // has to unescape the strings.
@@ -36,7 +36,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testMultiTemplates()
+    void testMultiTemplates()
     {
         String templates = "ta(x) ::= \"[<x>]\"" +
             NEWLINE +
@@ -70,7 +70,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testSetDefaultDelimiters() throws IOException
+    void testSetDefaultDelimiters() throws IOException
     {
         String templates = "delimiters \"<\", \">\"" + NEWLINE + "ta(x) ::= \"[<x>]\"" + NEWLINE;
 
@@ -91,7 +91,7 @@ public class TestGroupSyntax extends BaseTest
      * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/131">antlr/stringtemplate4#131</a>.
      */
     @Test
-    public void testSetDefaultDelimitersForStringBasedGroup()
+    void testSetDefaultDelimitersForStringBasedGroup()
     {
         String templates = "delimiters \"<\", \">\"" +
             NEWLINE +
@@ -119,7 +119,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testSetNonDefaultDelimiters()
+    void testSetNonDefaultDelimiters()
     {
         String templates = "delimiters \"%\", \"%\"" + NEWLINE + "ta(x) ::= \"[%x%]\"" + NEWLINE;
 
@@ -134,7 +134,7 @@ public class TestGroupSyntax extends BaseTest
      * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/84">antlr/stringtemplate4#84</a>.
      */
     @Test
-    public void testSetUnsupportedDelimiters_At() throws IOException
+    void testSetUnsupportedDelimiters_At() throws IOException
     {
         String templates = "delimiters \"@\", \"@\"" + NEWLINE + "ta(x) ::= \"[<x>]\"" + NEWLINE;
 
@@ -154,7 +154,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testSingleTemplateWithArgs()
+    void testSingleTemplateWithArgs()
     {
         String templates = "t(a,b) ::= \"[<a>]\"" + NEWLINE;
 
@@ -164,7 +164,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testDefaultValues()
+    void testDefaultValues()
     {
         String templates = "t(a={def1},b=\"def2\") ::= \"[<a>]\"" + NEWLINE;
 
@@ -174,7 +174,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testDefaultValues2()
+    void testDefaultValues2()
     {
         String templates = "t(x, y, a={def1}, b=\"def2\") ::= \"[<a>]\"" + NEWLINE;
 
@@ -186,7 +186,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testDefaultValueTemplateWithArg()
+    void testDefaultValueTemplateWithArg()
     {
         String templates = "t(a={x | 2*<x>}) ::= \"[<a>]\"" + NEWLINE;
 
@@ -196,7 +196,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testDefaultValueBehaviorTrue() throws IOException
+    void testDefaultValueBehaviorTrue() throws IOException
     {
         String templates = "t(a=true) ::= <<\n" + "<a><if(a)>+<else>-<endif>\n" + ">>\n";
 
@@ -207,7 +207,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testDefaultValueBehaviorFalse() throws IOException
+    void testDefaultValueBehaviorFalse() throws IOException
     {
         String templates = "t(a=false) ::= <<\n" + "<a><if(a)>+<else>-<endif>\n" + ">>\n";
 
@@ -218,7 +218,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testDefaultValueBehaviorEmptyTemplate() throws IOException
+    void testDefaultValueBehaviorEmptyTemplate() throws IOException
     {
         String templates = "t(a={}) ::= <<\n" + "<a><if(a)>+<else>-<endif>\n" + ">>\n";
 
@@ -229,7 +229,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testDefaultValueBehaviorEmptyList() throws IOException
+    void testDefaultValueBehaviorEmptyList() throws IOException
     {
         String templates = "t(a=[]) ::= <<\n" + "<a><if(a)>+<else>-<endif>\n" + ">>\n";
 
@@ -240,7 +240,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testNestedTemplateInGroupFile()
+    void testNestedTemplateInGroupFile()
     {
         String templates = "t(a) ::= \"<a:{x | <x:{y | <y>}>}>\"" + NEWLINE;
 
@@ -250,7 +250,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testNestedDefaultValueTemplate()
+    void testNestedDefaultValueTemplate()
     {
         String templates = "t(a={x | <x:{y|<y>}>}) ::= \"ick\"" + NEWLINE;
 
@@ -261,7 +261,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testNestedDefaultValueTemplateWithEscapes()
+    void testNestedDefaultValueTemplateWithEscapes()
     {
         String templates = "t(a={x | \\< <x:{y|<y>\\}}>}) ::= \"[<a>]\"" + NEWLINE;
 
@@ -273,7 +273,7 @@ public class TestGroupSyntax extends BaseTest
     }
 
     @Test
-    public void testMessedUpTemplateDoesntCauseRuntimeError()
+    void testMessedUpTemplateDoesntCauseRuntimeError()
     {
         String templates = "main(p) ::= <<\n" + "<f(x=\"abc\")>\n" + ">>\n" + "\n" + "f() ::= <<\n" + "<x>\n" + ">>\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -296,7 +296,7 @@ public class TestGroupSyntax extends BaseTest
      * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/138">antlr/stringtemplate4#138</a>.
      */
     @Test
-    public void testIndentedComment() throws IOException
+    void testIndentedComment() throws IOException
     {
         String templates = "t() ::= <<" + NEWLINE + "  <! a comment !>" + NEWLINE + ">>" + NEWLINE;
 

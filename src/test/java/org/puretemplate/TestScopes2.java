@@ -1,14 +1,14 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestScopes2 extends BaseTest
+class TestScopes2 extends BaseTest
 {
     @Test
-    public void testIndexAttrVisibleLocallyOnly()
+    void testIndexAttrVisibleLocallyOnly()
     {
         String templates = "t(names) ::= \"<names:{n | <u(n)>}>\"\n" + "u(x) ::= \"<i>:<x>\"";
         ErrorBuffer errors = new ErrorBuffer();

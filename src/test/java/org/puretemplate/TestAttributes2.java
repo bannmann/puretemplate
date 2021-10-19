@@ -1,13 +1,13 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TestAttributes2 extends BaseTest
+class TestAttributes2 extends BaseTest
 {
     @Test
-    public void testRedefOfKeyInClone()
+    void testRedefOfKeyInClone()
     {
         ST a = new ST("x");
         // a has no formal args
@@ -25,7 +25,7 @@ public class TestAttributes2 extends BaseTest
      * @see <a href="https://github.com/antlr/stringtemplate4/issues/98">antlr/stringtemplate4#98</a>
      */
     @Test
-    public void testRedefOfKeyInCloneAfterAddingAttribute()
+    void testRedefOfKeyInCloneAfterAddingAttribute()
     {
         ST a = new ST("x");
         a.add("y", "eh?");  // This forces formal def of "y" attribute

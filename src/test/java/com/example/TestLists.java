@@ -1,13 +1,13 @@
 package com.example;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 
-public class TestLists extends BaseTest
+class TestLists extends BaseTest
 {
     @Test
-    public void testJustCat()
+    void testJustCat()
     {
         Context context = makeTemplateContext("<[names,phones]>").add("names", "Ter")
             .add("names", "Tom")
@@ -17,21 +17,21 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testListLiteralWithEmptyElements()
+    void testListLiteralWithEmptyElements()
     {
         Context context = makeTemplateContext("<[\"Ter\",,\"Jesse\"]:{n | <i>:<n>}; separator=\", \", null={foo}>");
         assertRenderingResult("1:Ter, foo, 2:Jesse", context);
     }
 
     @Test
-    public void testListLiteralWithEmptyFirstElement()
+    void testListLiteralWithEmptyFirstElement()
     {
         Context context = makeTemplateContext("<[,\"Ter\",\"Jesse\"]:{n | <i>:<n>}; separator=\", \", null={foo}>");
         assertRenderingResult("foo, 1:Ter, 2:Jesse", context);
     }
 
     @Test
-    public void testLength()
+    void testLength()
     {
         Context context = makeTemplateContext("<length([names,phones])>").add("names", "Ter")
             .add("names", "Tom")
@@ -41,7 +41,7 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testCat2Attributes()
+    void testCat2Attributes()
     {
         Context context = makeTemplateContext("<[names,phones]; separator=\", \">").add("names", "Ter")
             .add("names", "Tom")
@@ -51,7 +51,7 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testCat2AttributesWithApply()
+    void testCat2AttributesWithApply()
     {
         Context context = makeTemplateContext("<[names,phones]:{a|<a>.}>").add("names", "Ter")
             .add("names", "Tom")
@@ -61,7 +61,7 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testCat3Attributes()
+    void testCat3Attributes()
     {
         Context context = makeTemplateContext("<[names,phones,salaries]; separator=\", \">").add("names", "Ter")
             .add("names", "Tom")
@@ -73,7 +73,7 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testCatWithTemplateApplicationAsElement()
+    void testCatWithTemplateApplicationAsElement()
     {
         Context context = makeTemplateContext("<[names:{n|<n>!},phones]; separator=\", \">").add("names", "Ter")
             .add("names", "Tom")
@@ -83,10 +83,10 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testCatWithIFAsElement()
+    void testCatWithIFAsElement()
     {
         Context context = makeTemplateContext("<[{<if(names)>doh<endif>},phones]; separator=\", \">").add("names",
-            "Ter")
+                "Ter")
             .add("names", "Tom")
             .add("phones", "1")
             .add("phones", "2");
@@ -94,7 +94,7 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testCatNullValues()
+    void testCatNullValues()
     {
         // [a, b] must behave like <a><b>; if a==b==null, blank output
         // unless null argument.
@@ -104,7 +104,7 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testCatWithNullTemplateApplicationAsElement()
+    void testCatWithNullTemplateApplicationAsElement()
     {
         Context context = makeTemplateContext("<[names:{n|<n>!},\"foo\"]:{a|x}; separator=\", \">").add("phones", "1")
             .add("phones", "2");
@@ -112,11 +112,11 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testCatWithNestedTemplateApplicationAsElement()
+    void testCatWithNestedTemplateApplicationAsElement()
     {
         Context context = makeTemplateContext("<[names, [\"foo\",\"bar\"]:{x | <x>!},phones]; separator=\", \">").add(
-            "names",
-            "Ter")
+                "names",
+                "Ter")
             .add("names", "Tom")
             .add("phones", "1")
             .add("phones", "2");
@@ -124,7 +124,7 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testListAsTemplateArgument()
+    void testListAsTemplateArgument()
     {
         String templates = "test(names,phones) ::= \"<foo([names,phones])>\"" +
             NEWLINE +
@@ -140,7 +140,7 @@ public class TestLists extends BaseTest
     }
 
     @Test
-    public void testListWithTwoEmptyListsCollapsesToEmptyList()
+    void testListWithTwoEmptyListsCollapsesToEmptyList()
     {
         Context context = makeTemplateContext("<[[],[]]:{x | <x>!}; separator=\", \">").add("names", "Ter")
             .add("names", "Tom");

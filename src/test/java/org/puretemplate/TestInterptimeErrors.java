@@ -1,13 +1,13 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestInterptimeErrors extends BaseTest
+class TestInterptimeErrors extends BaseTest
 {
     public static class UserHiddenName
     {
@@ -35,7 +35,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testMissingEmbeddedTemplate()
+    void testMissingEmbeddedTemplate()
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -50,7 +50,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testMissingSuperTemplate()
+    void testMissingSuperTemplate()
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -70,7 +70,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testNoPropertyNotError()
+    void testNoPropertyNotError()
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -86,7 +86,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testHiddenPropertyNotError()
+    void testHiddenPropertyNotError()
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -102,7 +102,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testHiddenFieldNotError()
+    void testHiddenFieldNotError()
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -118,7 +118,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testSoleArg()
+    void testSoleArg()
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -134,7 +134,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testSoleArgUsingApplySyntax() throws IOException
+    void testSoleArgUsingApplySyntax() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -151,7 +151,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testUndefinedAttr()
+    void testUndefinedAttr()
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -166,7 +166,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testParallelAttributeIterationWithMissingArgs() throws IOException
+    void testParallelAttributeIterationWithMissingArgs() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
         STGroup group = new LegacyBareStGroup();
@@ -189,7 +189,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testStringTypeMismatch()
+    void testStringTypeMismatch()
     {
         ErrorBuffer errors = new ErrorBuffer();
         STGroup group = new LegacyBareStGroup();
@@ -203,7 +203,7 @@ public class TestInterptimeErrors extends BaseTest
     }
 
     @Test
-    public void testStringTypeMismatch2()
+    void testStringTypeMismatch2()
     {
         ErrorBuffer errors = new ErrorBuffer();
         STGroup group = new LegacyBareStGroup();

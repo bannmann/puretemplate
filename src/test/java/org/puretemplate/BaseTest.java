@@ -1,7 +1,7 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.NonNull;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
 
@@ -44,8 +44,8 @@ public abstract class BaseTest
             thrown = e;
         }
 
-        assertTrue("expecting " + exceptionType.getSimpleName() + ", got " + getClassName(thrown),
-            exceptionType.isInstance(thrown));
+        assertTrue(exceptionType.isInstance(thrown),
+            "expecting " + exceptionType.getSimpleName() + ", got " + getClassName(thrown));
         return exceptionType.cast(thrown);
     }
 
@@ -62,7 +62,7 @@ public abstract class BaseTest
         assertThrowsExceptionOfType(invocation, IllegalArgumentException.class);
     }
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         loader = new Loader();

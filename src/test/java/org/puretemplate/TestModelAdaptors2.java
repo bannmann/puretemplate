@@ -2,14 +2,14 @@ package org.puretemplate;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.example.TestModelAdaptors;
 
-public class TestModelAdaptors2 extends TestModelAdaptors
+class TestModelAdaptors2 extends TestModelAdaptors
 {
     @Test
-    public void testWeCanResetAdaptorCacheInvalidatedUponAdaptorReset() throws IOException
+    void testWeCanResetAdaptorCacheInvalidatedUponAdaptorReset() throws IOException
     {
         String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
         writeFile(tmpdir, "foo.stg", templates);

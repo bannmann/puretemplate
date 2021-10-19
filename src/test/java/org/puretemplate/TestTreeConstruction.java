@@ -1,15 +1,15 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.antlr.runtime.RuleReturnScope;
 import org.antlr.runtime.tree.Tree;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class TestTreeConstruction extends org.puretemplate.gUnitBase
+class TestTreeConstruction extends org.puretemplate.gUnitBase
 {
-    @Before
+    @BeforeEach
     public void setup()
     {
         lexerClassName = "org.puretemplate.STLexer";
@@ -17,22 +17,22 @@ public class TestTreeConstruction extends org.puretemplate.gUnitBase
     }
 
     @Test
-    public void test_template1() throws ReflectiveOperationException
+    void test_template1() throws ReflectiveOperationException
     {
         // gunit test on line 16
         RuleReturnScope rstruct = (RuleReturnScope) execParser("template", "<[]>", 16);
         Object actual = ((Tree) rstruct.getTree()).toStringTree();
         Object expecting = "(EXPR [)";
-        assertEquals("testing rule template", expecting, actual);
+        assertEquals(expecting, actual, "testing rule template");
     }
 
     @Test
-    public void test_template2() throws ReflectiveOperationException
+    void test_template2() throws ReflectiveOperationException
     {
         // gunit test on line 17
         RuleReturnScope rstruct = (RuleReturnScope) execParser("template", "<[a,b]>", 17);
         Object actual = ((Tree) rstruct.getTree()).toStringTree();
         Object expecting = "(EXPR ([ a b))";
-        assertEquals("testing rule template", expecting, actual);
+        assertEquals(expecting, actual, "testing rule template");
     }
 }

@@ -1,16 +1,16 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.debug.InterpEvent;
 
-public class TestDebugEvents extends BaseTest
+class TestDebugEvents extends BaseTest
 {
     @Test
-    public void testString()
+    void testString()
     {
         String templates = "t() ::= <<foo>>" + NEWLINE;
 
@@ -25,7 +25,7 @@ public class TestDebugEvents extends BaseTest
     }
 
     @Test
-    public void testAttribute()
+    void testAttribute()
     {
         String templates = "t(x) ::= << <x> >>" + NEWLINE;
 
@@ -42,7 +42,7 @@ public class TestDebugEvents extends BaseTest
     }
 
     @Test
-    public void testTemplateCall()
+    void testTemplateCall()
     {
         String templates = "t(x) ::= <<[<u()>]>>\n" + "u() ::= << <x> >>\n";
 
@@ -66,7 +66,7 @@ public class TestDebugEvents extends BaseTest
     }
 
     @Test
-    public void testEvalExprEventForSpecialCharacter()
+    void testEvalExprEventForSpecialCharacter()
     {
         String templates = "t() ::= <<[<\\n>]>>\n";
         //                            012 345

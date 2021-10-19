@@ -1,18 +1,18 @@
 package com.example;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestScopes extends BaseTest
+class TestScopes extends BaseTest
 {
     @Test
-    public void testSeesEnclosingAttr() throws IOException
+    void testSeesEnclosingAttr() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -26,7 +26,7 @@ public class TestScopes extends BaseTest
     }
 
     @Test
-    public void testMissingArg() throws IOException
+    void testMissingArg() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -41,7 +41,7 @@ public class TestScopes extends BaseTest
     }
 
     @Test
-    public void testUnknownAttr() throws IOException
+    void testUnknownAttr() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -56,7 +56,7 @@ public class TestScopes extends BaseTest
     }
 
     @Test
-    public void testArgWithSameNameAsEnclosing() throws IOException
+    void testArgWithSameNameAsEnclosing() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -71,7 +71,7 @@ public class TestScopes extends BaseTest
     }
 
     @Test
-    public void testIndexAttrVisibleLocallyOnly() throws IOException
+    void testIndexAttrVisibleLocallyOnly() throws IOException
     {
         String templates = "t(names) ::= \"<names:{n | <u(n)>}>\"\n" + "u(x) ::= \"<i>:<x>\"";
         ErrorBuffer errors = new ErrorBuffer();

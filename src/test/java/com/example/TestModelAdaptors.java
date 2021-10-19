@@ -1,13 +1,13 @@
 package com.example;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.TreeMap;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.error.RuntimeMessage;
@@ -15,6 +15,7 @@ import org.puretemplate.exception.NoSuchPropertyException;
 import org.puretemplate.misc.ErrorBufferAllErrors;
 import org.puretemplate.model.ModelAdaptor;
 
+@SuppressWarnings("java:S5786")
 public class TestModelAdaptors extends BaseTest
 {
     @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -71,7 +72,7 @@ public class TestModelAdaptors extends BaseTest
     }
 
     @Test
-    public void testSimpleAdaptor()
+    void testSimpleAdaptor()
     {
         String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
 
@@ -87,7 +88,7 @@ public class TestModelAdaptors extends BaseTest
     }
 
     @Test
-    public void testAdaptorAndBadProp()
+    void testAdaptorAndBadProp()
     {
         String templates = "foo(x) ::= \"<x.qqq>\"\n";
         ErrorBufferAllErrors errors = new ErrorBufferAllErrors();
@@ -110,7 +111,7 @@ public class TestModelAdaptors extends BaseTest
     }
 
     @Test
-    public void testAdaptorCoversSubclass()
+    void testAdaptorCoversSubclass()
     {
         String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
 
@@ -126,7 +127,7 @@ public class TestModelAdaptors extends BaseTest
     }
 
     @Test
-    public void testSeesMostSpecificAdaptor()
+    void testSeesMostSpecificAdaptor()
     {
         String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
 
@@ -149,7 +150,7 @@ public class TestModelAdaptors extends BaseTest
      * @see <a href="https://github.com/antlr/stringtemplate4/issues/214">antlr/stringtemplate4#214</a>
      */
     @Test
-    public void testHandlesNullKeys()
+    void testHandlesNullKeys()
     {
         String templates = "foo(x, y) ::= \"<x.(y); null={NULL}>\"";
 
@@ -168,7 +169,7 @@ public class TestModelAdaptors extends BaseTest
      * @see <a href="https://github.com/antlr/stringtemplate4/issues/214">antlr/stringtemplate4#214</a>
      */
     @Test
-    public void testHandlesKeysNotComparableToString()
+    void testHandlesKeysNotComparableToString()
     {
         String templates = "foo(x) ::= \"<x.keys>\"";
 

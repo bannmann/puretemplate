@@ -3,15 +3,15 @@ package com.example;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Group;
 
-public class TestDollarDelimiters extends BaseTest
+class TestDollarDelimiters extends BaseTest
 {
     @Test
-    public void testAttr()
+    void testAttr()
     {
         String template = "hi $name$!";
 
@@ -26,7 +26,7 @@ public class TestDollarDelimiters extends BaseTest
     }
 
     @Test
-    public void testParallelMap()
+    void testParallelMap()
     {
         String templates = "test(names,phones) ::= <<hi $names,phones:{n,p | $n$:$p$;}$>>\n";
 
@@ -47,7 +47,7 @@ public class TestDollarDelimiters extends BaseTest
     }
 
     @Test
-    public void testRefToAnotherTemplateInSameGroup() throws IOException
+    void testRefToAnotherTemplateInSameGroup() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a() ::= << <$b()$> >>\n");
@@ -62,7 +62,7 @@ public class TestDollarDelimiters extends BaseTest
     }
 
     @Test
-    public void testDefaultArgument() throws IOException
+    void testDefaultArgument() throws IOException
     {
         String templates = "method(name) ::= <<" +
             NEWLINE +
@@ -91,7 +91,7 @@ public class TestDollarDelimiters extends BaseTest
      * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/46">antlr/stringtemplate4#46</a>.
      */
     @Test
-    public void testDelimitersClause()
+    void testDelimitersClause()
     {
         String templates = "delimiters \"$\", \"$\"" +
             NEWLINE +
@@ -115,7 +115,7 @@ public class TestDollarDelimiters extends BaseTest
      * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/46">antlr/stringtemplate4#46</a>.
      */
     @Test
-    public void testDelimitersClauseInGroupString()
+    void testDelimitersClauseInGroupString()
     {
         Context context = loader.getGroup()
             .fromString("delimiters \"$\", \"$\"" +
@@ -140,7 +140,7 @@ public class TestDollarDelimiters extends BaseTest
      * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/66">antlr/stringtemplate4#66</a>.
      */
     @Test
-    public void testImportTemplatePreservesDelimiters() throws IOException
+    void testImportTemplatePreservesDelimiters() throws IOException
     {
         String groupFile = "group GenerateHtml;" +
             NEWLINE +
@@ -180,7 +180,7 @@ public class TestDollarDelimiters extends BaseTest
      * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/66">antlr/stringtemplate4#66</a>.
      */
     @Test
-    public void testImportGroupPreservesDelimiters() throws IOException
+    void testImportGroupPreservesDelimiters() throws IOException
     {
         String groupFile = "group GenerateHtml;" +
             NEWLINE +
@@ -211,7 +211,7 @@ public class TestDollarDelimiters extends BaseTest
      * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/66">antlr/stringtemplate4#66</a>.
      */
     @Test
-    public void testDelimitersClauseOverridesConstructorDelimiters() throws IOException
+    void testDelimitersClauseOverridesConstructorDelimiters() throws IOException
     {
         String groupFile = "group GenerateHtml;" +
             NEWLINE +
@@ -244,7 +244,7 @@ public class TestDollarDelimiters extends BaseTest
      * This is part of a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/66">antlr/stringtemplate4#66</a>.
      */
     @Test
-    public void testDelimitersClauseOverridesInheritedDelimiters() throws IOException
+    void testDelimitersClauseOverridesInheritedDelimiters() throws IOException
     {
         String groupFile = "group GenerateHtml;" +
             NEWLINE +

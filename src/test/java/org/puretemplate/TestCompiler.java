@@ -1,18 +1,18 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestCompiler extends BaseTest
+class TestCompiler extends BaseTest
 {
 
     @Test
-    public void testAttr()
+    void testAttr()
     {
         String template = "hi <name>";
         CompiledST code = new Compiler().compile(template);
@@ -25,7 +25,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testInclude()
+    void testInclude()
     {
         String template = "hi <foo()>";
         CompiledST code = new Compiler().compile(template);
@@ -38,7 +38,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testIncludeWithPassThrough()
+    void testIncludeWithPassThrough()
     {
         String template = "hi <foo(...)>";
         CompiledST code = new Compiler().compile(template);
@@ -51,7 +51,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testIncludeWithPartialPassThrough()
+    void testIncludeWithPartialPassThrough()
     {
         String template = "hi <foo(x=y,...)>";
         CompiledST code = new Compiler().compile(template);
@@ -64,7 +64,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testSuperInclude()
+    void testSuperInclude()
     {
         String template = "<super.foo()>";
         CompiledST code = new Compiler().compile(template);
@@ -78,7 +78,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testSuperIncludeWithArgs()
+    void testSuperIncludeWithArgs()
     {
         String template = "<super.foo(a,{b})>";
         CompiledST code = new Compiler().compile(template);
@@ -91,7 +91,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testSuperIncludeWithNamedArgs()
+    void testSuperIncludeWithNamedArgs()
     {
         String template = "<super.foo(x=a,y={b})>";
         CompiledST code = new Compiler().compile(template);
@@ -104,7 +104,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testIncludeWithArgs()
+    void testIncludeWithArgs()
     {
         String template = "hi <foo(a,b)>";
         CompiledST code = new Compiler().compile(template);
@@ -117,7 +117,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testAnonIncludeArgs()
+    void testAnonIncludeArgs()
     {
         String template = "<({ a, b | <a><b>})>";
         CompiledST code = new Compiler().compile(template);
@@ -130,7 +130,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testAnonIncludeArgMismatch()
+    void testAnonIncludeArgMismatch()
     {
         ErrorListener errors = new ErrorBuffer();
         String template = "<a:{foo}>";
@@ -142,7 +142,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testAnonIncludeArgMismatch2()
+    void testAnonIncludeArgMismatch2()
     {
         ErrorListener errors = new ErrorBuffer();
         String template = "<a,b:{x|foo}>";
@@ -154,7 +154,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testAnonIncludeArgMismatch3()
+    void testAnonIncludeArgMismatch3()
     {
         ErrorListener errors = new ErrorBuffer();
         String template = "<a:{x|foo},{bar}>";
@@ -166,7 +166,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testIndirectIncludeWitArgs()
+    void testIndirectIncludeWitArgs()
     {
         String template = "hi <(foo)(a,b)>";
         CompiledST code = new Compiler().compile(template);
@@ -179,7 +179,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testProp()
+    void testProp()
     {
         String template = "hi <a.b>";
         CompiledST code = new Compiler().compile(template);
@@ -192,7 +192,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testProp2()
+    void testProp2()
     {
         String template = "<u.id>: <u.name>";
         CompiledST code = new Compiler().compile(template);
@@ -205,7 +205,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testMap()
+    void testMap()
     {
         String template = "<name:bold()>";
         CompiledST code = new Compiler().compile(template);
@@ -218,7 +218,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testMapAsOption()
+    void testMapAsOption()
     {
         String template = "<a; wrap=name:bold()>";
         CompiledST code = new Compiler().compile(template);
@@ -231,7 +231,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testMapArg()
+    void testMapArg()
     {
         String template = "<name:bold(x)>";
         CompiledST code = new Compiler().compile(template);
@@ -244,7 +244,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testIndirectMapArg()
+    void testIndirectMapArg()
     {
         String template = "<name:(t)(x)>";
         CompiledST code = new Compiler().compile(template);
@@ -257,7 +257,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testRepeatedMap()
+    void testRepeatedMap()
     {
         String template = "<name:bold():italics()>";
         CompiledST code = new Compiler().compile(template);
@@ -270,7 +270,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testRepeatedMapArg()
+    void testRepeatedMapArg()
     {
         String template = "<name:bold(x):italics(x,y)>";
         CompiledST code = new Compiler().compile(template);
@@ -284,7 +284,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testRotMap()
+    void testRotMap()
     {
         String template = "<name:bold(),italics()>";
         CompiledST code = new Compiler().compile(template);
@@ -297,7 +297,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testRotMapArg()
+    void testRotMapArg()
     {
         String template = "<name:bold(x),italics()>";
         CompiledST code = new Compiler().compile(template);
@@ -310,7 +310,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testZipMap()
+    void testZipMap()
     {
         String template = "<names,phones:bold()>";
         CompiledST code = new Compiler().compile(template);
@@ -323,7 +323,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testZipMapArg()
+    void testZipMapArg()
     {
         String template = "<names,phones:bold(x)>";
         CompiledST code = new Compiler().compile(template);
@@ -336,7 +336,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testAnonMap()
+    void testAnonMap()
     {
         String template = "<name:{n | <n>}>";
         CompiledST code = new Compiler().compile(template);
@@ -349,7 +349,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testAnonZipMap()
+    void testAnonZipMap()
     {
         String template = "<a,b:{x,y | <x><y>}>";
         CompiledST code = new Compiler().compile(template);
@@ -362,7 +362,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testIf()
+    void testIf()
     {
         String template = "go: <if(name)>hi, foo<endif>";
         CompiledST code = new Compiler().compile(template);
@@ -375,7 +375,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testIfElse()
+    void testIfElse()
     {
         String template = "go: <if(name)>hi, foo<else>bye<endif>";
         CompiledST code = new Compiler().compile(template);
@@ -393,7 +393,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testElseIf()
+    void testElseIf()
     {
         String template = "go: <if(name)>hi, foo<elseif(user)>a user<endif>";
         CompiledST code = new Compiler().compile(template);
@@ -413,7 +413,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testElseIfElse()
+    void testElseIfElse()
     {
         String template = "go: <if(name)>hi, foo<elseif(user)>a user<else>bye<endif>";
         CompiledST code = new Compiler().compile(template);
@@ -435,7 +435,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testOption()
+    void testOption()
     {
         String template = "hi <name; separator=\"x\">";
         CompiledST code = new Compiler().compile(template);
@@ -448,7 +448,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testOptionAsTemplate()
+    void testOptionAsTemplate()
     {
         String template = "hi <name; separator={, }>";
         CompiledST code = new Compiler().compile(template);
@@ -461,7 +461,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testOptions()
+    void testOptions()
     {
         String template = "hi <name; anchor, wrap=foo(), separator=\", \">";
         CompiledST code = new Compiler().compile(template);
@@ -484,7 +484,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testEmptyList()
+    void testEmptyList()
     {
         String template = "<[]>";
         CompiledST code = new Compiler().compile(template);
@@ -497,7 +497,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testList()
+    void testList()
     {
         String template = "<[a,b]>";
         CompiledST code = new Compiler().compile(template);
@@ -510,7 +510,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testEmbeddedRegion()
+    void testEmbeddedRegion()
     {
         String template = "<@r>foo<@end>";
         // compile as if in root dir and in template 'a'
@@ -524,7 +524,7 @@ public class TestCompiler extends BaseTest
     }
 
     @Test
-    public void testRegion()
+    void testRegion()
     {
         String template = "x:<@r()>";
         // compile as if in root dir and in template 'a'

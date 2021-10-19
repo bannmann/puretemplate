@@ -1,7 +1,7 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -14,13 +14,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestGroups extends BaseTest
+class TestGroups extends BaseTest
 {
     @Test
-    public void testSimpleGroup() throws IOException
+    void testSimpleGroup() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a(x) ::= <<foo>>");
@@ -33,7 +33,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testEscapeOneRightAngle() throws IOException
+    void testEscapeOneRightAngle() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a(x) ::= << > >>");
@@ -49,7 +49,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testEscapeOneRightAngle2() throws IOException
+    void testEscapeOneRightAngle2() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a(x) ::= << \\> >>");
@@ -65,7 +65,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testEscapeJavaRightShift() throws IOException
+    void testEscapeJavaRightShift() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a(x) ::= << \\>> >>");
@@ -81,7 +81,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testEscapeJavaRightShift2() throws IOException
+    void testEscapeJavaRightShift2() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a(x) ::= << >\\> >>");
@@ -97,7 +97,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testEscapeJavaRightShiftAtRightEdge() throws IOException
+    void testEscapeJavaRightShiftAtRightEdge() throws IOException
     {
         String dir = getRandomDir();
         writeFile(dir, "a.st", "a(x) ::= <<\\>>>"); // <<\>>>
@@ -113,7 +113,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testEscapeJavaRightShiftAtRightEdge2() throws IOException
+    void testEscapeJavaRightShiftAtRightEdge2() throws IOException
     {
         String dir = getRandomDir();
         writeFile(dir, "a.st", "a(x) ::= <<>\\>>>");
@@ -129,7 +129,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testSimpleGroupFromString()
+    void testSimpleGroupFromString()
     {
         String templates = "a(x) ::= <<foo>>\n" + "b() ::= <<bar>>\n";
 
@@ -140,7 +140,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testGroupWithTwoTemplates() throws IOException
+    void testGroupWithTwoTemplates() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a(x) ::= <<foo>>");
@@ -155,7 +155,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testSubdir() throws IOException
+    void testSubdir() throws IOException
     {
         // /randomdir/a and /randomdir/subdir/b
 
@@ -173,7 +173,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testSubdirWithSubtemplate() throws IOException
+    void testSubdirWithSubtemplate() throws IOException
     {
         // /randomdir/a and /randomdir/subdir/b
 
@@ -191,7 +191,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testGroupFileInDir() throws IOException
+    void testGroupFileInDir() throws IOException
     {
         // /randomdir/a and /randomdir/group.stg with b and c templates
 
@@ -212,7 +212,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testSubSubdir() throws IOException
+    void testSubSubdir() throws IOException
     {
         // /randomdir/a and /randomdir/subdir/b
 
@@ -229,7 +229,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testGroupFileInSubDir() throws IOException
+    void testGroupFileInSubDir() throws IOException
     {
         // /randomdir/a and /randomdir/sbdir/group.stg with b and c templates
 
@@ -248,7 +248,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDupDef() throws IOException
+    void testDupDef() throws IOException
     {
         String templates = "b() ::= \"bar\"\n" + "b() ::= \"duh\"\n";
 
@@ -258,7 +258,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testAlias()
+    void testAlias()
     {
         String templates = "a() ::= \"bar\"\n" + "b ::= a\n";
 
@@ -269,7 +269,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testAliasWithArgs()
+    void testAliasWithArgs()
     {
         String templates = "a(x,y) ::= \"<x><y>\"\n" + "b ::= a\n";
 
@@ -282,7 +282,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testSimpleDefaultArg() throws IOException
+    void testSimpleDefaultArg() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a() ::= << <b()> >>\n");
@@ -296,7 +296,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDefaultArgument()
+    void testDefaultArgument()
     {
         String templates = "method(name) ::= <<" +
             NEWLINE +
@@ -315,7 +315,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testBooleanDefaultArguments()
+    void testBooleanDefaultArguments()
     {
         String templates = "method(name) ::= <<" +
             NEWLINE +
@@ -334,7 +334,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDefaultArgument2()
+    void testDefaultArgument2()
     {
         String templates = "stat(name,value=\"99\") ::= \"x=<value>; // <name>\"" + NEWLINE;
 
@@ -346,7 +346,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testSubtemplateAsDefaultArgSeesOtherArgs()
+    void testSubtemplateAsDefaultArgSeesOtherArgs()
     {
         String templates = "t(x,y={<x:{s|<s><z>}>},z=\"foo\") ::= <<\n" + "x: <x>\n" + "y: <y>\n" + ">>" + NEWLINE;
 
@@ -358,7 +358,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testEarlyEvalOfDefaultArgs()
+    void testEarlyEvalOfDefaultArgs()
     {
         String templates = "s(x,y={<(x)>}) ::= \"<x><y>\"\n"; // should see x in def arg
 
@@ -370,7 +370,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDefaultArgumentAsSimpleTemplate()
+    void testDefaultArgumentAsSimpleTemplate()
     {
         String templates = "stat(name,value={99}) ::= \"x=<value>; // <name>\"" + NEWLINE;
 
@@ -382,7 +382,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDefaultArgumentManuallySet()
+    void testDefaultArgumentManuallySet()
     {
         class Field
         {
@@ -413,7 +413,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDefaultArgumentSeesVarFromDynamicScoping()
+    void testDefaultArgumentSeesVarFromDynamicScoping()
     {
         class Field
         {
@@ -443,7 +443,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDefaultArgumentImplicitlySet2()
+    void testDefaultArgumentImplicitlySet2()
     {
         class Field
         {
@@ -474,7 +474,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDefaultArgumentAsTemplate()
+    void testDefaultArgumentAsTemplate()
     {
         String templates = "method(name,size) ::= <<" +
             NEWLINE +
@@ -494,7 +494,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDefaultArgumentAsTemplate2()
+    void testDefaultArgumentAsTemplate2()
     {
         String templates = "method(name,size) ::= <<" +
             NEWLINE +
@@ -514,7 +514,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDoNotUseDefaultArgument()
+    void testDoNotUseDefaultArgument()
     {
         String templates = "method(name) ::= <<" +
             NEWLINE +
@@ -533,7 +533,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testDefaultArgumentInParensToEvalEarly()
+    void testDefaultArgumentInParensToEvalEarly()
     {
         class Counter
         {
@@ -556,7 +556,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testTrueFalseArgs()
+    void testTrueFalseArgs()
     {
         String templates = "f(x,y) ::= \"<x><y>\"\n" + "g() ::= \"<f(true,{a})>\"";
 
@@ -567,7 +567,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testNamedArgsInOrder()
+    void testNamedArgsInOrder()
     {
         String templates = "f(x,y) ::= \"<x><y>\"\n" + "g() ::= \"<f(x={a},y={b})>\"";
 
@@ -578,7 +578,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testNamedArgsOutOfOrder()
+    void testNamedArgsOutOfOrder()
     {
         String templates = "f(x,y) ::= \"<x><y>\"\n" + "g() ::= \"<f(y={b},x={a})>\"";
 
@@ -589,7 +589,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testUnknownNamedArg() throws IOException
+    void testUnknownNamedArg() throws IOException
     {
         String templates = "f(x,y) ::= \"<x><y>\"\n" + "g() ::= \"<f(x={a},z={b})>\"";
         ErrorBuffer errors = new ErrorBuffer();
@@ -601,7 +601,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testMissingNamedArg() throws IOException
+    void testMissingNamedArg() throws IOException
     {
         String group = "f(x,y) ::= \"<x><y>\"\n" + "g() ::= \"<f(x={a},{b})>\"";
 
@@ -611,7 +611,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testNamedArgsNotAllowInIndirectInclude() throws IOException
+    void testNamedArgsNotAllowInIndirectInclude() throws IOException
     {
         String group = "f(x,y) ::= \"<x><y>\"\n" + "g(name) ::= \"<(name)(x={a},y={b})>\"";
         ErrorBuffer errors = getGroupLoadingErrors(group);
@@ -620,7 +620,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testCantSeeGroupDirIfGroupFileOfSameName() throws IOException
+    void testCantSeeGroupDirIfGroupFileOfSameName() throws IOException
     {
         String dir = getRandomDir();
         String a = "a() ::= <<dir1 a>>\n";
@@ -637,7 +637,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testGroupFileImport() throws IOException
+    void testGroupFileImport() throws IOException
     {
         // /randomdir/group1.stg (a template) and /randomdir/group2.stg with b.
         // group1 imports group2, a includes b
@@ -668,7 +668,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testGetTemplateNames()
+    void testGetTemplateNames()
     {
         String templates = "t() ::= \"foo\"\n" + "main() ::= \"<t()>\"";
         writeFile(tmpdir, "t.stg", templates);
@@ -688,7 +688,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testLineBreakInGroup()
+    void testLineBreakInGroup()
     {
         String templates = "t() ::= <<" + NEWLINE + "Foo <\\\\>" + NEWLINE + "  \t  bar" + NEWLINE + ">>" + NEWLINE;
 
@@ -699,7 +699,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testLineBreakInGroup2()
+    void testLineBreakInGroup2()
     {
         String templates = "t() ::= <<" +
             NEWLINE +
@@ -717,7 +717,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testLineBreakMissingTrailingNewline()
+    void testLineBreakMissingTrailingNewline()
     {
         writeFile(tmpdir, "t.stg", "a(x) ::= <<<\\\\>\r\n>>"); // that is <<<\\>>> not an escaped >>
         ErrorBuffer errors = new ErrorBuffer();
@@ -737,7 +737,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testLineBreakWithScarfedTrailingNewline()
+    void testLineBreakWithScarfedTrailingNewline()
     {
         writeFile(tmpdir, "t.stg", "a(x) ::= <<<\\\\>\r\n>>"); // \r\n removed as trailing whitespace
         ErrorBuffer errors = new ErrorBuffer();
@@ -775,7 +775,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testGroupStringMultipleThreads() throws ExecutionException, InterruptedException
+    void testGroupStringMultipleThreads() throws ExecutionException, InterruptedException
     {
         Group group = loader.getGroup()
             .fromString("stat(name,value={99}) ::= \"x=<value>; // <name>\"" + NEWLINE)
@@ -800,7 +800,7 @@ public class TestGroups extends BaseTest
     }
 
     @Test
-    public void testGroupFileMultipleThreads() throws IOException, ExecutionException, InterruptedException
+    void testGroupFileMultipleThreads() throws IOException, ExecutionException, InterruptedException
     {
         // /randomdir/a and /randomdir/group.stg with b and c templates
         String dir = getRandomDir();

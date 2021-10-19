@@ -1,16 +1,16 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.exception.TemplateException;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestSyntaxErrors extends BaseTest
+class TestSyntaxErrors extends BaseTest
 {
     @Test
-    public void testEmptyExpr()
+    void testEmptyExpr()
     {
         String template = " <> ";
         STGroup group = new LegacyBareStGroup();
@@ -30,7 +30,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testEmptyExpr2()
+    void testEmptyExpr2()
     {
         String template = "hi <> ";
         STGroup group = new LegacyBareStGroup();
@@ -50,7 +50,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testUnterminatedExpr()
+    void testUnterminatedExpr()
     {
         String template = "hi <t()$";
         STGroup group = new LegacyBareStGroup();
@@ -75,7 +75,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testWeirdChar()
+    void testWeirdChar()
     {
         String template = "   <*>";
         STGroup group = new LegacyBareStGroup();
@@ -98,7 +98,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testWeirdChar2()
+    void testWeirdChar2()
     {
         String template = "\n<\\\n";
         STGroup group = new LegacyBareStGroup();
@@ -121,7 +121,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testValidButOutOfPlaceChar()
+    void testValidButOutOfPlaceChar()
     {
         String templates = "foo() ::= <<hi <.> mom>>\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -134,7 +134,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testValidButOutOfPlaceCharOnDifferentLine()
+    void testValidButOutOfPlaceCharOnDifferentLine()
     {
         String templates = "foo() ::= \"hi <\n" + ".> mom\"\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -149,7 +149,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testErrorInNestedTemplate()
+    void testErrorInNestedTemplate()
     {
         String templates = "foo() ::= \"hi <name:{[<aaa.bb!>]}> mom\"\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -162,7 +162,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testEOFInExpr()
+    void testEOFInExpr()
     {
         String templates = "foo() ::= \"hi <name\"";
         writeFile(tmpdir, "t.stg", templates);
@@ -175,7 +175,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testEOFInExpr2()
+    void testEOFInExpr2()
     {
         String templates = "foo() ::= \"hi <name:{x|[<aaa.bb>]}\"\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -188,7 +188,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testEOFInString()
+    void testEOFInString()
     {
         String templates = "foo() ::= << <f(\"foo>>\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -201,7 +201,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testNonterminatedComment()
+    void testNonterminatedComment()
     {
         String templates = "foo() ::= << <!foo> >>";
         writeFile(tmpdir, "t.stg", templates);
@@ -214,7 +214,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testMissingRPAREN()
+    void testMissingRPAREN()
     {
         String templates = "foo() ::= \"hi <foo(>\"\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -227,7 +227,7 @@ public class TestSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testRotPar()
+    void testRotPar()
     {
         String templates = "foo() ::= \"<a,b:t(),u()>\"\n";
         writeFile(tmpdir, "t.stg", templates);

@@ -1,18 +1,18 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestRegions extends BaseTest
+class TestRegions extends BaseTest
 {
     @Test
-    public void testEmbeddedRegion() throws IOException
+    void testEmbeddedRegion() throws IOException
     {
         String dir = getRandomDir();
         String groupFile = "a() ::= <<\n" + "[<@r>bar<@end>]\n" + ">>\n";
@@ -23,7 +23,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testRegion() throws IOException
+    void testRegion() throws IOException
     {
         String dir = getRandomDir();
         String groupFile = "a() ::= <<\n" + "[<@r()>]\n" + ">>\n";
@@ -34,7 +34,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testDefineRegionInSubgroup() throws IOException
+    void testDefineRegionInSubgroup() throws IOException
     {
         String dir = getRandomDir();
         writeFile(dir, "g1.stg", "a() ::= <<[<@r()>]>>\n");
@@ -48,7 +48,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testDefineRegionInSubgroupOneInSubdir() throws IOException
+    void testDefineRegionInSubgroupOneInSubdir() throws IOException
     {
         String dir = getRandomDir();
         writeFile(dir, "g1.stg", "a() ::= <<[<@r()>]>>\n");
@@ -62,7 +62,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testDefineRegionInSubgroupBothInSubdir() throws IOException
+    void testDefineRegionInSubgroupBothInSubdir() throws IOException
     {
         String dir = getRandomDir();
         writeFile(dir + "/subdir", "g1.stg", "a() ::= <<[<@r()>]>>\n");
@@ -76,7 +76,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testDefineRegionInSubgroupThatRefsSuper() throws IOException
+    void testDefineRegionInSubgroupThatRefsSuper() throws IOException
     {
         String dir = getRandomDir();
         String g1 = "a() ::= <<[<@r>foo<@end>]>>\n";
@@ -92,7 +92,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testDefineRegionInSubgroup2() throws IOException
+    void testDefineRegionInSubgroup2() throws IOException
     {
         String dir = getRandomDir();
         String g1 = "a() ::= <<[<@r()>]>>\n";
@@ -108,7 +108,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testDefineRegionInSameGroup() throws IOException
+    void testDefineRegionInSameGroup() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= <<[<@r()>]>>\n" + "@a.r() ::= <<foo>>\n";
@@ -120,7 +120,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testAnonymousTemplateInRegion() throws IOException
+    void testAnonymousTemplateInRegion() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= <<[<@r()>]>>\n" + "@a.r() ::= <<\n" + "<[\"foo\"]:{x|<x>}>\n" + ">>\n";
@@ -132,7 +132,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testAnonymousTemplateInRegionInSubdir() throws IOException
+    void testAnonymousTemplateInRegionInSubdir() throws IOException
     {
         //fails since it makes region name /region__/g/a/_r
         Path dir = getRandomDirPath();
@@ -147,7 +147,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testCantDefineEmbeddedRegionAgain() throws IOException
+    void testCantDefineEmbeddedRegionAgain() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= <<[<@r>foo<@end>]>>\n" + "@a.r() ::= <<bar>>\n"; // error; dup
@@ -162,7 +162,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testCantDefineEmbeddedRegionAgainInTemplate() throws IOException
+    void testCantDefineEmbeddedRegionAgainInTemplate() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= <<\n" + "[\n" + "<@r>foo<@end>\n" + "<@r()>" + "]\n" + ">>\n"; // error; dup
@@ -176,7 +176,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testMissingRegionName() throws IOException
+    void testMissingRegionName() throws IOException
     {
         String dir = getRandomDir();
         String g = "@t.() ::= \"\"\n";
@@ -190,7 +190,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testIndentBeforeRegionIsIgnored() throws IOException
+    void testIndentBeforeRegionIsIgnored() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= <<[\n" + "  <@r>\n" + "  foo\n" + "  <@end>\n" + "]>>\n";
@@ -202,7 +202,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testRegionOverrideStripsNewlines() throws IOException
+    void testRegionOverrideStripsNewlines() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= \"X<@r()>Y\"" + "@a.r() ::= <<\n" + "foo\n" + ">>\n";
@@ -223,7 +223,7 @@ public class TestRegions extends BaseTest
     //
 
     @Test
-    public void testRegionOverrideRefSuperRegion() throws IOException
+    void testRegionOverrideRefSuperRegion() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= \"X<@r()>Y\"" + "@a.r() ::= \"foo\"" + NEWLINE;
@@ -242,7 +242,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testRegionOverrideRefSuperRegion2Levels()
+    void testRegionOverrideRefSuperRegion2Levels()
     {
         String g = "a() ::= \"X<@r()>Y\"\n" + "@a.r() ::= \"foo\"\n";
         STGroup group = new STGroupString(g);
@@ -259,7 +259,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testRegionOverrideRefSuperRegion3Levels() throws IOException
+    void testRegionOverrideRefSuperRegion3Levels() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= \"X<@r()>Y\"" + "@a.r() ::= \"foo\"" + NEWLINE;
@@ -284,7 +284,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testRegionOverrideRefSuperImplicitRegion() throws IOException
+    void testRegionOverrideRefSuperImplicitRegion() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= \"X<@r>foo<@end>Y\"" + NEWLINE;
@@ -303,7 +303,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testUnknownRegionDefError() throws IOException
+    void testUnknownRegionDefError() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= <<\n" + "X<@r()>Y\n" + ">>\n" + "@a.q() ::= \"foo\"" + NEWLINE;
@@ -319,7 +319,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testSuperRegionRefMissingOk() throws IOException
+    void testSuperRegionRefMissingOk() throws IOException
     {
         String dir = getRandomDir();
         String g = "a() ::= \"X<@r()>Y\"" + "@a.r() ::= \"foo\"" + NEWLINE;
@@ -340,7 +340,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testEmbeddedRegionOnOneLine() throws IOException
+    void testEmbeddedRegionOnOneLine() throws IOException
     {
         String dir = getRandomDir();
         String groupFile = "a() ::= <<\n" + "[\n" + "  <@r>bar<@end>\n" + "]\n" + ">>\n";
@@ -352,7 +352,7 @@ public class TestRegions extends BaseTest
     }
 
     @Test
-    public void testEmbeddedRegionTagsOnSeparateLines() throws IOException
+    void testEmbeddedRegionTagsOnSeparateLines() throws IOException
     {
         String dir = getRandomDir();
         String groupFile = "a() ::= <<\n" + "[\n" + "  <@r>\n" + "  bar\n" + "  <@end>\n" + "]\n" + ">>\n";

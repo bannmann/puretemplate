@@ -1,16 +1,16 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestOptions extends BaseTest
+class TestOptions extends BaseTest
 {
     @Test
-    public void testSeparator() throws IOException
+    void testSeparator() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; separator=\", \">!");
@@ -22,7 +22,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testSeparatorWithSpaces() throws IOException
+    void testSeparatorWithSpaces() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; separator= \", \">!");
@@ -35,7 +35,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testAttrSeparator() throws IOException
+    void testAttrSeparator() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name,sep", "hi <name; separator=sep>!");
@@ -48,7 +48,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testIncludeSeparator() throws IOException
+    void testIncludeSeparator() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("foo", "|");
@@ -62,7 +62,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testSubtemplateSeparator() throws IOException
+    void testSubtemplateSeparator() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name,sep", "hi <name; separator={<sep> _}>!");
@@ -75,7 +75,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testSeparatorWithNullFirstValueAndNullOption() throws IOException
+    void testSeparatorWithNullFirstValueAndNullOption() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; null=\"n/a\", separator=\", \">!");
@@ -87,7 +87,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testSeparatorWithNull2ndValueAndNullOption() throws IOException
+    void testSeparatorWithNull2ndValueAndNullOption() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; null=\"n/a\", separator=\", \">!");
@@ -100,7 +100,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testNullValueAndNullOption() throws IOException
+    void testNullValueAndNullOption() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "<name; null=\"n/a\">");
@@ -110,7 +110,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testListApplyWithNullValueAndNullOption() throws IOException
+    void testListApplyWithNullValueAndNullOption() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "<name:{n | <n>}; null=\"n/a\">");
@@ -122,7 +122,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testDoubleListApplyWithNullValueAndNullOption() throws IOException
+    void testDoubleListApplyWithNullValueAndNullOption() throws IOException
     {
         // first apply sends [ST, null, ST] to second apply, which puts [] around
         // the value.  This verifies that null not blank comes out of first apply
@@ -137,7 +137,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testMissingValueAndNullOption() throws IOException
+    void testMissingValueAndNullOption() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "<name; null=\"n/a\">");
@@ -146,7 +146,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testOptionDoesntApplyToNestedTemplate() throws IOException
+    void testOptionDoesntApplyToNestedTemplate() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("foo", "<zippo>");
@@ -157,7 +157,7 @@ public class TestOptions extends BaseTest
     }
 
     @Test
-    public void testIllegalOption() throws IOException
+    void testIllegalOption() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
         STGroup group = new LegacyBareStGroup();

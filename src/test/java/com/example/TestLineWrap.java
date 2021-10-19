@@ -1,17 +1,17 @@
 package com.example;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Group;
 import org.puretemplate.model.Aggregate;
 
-public class TestLineWrap extends BaseTest
+class TestLineWrap extends BaseTest
 {
     private static final int[] MANY_INTEGERS = {
         3,
@@ -74,7 +74,7 @@ public class TestLineWrap extends BaseTest
     };
 
     @Test
-    public void testLineWrap() throws IOException
+    void testLineWrap() throws IOException
     {
         String templates = "array(values) ::= <<int[] a = { <values; wrap=\"\\n\", separator=\",\"> };>>" + NEWLINE;
         Group group = loadGroupViaDisk(templates);
@@ -94,7 +94,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapAnchored() throws IOException
+    void testLineWrapAnchored() throws IOException
     {
         String templates = "array(values) ::= <<int[] a = { <values; anchor, wrap, separator=\",\"> };>>" + NEWLINE;
 
@@ -115,7 +115,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testSubtemplatesAnchorToo()
+    void testSubtemplatesAnchorToo()
     {
         Group group = loadGroupFromString("array(values) ::= <<{ <values; anchor, separator=\", \"> }>>" + NEWLINE);
 
@@ -145,7 +145,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testFortranLineWrap() throws IOException
+    void testFortranLineWrap() throws IOException
     {
         String templates = "func(args) ::= <<       FUNCTION line( <args; wrap=\"\\n      c\", separator=\",\"> )>>" +
             NEWLINE;
@@ -159,7 +159,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapWithDiffAnchor() throws IOException
+    void testLineWrapWithDiffAnchor() throws IOException
     {
         String templates = "array(values) ::= <<int[] a = { <{1,9,2,<values; wrap, separator=\",\">}; anchor> };>>" +
             NEWLINE;
@@ -187,7 +187,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapEdgeCase() throws IOException
+    void testLineWrapEdgeCase() throws IOException
     {
         String templates = "duh(chars) ::= \"<chars; wrap={<\\n>}>\"" + NEWLINE;
 
@@ -205,7 +205,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapLastCharIsNewline() throws IOException
+    void testLineWrapLastCharIsNewline() throws IOException
     {
         String templates = "duh(chars) ::= <<" + NEWLINE + "<chars; wrap=\"\\n\"\\>" + NEWLINE + ">>" + NEWLINE;
 
@@ -219,7 +219,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapCharAfterWrapIsNewline() throws IOException
+    void testLineWrapCharAfterWrapIsNewline() throws IOException
     {
         String templates = "duh(chars) ::= <<" + NEWLINE + "<chars; wrap=\"\\n\"\\>" + NEWLINE + ">>" + NEWLINE;
 
@@ -236,7 +236,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapForList() throws IOException
+    void testLineWrapForList() throws IOException
     {
         String templates = "duh(data) ::= <<!<data; wrap>!>>" + NEWLINE;
 
@@ -249,7 +249,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapForAnonTemplate() throws IOException
+    void testLineWrapForAnonTemplate() throws IOException
     {
         String templates = "duh(data) ::= <<!<data:{v|[<v>]}; wrap>!>>" + NEWLINE;
 
@@ -262,7 +262,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapForAnonTemplateAnchored() throws IOException
+    void testLineWrapForAnonTemplateAnchored() throws IOException
     {
         String templates = "duh(data) ::= <<!<data:{v|[<v>]}; anchor, wrap>!>>" + NEWLINE;
 
@@ -274,7 +274,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapForAnonTemplateComplicatedWrap() throws IOException
+    void testLineWrapForAnonTemplateComplicatedWrap() throws IOException
     {
         String templates = "top(s) ::= <<  <s>.>>" + "str(data) ::= <<!<data:{v|[<v>]}; wrap=\"!+\\n!\">!>>" + NEWLINE;
         Group group = loadGroupViaDisk(templates);
@@ -301,7 +301,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testIndentBeyondLineWidth() throws IOException
+    void testIndentBeyondLineWidth() throws IOException
     {
         String templates = "duh(chars) ::= <<" + NEWLINE + "    <chars; wrap=\"\\n\">" + NEWLINE + ">>" + NEWLINE;
 
@@ -321,7 +321,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testIndentedExpr() throws IOException
+    void testIndentedExpr() throws IOException
     {
         String templates = "duh(chars) ::= <<" + NEWLINE + "    <chars; wrap=\"\\n\">" + NEWLINE + ">>" + NEWLINE;
 
@@ -334,7 +334,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testNestedIndentedExpr() throws IOException
+    void testNestedIndentedExpr() throws IOException
     {
         String templates = "top(d) ::= <<  <d>!>>" +
             NEWLINE +
@@ -359,7 +359,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testNestedWithIndentAndTrackStartOfExpr() throws IOException
+    void testNestedWithIndentAndTrackStartOfExpr() throws IOException
     {
         String templates = "top(d) ::= <<  <d>!>>" +
             NEWLINE +
@@ -383,7 +383,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineDoesNotWrapDueToLiteral()
+    void testLineDoesNotWrapDueToLiteral()
     {
         String templates =
             "m(args,body) ::= <<@Test public voidfoo(<args; wrap=\"\\n\",separator=\", \">) throws Ick { <body> }>>" +
@@ -400,7 +400,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testSingleValueWrap() throws IOException
+    void testSingleValueWrap() throws IOException
     {
         String templates = "m(args,body) ::= <<{ <body; anchor, wrap=\"\\n\"> }>>" + NEWLINE;
 
@@ -422,7 +422,7 @@ public class TestLineWrap extends BaseTest
     }
 
     @Test
-    public void testLineWrapInNestedExpr() throws IOException
+    void testLineWrapInNestedExpr() throws IOException
     {
         String templates = "top(arrays) ::= <<Arrays: <arrays>done>>" +
             NEWLINE +

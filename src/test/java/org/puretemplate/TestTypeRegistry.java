@@ -1,14 +1,15 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see <a href="https://github.com/antlr/stringtemplate4/issues/122">antlr/stringtemplate4#122</a>
  */
-public class TestTypeRegistry
+class TestTypeRegistry
 {
     static class A
     {
@@ -19,17 +20,17 @@ public class TestTypeRegistry
     }
 
     @Test
-    public void registryWithObject()
+    void registryWithObject()
     {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(Object.class, "Object");
-        assertEquals("Object", registry.get(Object.class));
+        Assertions.assertEquals("Object", registry.get(Object.class));
         assertEquals("Object", registry.get(A.class));
         assertEquals("Object", registry.get(B.class));
     }
 
     @Test
-    public void registryWithA()
+    void registryWithA()
     {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(A.class, "A");
@@ -39,7 +40,7 @@ public class TestTypeRegistry
     }
 
     @Test
-    public void registryWithB()
+    void registryWithB()
     {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(B.class, "B");
@@ -49,7 +50,7 @@ public class TestTypeRegistry
     }
 
     @Test
-    public void registryWithObjectAndA()
+    void registryWithObjectAndA()
     {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(Object.class, "Object");
@@ -60,7 +61,7 @@ public class TestTypeRegistry
     }
 
     @Test
-    public void registryWithObjectAndB()
+    void registryWithObjectAndB()
     {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(Object.class, "Object");
@@ -71,7 +72,7 @@ public class TestTypeRegistry
     }
 
     @Test
-    public void registryWithAAndB()
+    void registryWithAAndB()
     {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(A.class, "A");
@@ -82,7 +83,7 @@ public class TestTypeRegistry
     }
 
     @Test
-    public void registryWithObjectAndAAndB()
+    void registryWithObjectAndAAndB()
     {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(Object.class, "Object");
