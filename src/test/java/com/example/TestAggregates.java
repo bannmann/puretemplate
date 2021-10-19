@@ -5,10 +5,10 @@ import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.model.Aggregate;
 
-public class TestAggregates extends BaseTest
+class TestAggregates extends BaseTest
 {
     @Test
-    public void testApplyAnonymousTemplateToAggregateAttribute()
+    void testApplyAnonymousTemplateToAggregateAttribute()
     {
         Context context = makeTemplateContext("<items:{it|<it.id>: <it.lastName>, <it.firstName>\n}>");
 
@@ -48,7 +48,7 @@ public class TestAggregates extends BaseTest
     }
 
     @Test
-    public void testComplicatedIndirectTemplateApplication()
+    void testComplicatedIndirectTemplateApplication()
     {
         String templates = "group Java;" +
             NEWLINE +

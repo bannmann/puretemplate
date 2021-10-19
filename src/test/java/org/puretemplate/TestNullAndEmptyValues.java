@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class TestNullAndEmptyValues extends BaseTest
+class TestNullAndEmptyValues extends BaseTest
 {
     public static class T
     {
@@ -188,7 +188,7 @@ public class TestNullAndEmptyValues extends BaseTest
         };
 
     @Test
-    public void testSingleValued()
+    void testSingleValued()
     {
         List<T> failed = testMatrix(singleValuedTests);
         List<T> expecting = Collections.emptyList();
@@ -196,7 +196,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testMultiValued()
+    void testMultiValued()
     {
         List<T> failed = testMatrix(multiValuedTests);
         List<T> expecting = Collections.emptyList();
@@ -204,7 +204,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testLists()
+    void testLists()
     {
         List<T> failed = testMatrix(listTests);
         List<T> expecting = Collections.emptyList();
@@ -237,7 +237,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testSeparatorWithNullFirstValue() throws IOException
+    void testSeparatorWithNullFirstValue() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; separator=\", \">!");
@@ -249,7 +249,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testTemplateAppliedToNullIsEmpty() throws IOException
+    void testTemplateAppliedToNullIsEmpty() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "<name:t()>");
@@ -260,7 +260,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testTemplateAppliedToMissingValueIsEmpty() throws IOException
+    void testTemplateAppliedToMissingValueIsEmpty() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "<name:t()>");
@@ -270,7 +270,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testSeparatorWithNull2ndValue() throws IOException
+    void testSeparatorWithNull2ndValue() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; separator=\", \">!");
@@ -282,7 +282,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testSeparatorWithNullLastValue() throws IOException
+    void testSeparatorWithNullLastValue() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; separator=\", \">!");
@@ -294,7 +294,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testSeparatorWithTwoNullValuesInRow() throws IOException
+    void testSeparatorWithTwoNullValuesInRow() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; separator=\", \">!");
@@ -308,7 +308,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testTwoNullValues() throws IOException
+    void testTwoNullValues() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; null=\"x\">!");
@@ -319,7 +319,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testNullListItemNotCountedForIteratorIndex() throws IOException
+    void testNullListItemNotCountedForIteratorIndex() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "<name:{n | <i>:<n>}>");
@@ -332,7 +332,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testSizeZeroButNonNullListGetsNoOutput() throws IOException
+    void testSizeZeroButNonNullListGetsNoOutput() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "users", "begin\n" + "<users>\n" + "end\n");
@@ -342,7 +342,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testNullListGetsNoOutput() throws IOException
+    void testNullListGetsNoOutput() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "users", "begin\n" + "<users:{u | name: <u>}; separator=\", \">\n" + "end\n");
@@ -351,7 +351,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testEmptyListGetsNoOutput() throws IOException
+    void testEmptyListGetsNoOutput() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "users", "begin\n" + "<users:{u | name: <u>}; separator=\", \">\n" + "end\n");
@@ -361,7 +361,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testMissingDictionaryValue() throws IOException
+    void testMissingDictionaryValue() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "m", "<m.foo>");
@@ -371,7 +371,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testMissingDictionaryValue2() throws IOException
+    void testMissingDictionaryValue2() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "m", "<if(m.foo)>[<m.foo>]<endif>");
@@ -381,7 +381,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void testMissingDictionaryValue3() throws IOException
+    void testMissingDictionaryValue3() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "m", "<if(m.foo)>[<m.foo>]<endif>");
@@ -391,7 +391,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void TestSeparatorEmittedForEmptyIteratorValue()
+    void TestSeparatorEmittedForEmptyIteratorValue()
     {
         Context context = makeTemplateContext("<values:{v|<if(v)>x<endif>}; separator=\" \">").add("values",
             new boolean[]{ true, false, true });
@@ -399,7 +399,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void TestSeparatorEmittedForEmptyIteratorValu3333e() throws IOException
+    void TestSeparatorEmittedForEmptyIteratorValu3333e() throws IOException
     {
         String dir = getRandomDir();
         String groupFile = "filter ::= [\"b\":, default: key]\n" +
@@ -412,7 +412,7 @@ public class TestNullAndEmptyValues extends BaseTest
     }
 
     @Test
-    public void TestSeparatorEmittedForEmptyIteratorValue2()
+    void TestSeparatorEmittedForEmptyIteratorValue2()
     {
         Context context = makeTemplateContext("<values; separator=\" \">").add("values", new String[]{ "x", "", "y" });
         assertRenderingResult("x  y", context);

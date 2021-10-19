@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestGroupSyntaxErrors extends BaseTest
+class TestGroupSyntaxErrors extends BaseTest
 {
     @Test
-    public void testMissingImportString() throws IOException
+    void testMissingImportString() throws IOException
     {
         String templates = "import\n" + "foo() ::= <<>>\n";
 
@@ -26,7 +26,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testImportNotString() throws IOException
+    void testImportNotString() throws IOException
     {
         String templates = "import Super.stg\n" + "foo() ::= <<>>\n";
 
@@ -36,7 +36,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testMissingTemplate() throws IOException
+    void testMissingTemplate() throws IOException
     {
         String templates = "foo() ::= \n";
 
@@ -46,7 +46,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testUnclosedTemplate() throws IOException
+    void testUnclosedTemplate() throws IOException
     {
         String templates = "foo() ::= {";
 
@@ -61,7 +61,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testParen() throws IOException
+    void testParen() throws IOException
     {
         String templates = "foo( ::= << >>\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -72,7 +72,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testNewlineInString() throws IOException
+    void testNewlineInString() throws IOException
     {
         String templates = "foo() ::= \"\nfoo\"\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -83,7 +83,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testParen2() throws IOException
+    void testParen2() throws IOException
     {
         String templates = "foo) ::= << >>\n" + "bar() ::= <<bar>>\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -94,7 +94,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testArg() throws IOException
+    void testArg() throws IOException
     {
         String templates = "foo(a,) ::= << >>\n";
 
@@ -104,7 +104,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testArg2() throws IOException
+    void testArg2() throws IOException
     {
         String templates = "foo(a,,) ::= << >>\n";
         writeFile(tmpdir, "t.stg", templates);
@@ -120,7 +120,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testArg3() throws IOException
+    void testArg3() throws IOException
     {
         String templates = "foo(a b) ::= << >>\n";
 
@@ -132,7 +132,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testDefaultArgsOutOfOrder() throws IOException
+    void testDefaultArgsOutOfOrder() throws IOException
     {
         String templates = "foo(a={hi}, b) ::= << >>\n";
 
@@ -144,7 +144,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testArgumentRedefinition() throws IOException
+    void testArgumentRedefinition() throws IOException
     {
         String templates = "foo(a,b,a) ::= << >>\n";
 
@@ -156,7 +156,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testArgumentRedefinitionInSubtemplate() throws IOException
+    void testArgumentRedefinitionInSubtemplate() throws IOException
     {
         String templates = "foo(names) ::= <<" + NEWLINE + "<names, names, names:{a,b,a|}>" + NEWLINE + ">>" + NEWLINE;
 
@@ -170,7 +170,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testErrorWithinTemplate() throws IOException
+    void testErrorWithinTemplate() throws IOException
     {
         String templates = "foo(a) ::= \"<a b>\"\n";
 
@@ -182,7 +182,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testMap() throws IOException
+    void testMap() throws IOException
     {
         String templates = "d ::= []\n";
 
@@ -194,7 +194,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testMap2() throws IOException
+    void testMap2() throws IOException
     {
         String templates = "d ::= [\"k\":]\n";
 
@@ -206,7 +206,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testMap3() throws IOException
+    void testMap3() throws IOException
     {
         String templates = "d ::= [\"k\":{dfkj}}]\n"; // extra }
 
@@ -218,7 +218,7 @@ public class TestGroupSyntaxErrors extends BaseTest
     }
 
     @Test
-    public void testUnterminatedString() throws IOException
+    void testUnterminatedString() throws IOException
     {
         String templates = "f() ::= \""; // extra }
 

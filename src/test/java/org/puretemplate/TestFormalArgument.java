@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.antlr.runtime.Token;
 import org.junit.jupiter.api.Test;
 
-public class TestFormalArgument
+class TestFormalArgument
 {
     private static final FormalArgument FOO = new FormalArgument("foo");
     private static final FormalArgument BAR = new FormalArgument("bar");
@@ -14,7 +14,7 @@ public class TestFormalArgument
     private static final FormalArgument BAZ2 = new FormalArgument("baz", Token.INVALID_TOKEN);
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         assertTrue(FOO.equals(FOO));
         assertTrue(BAR.equals(BAR));

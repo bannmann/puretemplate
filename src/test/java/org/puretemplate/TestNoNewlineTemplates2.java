@@ -4,10 +4,10 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-public class TestNoNewlineTemplates2 extends BaseTest
+class TestNoNewlineTemplates2 extends BaseTest
 {
     @Test
-    public void testDefineRegionInSubgroup() throws IOException
+    void testDefineRegionInSubgroup() throws IOException
     {
         String dir = getRandomDir();
         String g1 = "a() ::= <<[<@r()>]>>\n";

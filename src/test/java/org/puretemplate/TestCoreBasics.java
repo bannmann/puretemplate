@@ -14,23 +14,23 @@ import org.puretemplate.misc.ErrorBufferAllErrors;
 
 import com.google.common.collect.ImmutableMap;
 
-public class TestCoreBasics extends BaseTest
+class TestCoreBasics extends BaseTest
 {
     @Test
-    public void testNullAttr()
+    void testNullAttr()
     {
         assertNoArgRenderingResult("hi !", "hi <name>!");
     }
 
     @Test
-    public void testAttr()
+    void testAttr()
     {
         Context context = makeTemplateContext("hi <name>!").add("name", "Ter");
         assertRenderingResult("hi Ter!", context);
     }
 
     @Test
-    public void testChainAttr()
+    void testChainAttr()
     {
         Context context = makeTemplateContext("<x>:<names>!").add("names", "Ter")
             .add("names", "Tom")
@@ -39,7 +39,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testSetUnknownAttr()
+    void testSetUnknownAttr()
     {
         String templates = "t() ::= <<hi <name>!>>\n";
 
@@ -60,7 +60,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testMultiAttr()
+    void testMultiAttr()
     {
         Context context = makeTemplateContext("hi <name>!").add("name", "Ter")
             .add("name", "Tom");
@@ -68,7 +68,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testAttrIsList()
+    void testAttrIsList()
     {
         Context context = makeTemplateContext("hi <name>!");
         List<String> names = List.of("Ter", "Tom");
@@ -80,7 +80,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testAttrIsArray()
+    void testAttrIsArray()
     {
         Context context = makeTemplateContext("hi <name>!");
         String[] names = new String[]{ "Ter", "Tom" };
@@ -91,7 +91,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testProp()
+    void testProp()
     {
         String template = "<u.id>: <u.name>"; // checks field and method getter
         Context context = makeTemplateContext(template).add("u", new User(1, "parrt"));
@@ -99,14 +99,14 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testPropWithNoAttr()
+    void testPropWithNoAttr()
     {
         Context context = makeTemplateContext("<foo.a>: <ick>").add("foo", Map.of("a", "b"));
         assertRenderingResult("b: ", context);
     }
 
     @Test
-    public void testMapAcrossDictionaryUsesKeys()
+    void testMapAcrossDictionaryUsesKeys()
     {
         String template = "<foo:{f | <f>}>"; // checks field and method getter
         Context context = makeTemplateContext(template).add("foo", ImmutableMap.of("a", "b", "c", "d"));
@@ -114,7 +114,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testSTProp()
+    void testSTProp()
     {
         String template = "<t.x>"; // get x attr of template context t
 
@@ -126,7 +126,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testBooleanISProp()
+    void testBooleanISProp()
     {
         String template = "<t.manager>"; // call isManager
         Context context = makeTemplateContext(template).add("t", new User(32, "Ter"));
@@ -134,7 +134,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testBooleanHASProp()
+    void testBooleanHASProp()
     {
         String template = "<t.parkingSpot>"; // call hasParkingSpot
         Context context = makeTemplateContext(template).add("t", new User(32, "Ter"));
@@ -142,13 +142,13 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testNullAttrProp()
+    void testNullAttrProp()
     {
         assertNoArgRenderingResult(": ", "<u.id>: <u.name>");
     }
 
     @Test
-    public void testNoSuchProp() throws IOException
+    void testNoSuchProp() throws IOException
     {
         ErrorBufferAllErrors errors = new ErrorBufferAllErrors();
         String template = "<u.qqq>";
@@ -165,7 +165,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testNullIndirectProp() throws IOException
+    void testNullIndirectProp() throws IOException
     {
         ErrorBufferAllErrors errors = new ErrorBufferAllErrors();
         STGroup group = new LegacyBareStGroup();
@@ -182,7 +182,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testPropConvertsToString() throws IOException
+    void testPropConvertsToString() throws IOException
     {
         ErrorBufferAllErrors errors = new ErrorBufferAllErrors();
         STGroup group = new LegacyBareStGroup();
@@ -199,7 +199,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testInclude() throws IOException
+    void testInclude() throws IOException
     {
         String template = "load <box()>;";
         ST st = new ST(template);
@@ -208,7 +208,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testIncludeWithArg() throws IOException
+    void testIncludeWithArg() throws IOException
     {
         String template = "load <box(\"arg\")>;";
         ST st = new ST(template);
@@ -219,7 +219,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testIncludeWithEmptySubtemplateArg() throws IOException
+    void testIncludeWithEmptySubtemplateArg() throws IOException
     {
         String template = "load <box({})>;";
         ST st = new ST(template);
@@ -230,7 +230,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testIncludeWithArg2() throws IOException
+    void testIncludeWithArg2() throws IOException
     {
         String template = "load <box(\"arg\", foo())>;";
         ST st = new ST(template);
@@ -241,7 +241,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testIncludeWithNestedArgs() throws IOException
+    void testIncludeWithNestedArgs() throws IOException
     {
         String template = "load <box(foo(\"arg\"))>;";
         ST st = new ST(template);
@@ -252,7 +252,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testPassThru()
+    void testPassThru()
     {
         Context context = loader.getGroup()
             .fromString("a(x,y) ::= \"<b(...)>\"\n" + "b(x,y) ::= \"<x><y>\"\n")
@@ -265,7 +265,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testPassThruWithDefaultValue()
+    void testPassThruWithDefaultValue()
     {
         Context context = loader.getGroup()
             .fromString("a(x,y) ::= \"<b(...)>\"\nb(x,y={99}) ::= \"<x><y>\"\n") // 'a' should not set y when it sees "no value" from above
@@ -277,7 +277,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testPassThruWithDefaultValueThatLacksDefinitionAbove()
+    void testPassThruWithDefaultValueThatLacksDefinitionAbove()
     {
         Context context = loader.getGroup()
             .fromString("a(x) ::= \"<b(...)>\"\nb(x,y={99}) ::= \"<x><y>\"\n") // 'a' should not set y when it sees "no definition" from above
@@ -289,7 +289,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testPassThruPartialArgs()
+    void testPassThruPartialArgs()
     {
         Context context = loader.getGroup()
             .fromString("a(x,y) ::= \"<b(y={99},...)>\"\n" + "b(x,y) ::= \"<x><y>\"\n")
@@ -302,7 +302,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testPassThruNoMissingArgs()
+    void testPassThruNoMissingArgs()
     {
         Context context = loader.getGroup()
             .fromString("a(x,y) ::= \"<b(y={99},x={1},...)>\"\n" + "b(x,y) ::= \"<x><y>\"\n")
@@ -315,7 +315,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testDefineTemplate() throws IOException
+    void testDefineTemplate() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("inc", "x", "<x>+1");
@@ -328,7 +328,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testMap() throws IOException
+    void testMap() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("inc", "x", "[<x>]");
@@ -341,7 +341,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testIndirectMap() throws IOException
+    void testIndirectMap() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("inc", "x", "[<x>]");
@@ -355,7 +355,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testMapWithExprAsTemplateName()
+    void testMapWithExprAsTemplateName()
     {
         String templates = "d ::= [\"foo\":\"bold\"]\n" +
             "test(name) ::= \"<name:(d.foo)()>\"\n" +
@@ -371,7 +371,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testParallelMap() throws IOException
+    void testParallelMap() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names,phones", "hi <names,phones:{n,p | <n>:<p>;}>");
@@ -386,7 +386,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testParallelMapWith3Versus2Elements() throws IOException
+    void testParallelMapWith3Versus2Elements() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names,phones", "hi <names,phones:{n,p | <n>:<p>;}>");
@@ -400,7 +400,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testParallelMapThenMap() throws IOException
+    void testParallelMapThenMap() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("bold", "x", "[<x>]");
@@ -415,7 +415,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testMapThenParallelMap() throws IOException
+    void testMapThenParallelMap() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("bold", "x", "[<x>]");
@@ -430,7 +430,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testMapIndexes() throws IOException
+    void testMapIndexes() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("inc", "x,i", "<i>:<x>");
@@ -444,7 +444,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testMapIndexes2() throws IOException
+    void testMapIndexes2() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "<name:{n | <i>:<n>}; separator=\", \">");
@@ -457,7 +457,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testMapSingleValue() throws IOException
+    void testMapSingleValue() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("a", "x", "[<x>]");
@@ -468,7 +468,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testMapNullValue() throws IOException
+    void testMapNullValue() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("a", "x", "[<x>]");
@@ -478,7 +478,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testMapNullValueInList() throws IOException
+    void testMapNullValueInList() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "<name; separator=\", \">");
@@ -491,7 +491,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testRepeatedMap() throws IOException
+    void testRepeatedMap() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("a", "x", "[<x>]");
@@ -505,7 +505,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testRepeatedMapWithNullValue() throws IOException
+    void testRepeatedMapWithNullValue() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("a", "x", "[<x>]");
@@ -519,7 +519,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testRepeatedMapWithNullValueAndNullOption() throws IOException
+    void testRepeatedMapWithNullValueAndNullOption() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("a", "x", "[<x>]");
@@ -533,7 +533,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testRoundRobinMap() throws IOException
+    void testRoundRobinMap() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("a", "x", "[<x>]");
@@ -547,40 +547,40 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testTrueCond()
+    void testTrueCond()
     {
         Context context = makeTemplateContext("<if(name)>works<endif>").add("name", "Ter");
         assertRenderingResult("works", context);
     }
 
     @Test
-    public void testEmptyIFTemplate()
+    void testEmptyIFTemplate()
     {
         Context context = makeTemplateContext("<if(x)>fail<elseif(name)><endif>").add("name", "Ter");
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testCondParens()
+    void testCondParens()
     {
         assertNoArgRenderingResult("works", "<if(!(x||y)&&!z)>works<endif>");
     }
 
     @Test
-    public void testFalseCond()
+    void testFalseCond()
     {
         assertNoArgRenderingResult("", "<if(name)>works<endif>");
     }
 
     @Test
-    public void testFalseCond2()
+    void testFalseCond2()
     {
         Context context = makeTemplateContext("<if(name)>works<endif>").add("name", null);
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testFalseCondWithFormalArgs() throws IOException
+    void testFalseCondWithFormalArgs() throws IOException
     {
         // insert of indent instr was not working; ok now
         String dir = getRandomDir();
@@ -601,7 +601,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testElseIf2()
+    void testElseIf2()
     {
         Context context = makeTemplateContext("<if(x)>fail1<elseif(y)>fail2<elseif(z)>works<else>fail3<endif>").add("z",
             "blort");
@@ -609,27 +609,27 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testElseIf3()
+    void testElseIf3()
     {
         Context context = makeTemplateContext("<if(x)><elseif(y)><elseif(z)>works<else><endif>").add("z", "blort");
         assertRenderingResult("works", context);
     }
 
     @Test
-    public void testNotTrueCond()
+    void testNotTrueCond()
     {
         Context context = makeTemplateContext("<if(!name)>works<endif>").add("name", "Ter");
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testNotFalseCond()
+    void testNotFalseCond()
     {
         assertNoArgRenderingResult("works", "<if(!name)>works<endif>");
     }
 
     @Test
-    public void testParensInConditonal()
+    void testParensInConditonal()
     {
         Context context = makeTemplateContext("<if((a||b)&&(c||d))>works<endif>").add("a", true)
             .add("b", true)
@@ -640,7 +640,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testParensInConditonal2()
+    void testParensInConditonal2()
     {
         Context context = makeTemplateContext("<if((!a||b)&&!(c||d))>broken<else>works<endif>").add("a", true)
             .add("b", true)
@@ -651,67 +651,67 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testTrueCondWithElse()
+    void testTrueCondWithElse()
     {
         Context context = makeTemplateContext("<if(name)>works<else>fail<endif>").add("name", "Ter");
         assertRenderingResult("works", context);
     }
 
     @Test
-    public void testFalseCondWithElse()
+    void testFalseCondWithElse()
     {
         assertNoArgRenderingResult("works", "<if(name)>fail<else>works<endif>");
     }
 
     @Test
-    public void testElseIf()
+    void testElseIf()
     {
         Context context = makeTemplateContext("<if(name)>fail<elseif(id)>works<else>fail<endif>").add("id", "2DF3DF");
         assertRenderingResult("works", context);
     }
 
     @Test
-    public void testElseIfNoElseAllFalse()
+    void testElseIfNoElseAllFalse()
     {
         assertNoArgRenderingResult("", "<if(name)>fail<elseif(id)>fail<endif>");
     }
 
     @Test
-    public void testElseIfAllExprFalse()
+    void testElseIfAllExprFalse()
     {
         assertNoArgRenderingResult("works", "<if(name)>fail<elseif(id)>fail<else>works<endif>");
     }
 
     @Test
-    public void testOr()
+    void testOr()
     {
         Context context = makeTemplateContext("<if(name||notThere)>works<else>fail<endif>").add("name", "Ter");
         assertRenderingResult("works", context);
     }
 
     @Test
-    public void testMapConditionAndEscapeInside()
+    void testMapConditionAndEscapeInside()
     {
         Context context = makeTemplateContext("<if(m.name)>works \\\\<endif>").add("m", Map.of("name", "Ter"));
         assertRenderingResult("works \\", context);
     }
 
     @Test
-    public void testAnd()
+    void testAnd()
     {
         Context context = makeTemplateContext("<if(name&&notThere)>fail<else>works<endif>").add("name", "Ter");
         assertRenderingResult("works", context);
     }
 
     @Test
-    public void testAndNot()
+    void testAndNot()
     {
         Context context = makeTemplateContext("<if(name&&!notThere)>works<else>fail<endif>").add("name", "Ter");
         assertRenderingResult("works", context);
     }
 
     @Test
-    public void testCharLiterals() throws IOException
+    void testCharLiterals() throws IOException
     {
         ST st = new ST("Foo <\\n><\\n><\\t> bar\n");
         StringWriter sw = new StringWriter();
@@ -736,7 +736,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testUnicodeLiterals()
+    void testUnicodeLiterals()
     {
         assertNoArgRenderingResult("Foo \ufea5" + NEWLINE + "\u00C2 bar" + NEWLINE,
             "Foo <\\uFEA5><\\n><\\u00C2> bar\n");
@@ -748,13 +748,13 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testSubtemplateExpr()
+    void testSubtemplateExpr()
     {
         assertNoArgRenderingResult("name" + NEWLINE, "<{name\n}>");
     }
 
     @Test
-    public void testSeparator() throws IOException
+    void testSeparator() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n | case <n>}; separator=\", \">");
@@ -765,7 +765,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testSeparatorInList() throws IOException
+    void testSeparatorInList() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n | case <n>}; separator=\", \">");
@@ -775,7 +775,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testSeparatorInList2() throws IOException
+    void testSeparatorInList2() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n | case <n>}; separator=\", \">");
@@ -786,7 +786,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testSeparatorInArray() throws IOException
+    void testSeparatorInArray() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n | case <n>}; separator=\", \">");
@@ -796,7 +796,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testSeparatorInArray2() throws IOException
+    void testSeparatorInArray2() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n | case <n>}; separator=\", \">");
@@ -807,7 +807,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testSeparatorInPrimitiveArray() throws IOException
+    void testSeparatorInPrimitiveArray() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n | case <n>}; separator=\", \">");
@@ -817,7 +817,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testSeparatorInPrimitiveArray2() throws IOException
+    void testSeparatorInPrimitiveArray2() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n | case <n>}; separator=\", \">");
@@ -832,7 +832,7 @@ public class TestCoreBasics extends BaseTest
      * STWriter. e.g., AutoIndentWriter.
      */
     @Test
-    public void testEarlyEvalIndent()
+    void testEarlyEvalIndent()
     {
         String templates = "t() ::= <<  abc>>\n" + "main() ::= <<\n" + "<t()>\n" + "<(t())>\n" +
             // early eval ignores indents; mostly for simply strings
@@ -847,7 +847,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testEarlyEvalNoIndent() throws IOException
+    void testEarlyEvalNoIndent() throws IOException
     {
         String templates = "t() ::= <<  abc>>\n" + "main() ::= <<\n" + "<t()>\n" + "<(t())>\n" +
             // early eval ignores indents; mostly for simply strings
@@ -865,7 +865,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testArrayOfTemplates()
+    void testArrayOfTemplates()
     {
         Context context = makeTemplateContext("<foo>!");
         Context[] foo = new Context[]{ makeTemplateContext("hi"), makeTemplateContext("mom") };
@@ -875,7 +875,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testArrayOfTemplatesInTemplate()
+    void testArrayOfTemplatesInTemplate()
     {
         Context context = makeTemplateContext("<foo>!");
 
@@ -887,7 +887,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testListOfTemplates()
+    void testListOfTemplates()
     {
         Context context = makeTemplateContext("<foo>!");
 
@@ -898,7 +898,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testListOfTemplatesInTemplate()
+    void testListOfTemplatesInTemplate()
     {
         Context context = makeTemplateContext("<foo>!");
 
@@ -910,7 +910,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void playing()
+    void playing()
     {
         String template = "<a:t(x,y),u()>";
         ST st = new ST(template);
@@ -918,7 +918,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testPrototype() throws IOException
+    void testPrototype() throws IOException
     {
         ST prototype = new ST("simple template");
 
@@ -932,7 +932,7 @@ public class TestCoreBasics extends BaseTest
     }
 
     @Test
-    public void testFormat_PositionalArguments()
+    void testFormat_PositionalArguments()
     {
         String n = "n";
         String p = "p";

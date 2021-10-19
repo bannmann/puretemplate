@@ -7,10 +7,10 @@ import java.io.StringWriter;
 
 import org.junit.jupiter.api.Test;
 
-public class TestWhitespace extends BaseTest
+class TestWhitespace extends BaseTest
 {
     @Test
-    public void testTrimmedSubtemplates() throws IOException
+    void testTrimmedSubtemplates() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n | <n>}>!");
@@ -22,7 +22,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testTrimmedNewlinesBeforeAfterInTemplate()
+    void testTrimmedNewlinesBeforeAfterInTemplate()
     {
         Group group = loader.getGroup()
             .fromString("a(x) ::= <<" + NEWLINE + "foo" + NEWLINE + ">>" + NEWLINE)
@@ -34,14 +34,14 @@ public class TestWhitespace extends BaseTest
      * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/93">antlr/stringtemplate4#93</a>.
      */
     @Test
-    public void testNoTrimmedNewlinesBeforeAfterInCodedTemplate()
+    void testNoTrimmedNewlinesBeforeAfterInCodedTemplate()
     {
         Context context = makeTemplateContext(NEWLINE + "foo" + NEWLINE);
         assertRenderingResult(NEWLINE + "foo" + NEWLINE, context);
     }
 
     @Test
-    public void testDontTrimJustSpaceBeforeAfterInTemplate()
+    void testDontTrimJustSpaceBeforeAfterInTemplate()
     {
         Group group = loader.getGroup()
             .fromString("a(x) ::= << foo >>\n")
@@ -50,7 +50,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testTrimmedSubtemplatesNoArgs() throws IOException
+    void testTrimmedSubtemplatesNoArgs() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "[<foo({ foo })>]");
@@ -60,7 +60,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testTrimmedSubtemplatesArgs() throws IOException
+    void testTrimmedSubtemplatesArgs() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{x|  foo }>");
@@ -72,7 +72,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testTrimJustOneWSInSubtemplates() throws IOException
+    void testTrimJustOneWSInSubtemplates() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n |  <n> }>!");
@@ -84,7 +84,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testTrimNewlineInSubtemplates() throws IOException
+    void testTrimNewlineInSubtemplates() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n |\n" + "<n>}>!");
@@ -96,7 +96,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testLeaveNewlineOnEndInSubtemplates() throws IOException
+    void testLeaveNewlineOnEndInSubtemplates() throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "names", "<names:{n |\n" + "<n>\n" + "}>!");
@@ -108,86 +108,86 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testEmptyExprAsFirstLineGetsNoOutput()
+    void testEmptyExprAsFirstLineGetsNoOutput()
     {
         assertNoArgRenderingResult("end" + NEWLINE, "<users>\n" + "end\n");
     }
 
     @Test
-    public void testEmptyLineWithIndent()
+    void testEmptyLineWithIndent()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + NEWLINE + "end" + NEWLINE, "begin\n" + "    \n" + "end\n");
     }
 
     @Test
-    public void testEmptyLine()
+    void testEmptyLine()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + NEWLINE + "end" + NEWLINE, "begin\n" + "\n" + "end\n");
     }
 
     @Test
-    public void testSizeZeroOnLineByItselfGetsNoOutput()
+    void testSizeZeroOnLineByItselfGetsNoOutput()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "end" + NEWLINE,
             "begin\n" + "<name>\n" + "<users>\n" + "<users>\n" + "end\n");
     }
 
     @Test
-    public void testSizeZeroOnLineWithIndentGetsNoOutput()
+    void testSizeZeroOnLineWithIndentGetsNoOutput()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "end" + NEWLINE,
             "begin\n" + "  <name>\n" + "   <users>\n" + "   <users>\n" + "end\n");
     }
 
     @Test
-    public void testSizeZeroOnLineWithMultipleExpr()
+    void testSizeZeroOnLineWithMultipleExpr()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "end" + NEWLINE,
             "begin\n" + "  <name>\n" + "   <users><users>\n" + "end\n");
     }
 
     @Test
-    public void testIFExpr()
+    void testIFExpr()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "end" + NEWLINE, "begin\n" + "<if(x)><endif>\n" + "end\n");
     }
 
     @Test
-    public void testIndentedIFExpr()
+    void testIndentedIFExpr()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "end" + NEWLINE, "begin\n" + "    <if(x)><endif>\n" + "end\n");
     }
 
     @Test
-    public void testIFElseExprOnSingleLine()
+    void testIFElseExprOnSingleLine()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "end" + NEWLINE,
             "begin\n" + "<if(users)><else><endif>\n" + "end\n");
     }
 
     @Test
-    public void testIFOnMultipleLines()
+    void testIFOnMultipleLines()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "bar" + NEWLINE + "end" + NEWLINE,
             "begin\n" + "<if(users)>\n" + "foo\n" + "<else>\n" + "bar\n" + "<endif>\n" + "end\n");
     }
 
     @Test
-    public void testEndifNotOnLineAlone()
+    void testEndifNotOnLineAlone()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "  bar" + NEWLINE + "end" + NEWLINE,
             "begin\n" + "  <if(users)>\n" + "  foo\n" + "  <else>\n" + "  bar\n" + "  <endif>end\n");
     }
 
     @Test
-    public void testElseIFOnMultipleLines()
+    void testElseIFOnMultipleLines()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "end" + NEWLINE,
             "begin\n" + "<if(a)>\n" + "foo\n" + "<elseif(b)>\n" + "bar\n" + "<endif>\n" + "end\n");
     }
 
     @Test
-    public void testElseIFOnMultipleLines2()
+    void testElseIFOnMultipleLines2()
     {
         Context context = makeTemplateContext("begin\n" +
             "<if(a)>\n" +
@@ -200,7 +200,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testElseIFOnMultipleLines3()
+    void testElseIFOnMultipleLines3()
     {
         Context context = makeTemplateContext("begin\n" +
             "  <if(a)>\n" +
@@ -213,7 +213,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testNestedIFOnMultipleLines()
+    void testNestedIFOnMultipleLines()
     {
         Context context = makeTemplateContext("begin\n" +
             "<if(x)>\n" +
@@ -228,7 +228,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testLineBreak() throws IOException
+    void testLineBreak() throws IOException
     {
         ST st = new ST("Foo <\\\\>" + NEWLINE + "  \t  bar" + NEWLINE);
         StringWriter sw = new StringWriter();
@@ -239,7 +239,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testLineBreak2() throws IOException
+    void testLineBreak2() throws IOException
     {
         ST st = new ST("Foo <\\\\>       " + NEWLINE + "  \t  bar" + NEWLINE);
         StringWriter sw = new StringWriter();
@@ -250,7 +250,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testLineBreakNoWhiteSpace() throws IOException
+    void testLineBreakNoWhiteSpace() throws IOException
     {
         ST st = new ST("Foo <\\\\>" + NEWLINE + "bar\n");
         StringWriter sw = new StringWriter();
@@ -261,7 +261,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testNewlineNormalizationInTemplateString() throws IOException
+    void testNewlineNormalizationInTemplateString() throws IOException
     {
         ST st = new ST("Foo\r\n" + "Bar\n");
         StringWriter sw = new StringWriter();
@@ -272,7 +272,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testNewlineNormalizationInTemplateStringPC() throws IOException
+    void testNewlineNormalizationInTemplateStringPC() throws IOException
     {
         ST st = new ST("Foo\r\n" + "Bar\n");
         StringWriter sw = new StringWriter();
@@ -283,7 +283,7 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testNewlineNormalizationInAttribute() throws IOException
+    void testNewlineNormalizationInAttribute() throws IOException
     {
         ST st = new ST("Foo\r\n" + "<name>\n");
         st.add("name", "a\nb\r\nc");
@@ -295,13 +295,13 @@ public class TestWhitespace extends BaseTest
     }
 
     @Test
-    public void testCommentOnlyLineGivesNoOutput()
+    void testCommentOnlyLineGivesNoOutput()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "end" + NEWLINE, "begin\n" + "<! ignore !>\n" + "end\n");
     }
 
     @Test
-    public void testCommentOnlyLineGivesNoOutput2()
+    void testCommentOnlyLineGivesNoOutput2()
     {
         assertNoArgRenderingResult("begin" + NEWLINE + "end" + NEWLINE, "begin\n" + "    <! ignore !>\n" + "end\n");
     }

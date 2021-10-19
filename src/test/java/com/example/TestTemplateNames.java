@@ -11,10 +11,10 @@ import org.puretemplate.Context;
 import org.puretemplate.Group;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestTemplateNames extends BaseTest
+class TestTemplateNames extends BaseTest
 {
     @Test
-    public void testAbsoluteTemplateRefFromOutside() throws IOException
+    void testAbsoluteTemplateRefFromOutside() throws IOException
     {
         // /randomdir/a and /randomdir/subdir/b
         Path dir = getRandomDirPath();
@@ -31,7 +31,7 @@ public class TestTemplateNames extends BaseTest
     }
 
     @Test
-    public void testRelativeTemplateRefInExpr() throws IOException
+    void testRelativeTemplateRefInExpr() throws IOException
     {
         // /randomdir/a and /randomdir/subdir/b
         Path dir = getRandomDirPath();
@@ -46,7 +46,7 @@ public class TestTemplateNames extends BaseTest
     }
 
     @Test
-    public void testAbsoluteTemplateRefInExpr() throws IOException
+    void testAbsoluteTemplateRefInExpr() throws IOException
     {
         // /randomdir/a and /randomdir/subdir/b
         Path dir = getRandomDirPath();
@@ -61,7 +61,7 @@ public class TestTemplateNames extends BaseTest
     }
 
     @Test
-    public void testRefToAnotherTemplateInSameGroup() throws IOException
+    void testRefToAnotherTemplateInSameGroup() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a() ::= << <b()> >>\n");
@@ -75,7 +75,7 @@ public class TestTemplateNames extends BaseTest
     }
 
     @Test
-    public void testRefToAnotherTemplateInSameSubdir() throws IOException
+    void testRefToAnotherTemplateInSameSubdir() throws IOException
     {
         // /randomdir/a and /randomdir/subdir/b
         Path dir = getRandomDirPath();
@@ -92,7 +92,7 @@ public class TestTemplateNames extends BaseTest
     }
 
     @Test
-    public void testFullyQualifiedGetInstanceOf() throws IOException
+    void testFullyQualifiedGetInstanceOf() throws IOException
     {
         Path dir = getRandomDirPath();
         writeFile(dir, "a.st", "a(x) ::= <<foo>>");
@@ -106,7 +106,7 @@ public class TestTemplateNames extends BaseTest
     }
 
     @Test
-    public void testFullyQualifiedTemplateRef() throws IOException
+    void testFullyQualifiedTemplateRef() throws IOException
     {
         // /randomdir/a and /randomdir/subdir/b
         Path dir = getRandomDirPath();
@@ -122,7 +122,7 @@ public class TestTemplateNames extends BaseTest
     }
 
     @Test
-    public void testFullyQualifiedTemplateRef2() throws IOException
+    void testFullyQualifiedTemplateRef2() throws IOException
     {
         // /randomdir/a and /randomdir/group.stg with b and c templates
         Path dir = getRandomDirPath();
@@ -138,7 +138,7 @@ public class TestTemplateNames extends BaseTest
     }
 
     @Test
-    public void testRelativeInSubdir() throws IOException
+    void testRelativeInSubdir() throws IOException
     {
         // /randomdir/a and /randomdir/subdir/b
         Path dir = getRandomDirPath();
@@ -157,7 +157,7 @@ public class TestTemplateNames extends BaseTest
      * This is a regression test for <a href="https://github.com/antlr/stringtemplate4/issues/94">antlr/stringtemplate4#94</a>.
      */
     @Test
-    public void testIdWithHyphens() throws IOException
+    void testIdWithHyphens() throws IOException
     {
         String templates = "template-a(x-1) ::= \"[<x-1>]\"" +
             NEWLINE +

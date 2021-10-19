@@ -7,10 +7,10 @@ import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Group;
 
-public class TestIndentation extends BaseTest
+class TestIndentation extends BaseTest
 {
     @Test
-    public void testSimpleIndentOfAttributeList()
+    void testSimpleIndentOfAttributeList()
     {
         String templates = "list(names) ::= <<" + "  <names; separator=\"\\n\">" + NEWLINE + ">>" + NEWLINE;
 
@@ -24,7 +24,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIndentOfMultilineAttributes()
+    void testIndentOfMultilineAttributes()
     {
         String templates = "list(names) ::= <<" + "  <names; separator=\"\n\">" + NEWLINE + ">>" + NEWLINE;
 
@@ -52,7 +52,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIndentOfMultipleBlankLines()
+    void testIndentOfMultipleBlankLines()
     {
         String templates = "list(names) ::= <<" + "  <names>" + NEWLINE + ">>" + NEWLINE;
 
@@ -65,7 +65,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIndentBetweenLeftJustifiedLiterals()
+    void testIndentBetweenLeftJustifiedLiterals()
     {
         String templates = "list(names) ::= <<" +
             "Before:" +
@@ -95,7 +95,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testNestedIndent() throws IOException
+    void testNestedIndent() throws IOException
     {
         String templates = "method(name,stats) ::= <<" +
             "void <name>() {" +
@@ -165,7 +165,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIndentedIFWithValueExpr()
+    void testIndentedIFWithValueExpr()
     {
         Context context = makeTemplateContext("begin" +
             NEWLINE +
@@ -177,7 +177,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIndentedIFWithElse()
+    void testIndentedIFWithElse()
     {
         Context context = makeTemplateContext("begin" +
             NEWLINE +
@@ -189,7 +189,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIndentedIFWithElse2()
+    void testIndentedIFWithElse2()
     {
         Context context = makeTemplateContext("begin" +
             NEWLINE +
@@ -201,7 +201,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIndentedIFWithNewlineBeforeText()
+    void testIndentedIFWithNewlineBeforeText()
     {
         String templates = "t(x) ::= <<begin" + NEWLINE + "    <if(x)>\n" + "foo\n" + // no indent; ignore IF indent
             "    <endif>" + NEWLINE + // ignore indent on if-tags on line by themselves
@@ -215,7 +215,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIndentedIFWithEndifNextLine() throws IOException
+    void testIndentedIFWithEndifNextLine() throws IOException
     {
         String templates = "t(x) ::= <<begin" +
             NEWLINE +
@@ -234,7 +234,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIFWithIndentOnMultipleLines()
+    void testIFWithIndentOnMultipleLines()
     {
         String template = "begin" +
             NEWLINE +
@@ -254,7 +254,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIFWithIndentAndExprOnMultipleLines()
+    void testIFWithIndentAndExprOnMultipleLines()
     {
         Context context = makeTemplateContext("begin" +
             NEWLINE +
@@ -274,7 +274,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIFWithIndentAndExprWithIndentOnMultipleLines()
+    void testIFWithIndentAndExprWithIndentOnMultipleLines()
     {
         Context context = makeTemplateContext("begin" +
             NEWLINE +
@@ -294,7 +294,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testNestedIFWithIndentOnMultipleLines()
+    void testNestedIFWithIndentOnMultipleLines()
     {
         Context context = makeTemplateContext("begin" +
             NEWLINE +
@@ -323,7 +323,7 @@ public class TestIndentation extends BaseTest
     }
 
     @Test
-    public void testIFInSubtemplate()
+    void testIFInSubtemplate()
     {
         Context context = makeTemplateContext("<names:{n |" +
             NEWLINE +

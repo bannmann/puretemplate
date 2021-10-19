@@ -7,10 +7,10 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
-public class TestResources extends BaseTest
+class TestResources extends BaseTest
 {
     @Test
-    public void testRelativize()
+    void testRelativize()
     {
         Path dir = Resources.get("/org/puretemplate");
         Path subdir = Resources.get("/org/puretemplate/groupdir");
@@ -20,7 +20,7 @@ public class TestResources extends BaseTest
     }
 
     @Test
-    public void testStGroupPath() throws IOException
+    void testStGroupPath() throws IOException
     {
         ST st = new STGroupDirPath(Resources.get("/com/example/groupdir")).getInstanceOf("foo");
         assertRenderingResult("foo", st);

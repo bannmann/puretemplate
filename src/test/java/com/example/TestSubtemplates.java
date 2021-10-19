@@ -13,10 +13,10 @@ import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestSubtemplates extends BaseTest
+class TestSubtemplates extends BaseTest
 {
     @Test
-    public void testSimpleIteration()
+    void testSimpleIteration()
     {
         String templates = "test(names) ::= << <names:{n | <n>}>! >>" + NEWLINE;
 
@@ -30,7 +30,7 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testMapIterationIsByKeys()
+    void testMapIterationIsByKeys()
     {
         String templates = "test(emails) ::= << <emails:{n|<n>}>! >>" + NEWLINE;
 
@@ -53,7 +53,7 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testNestedIterationWithArg()
+    void testNestedIterationWithArg()
     {
         String templates = "test(users) ::= << <users:{u | <u.id:{id | <id>=}><u.name>}>! >>" + NEWLINE;
 
@@ -67,7 +67,7 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testSubtemplateAsDefaultArg()
+    void testSubtemplateAsDefaultArg()
     {
         String templates = "t(x,y={<x:{s|<s><s>}>}) ::= <<\n" + "x: <x>\n" + "y: <y>\n" + ">>" + NEWLINE;
         Context context = loadGroupFromString(templates).getTemplate("t")
@@ -77,7 +77,7 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testParallelAttributeIteration()
+    void testParallelAttributeIteration()
     {
         Context context = makeTemplateContext("<names,phones,salaries:{n,p,s | <n>@<p>: <s>\n}>").add("names", "Ter")
             .add("names", "Tom")
@@ -89,7 +89,7 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testParallelAttributeIterationWithNullValue()
+    void testParallelAttributeIterationWithNullValue()
     {
         Context context = makeTemplateContext("<names,phones,salaries:{n,p,s | <n>@<p>: <s>\n}>").add("names", "Ter")
             .add("names", "Tom")
@@ -103,10 +103,10 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testParallelAttributeIterationHasI()
+    void testParallelAttributeIterationHasI()
     {
         Context context = makeTemplateContext("<names,phones,salaries:{n,p,s | <i0>. <n>@<p>: <s>\n}>").add("names",
-            "Ter")
+                "Ter")
             .add("names", "Tom")
             .add("phones", "1")
             .add("phones", "2")
@@ -116,11 +116,11 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testParallelAttributeIterationWithDifferentSizes()
+    void testParallelAttributeIterationWithDifferentSizes()
     {
         Context context = makeTemplateContext("<names,phones,salaries:{n,p,s | <n>@<p>: <s>}; separator=\", \">").add(
-            "names",
-            "Ter")
+                "names",
+                "Ter")
             .add("names", "Tom")
             .add("names", "Sriram")
             .add("phones", "1")
@@ -130,18 +130,18 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testParallelAttributeIterationWithSingletons()
+    void testParallelAttributeIterationWithSingletons()
     {
         Context context = makeTemplateContext("<names,phones,salaries:{n,p,s | <n>@<p>: <s>}; separator=\", \">").add(
-            "names",
-            "Ter")
+                "names",
+                "Ter")
             .add("phones", "1")
             .add("salaries", "big");
         assertRenderingResult("Ter@1: big", context);
     }
 
     @Test
-    public void testParallelAttributeIterationWithDifferentSizesTemplateRefInsideToo()
+    void testParallelAttributeIterationWithDifferentSizesTemplateRefInsideToo()
     {
         String templates = "page(names,phones,salaries) ::= " +
             NEWLINE +
@@ -163,7 +163,7 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testEvalSTIteratingSubtemplateInSTFromAnotherGroup() throws IOException
+    void testEvalSTIteratingSubtemplateInSTFromAnotherGroup() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -184,7 +184,7 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testEvalSTIteratingSubtemplateInSTFromAnotherGroupSingleValue() throws IOException
+    void testEvalSTIteratingSubtemplateInSTFromAnotherGroupSingleValue() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
 
@@ -205,7 +205,7 @@ public class TestSubtemplates extends BaseTest
     }
 
     @Test
-    public void testEvalSTFromAnotherGroup() throws IOException
+    void testEvalSTFromAnotherGroup() throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
 

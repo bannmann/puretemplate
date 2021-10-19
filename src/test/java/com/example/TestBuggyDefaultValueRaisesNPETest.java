@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestBuggyDefaultValueRaisesNPETest extends BaseTest
+class TestBuggyDefaultValueRaisesNPETest extends BaseTest
 {
     /**
      * When the anonymous template specified as a default value for a formalArg contains a syntax error ST 4.0.2 emits a
      * NullPointerException error (after the syntax error)
      */
     @Test
-    public void testHandleBuggyDefaultArgument() throws IOException
+    void testHandleBuggyDefaultArgument() throws IOException
     {
         String templates = "main(a={(<\"\")>}) ::= \"\"";
         ErrorBuffer errors = new ErrorBuffer();

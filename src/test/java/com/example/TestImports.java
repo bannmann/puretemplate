@@ -14,10 +14,10 @@ import org.puretemplate.Group;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestImports extends BaseTest
+class TestImports extends BaseTest
 {
     @Test
-    public void testImportDir() throws IOException
+    void testImportDir() throws IOException
     {
         /*
         dir1
@@ -41,7 +41,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportResourceDirRelative()
+    void testImportResourceDirRelative()
     {
         /*
          * sub
@@ -59,7 +59,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportSiblingGroupResourceFile()
+    void testImportSiblingGroupResourceFile()
     {
         /*
          * main.stg ➞ imports lib.stg
@@ -77,7 +77,7 @@ public class TestImports extends BaseTest
      * A test for <a href="https://github.com/antlr/stringtemplate4/issues/124">antlr/stringtemplate4#124</a>
      */
     @Test
-    public void testImportRootResourceFileRelative()
+    void testImportRootResourceFileRelative()
     {
         /*
          * main.stg ➞ imports lib.stg
@@ -92,7 +92,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportResourceFileAbsolute()
+    void testImportResourceFileAbsolute()
     {
         /*
          * net/example
@@ -109,7 +109,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportRootResourceFile()
+    void testImportRootResourceFile()
     {
         /*
          * net/example
@@ -126,7 +126,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportRelativeDir() throws IOException
+    void testImportRelativeDir() throws IOException
     {
         /*
          * dir
@@ -154,7 +154,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportRelativeDirInJarViaCLASSPATH()
+    void testImportRelativeDirInJarViaCLASSPATH()
     {
         /*
          * org/foo/templates
@@ -172,7 +172,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testEmptyGroupImportGroupFileSameDir() throws IOException
+    void testEmptyGroupImportGroupFileSameDir() throws IOException
     {
         /*
         dir
@@ -191,7 +191,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportGroupFileSameDir() throws IOException
+    void testImportGroupFileSameDir() throws IOException
     {
         /*
         dir
@@ -210,7 +210,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportRelativeGroupFile() throws IOException
+    void testImportRelativeGroupFile() throws IOException
     {
         /*
         dir
@@ -230,7 +230,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportTemplateFileSameDir() throws IOException
+    void testImportTemplateFileSameDir() throws IOException
     {
         /*
         dir
@@ -249,7 +249,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportRelativeTemplateFile() throws IOException
+    void testImportRelativeTemplateFile() throws IOException
     {
         /*
         dir
@@ -269,7 +269,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportTemplateFromAnotherGroupObject() throws IOException
+    void testImportTemplateFromAnotherGroupObject() throws IOException
     {
         /*
         dir1
@@ -302,7 +302,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportTemplateInGroupFileFromDir() throws IOException
+    void testImportTemplateInGroupFileFromDir() throws IOException
     {
         /*
         dir
@@ -328,7 +328,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportTemplateInGroupFileFromGroupFile() throws IOException
+    void testImportTemplateInGroupFileFromGroupFile() throws IOException
     {
         Path dir = getRandomDirPath();
         Path groupFile1 = dir.resolve("x/group.stg");
@@ -350,7 +350,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportTemplateFromSubdir() throws IOException
+    void testImportTemplateFromSubdir() throws IOException
     {
         // /randomdir/x/subdir/a and /randomdir/y/subdir/b
         String dir = getRandomDir();
@@ -370,7 +370,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportTemplateFromGroupFile() throws IOException
+    void testImportTemplateFromGroupFile() throws IOException
     {
         // /randomdir/x/subdir/a and /randomdir/y/subdir.stg which has a and b
         String dir = getRandomDir();
@@ -390,7 +390,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testPolymorphicTemplateReference() throws IOException
+    void testPolymorphicTemplateReference() throws IOException
     {
         String dir1 = getRandomDir();
         writeFile(dir1, "b.st", "b() ::= <<dir1 b>>\n");
@@ -416,7 +416,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testSuper() throws IOException
+    void testSuper() throws IOException
     {
         String dir1 = getRandomDir();
         writeFile(dir1, "a.st", "a() ::= <<dir1 a>>\n");
@@ -441,7 +441,7 @@ public class TestImports extends BaseTest
      * Cannot import from a group file unless it's the root.
      */
     @Test
-    public void testGroupFileInDirImportsAnotherGroupFile() throws IOException
+    void testGroupFileInDirImportsAnotherGroupFile() throws IOException
     {
         // /randomdir/group.stg with a() imports /randomdir/imported.stg with b()
         // can't have groupdir then groupfile inside that imports
@@ -468,7 +468,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testGroupFileInDirImportsAGroupDir() throws IOException
+    void testGroupFileInDirImportsAGroupDir() throws IOException
     {
         /*
          * dir
@@ -495,7 +495,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportUsesStandardUtfCharset() throws IOException
+    void testImportUsesStandardUtfCharset() throws IOException
     {
         /*
         dir
@@ -517,7 +517,7 @@ public class TestImports extends BaseTest
     }
 
     @Test
-    public void testImportUsesGroupCharset() throws IOException
+    void testImportUsesGroupCharset() throws IOException
     {
         /*
         dir

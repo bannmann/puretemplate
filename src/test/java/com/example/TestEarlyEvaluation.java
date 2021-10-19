@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 
-public class TestEarlyEvaluation extends BaseTest
+class TestEarlyEvaluation extends BaseTest
 {
     /**
      * @see <a href="http://www.antlr3.org/pipermail/stringtemplate-interest/2011-May/003476.html">stringtemplate-interest
      * post 3476</a>
      */
     @Test
-    public void testEarlyEval()
+    void testEarlyEval()
     {
         String templates = "main() ::= <<\n<f(p=\"x\")>*<f(p=\"y\")>\n>>\n\n" + "f(p,q={<({a<p>})>}) ::= <<\n-<q>-\n>>";
 
@@ -28,7 +28,7 @@ public class TestEarlyEvaluation extends BaseTest
      * post 3476</a>
      */
     @Test
-    public void testEarlyEval2()
+    void testEarlyEval2()
     {
         String templates = "main() ::= <<\n<f(p=\"x\")>*\n>>\n\n" + "f(p,q={<({a<p>})>}) ::= <<\n-<q>-\n>>";
 
@@ -43,7 +43,7 @@ public class TestEarlyEvaluation extends BaseTest
      * post 3758</a>
      */
     @Test
-    public void testBugArrayIndexOutOfBoundsExceptionInSTRuntimeMessage_getSourceLocation()
+    void testBugArrayIndexOutOfBoundsExceptionInSTRuntimeMessage_getSourceLocation()
     {
         String templates = "main(doit = true) ::= " +
             "\"<if(doit || other)><t(...)><endif>\"\n" +
@@ -59,7 +59,7 @@ public class TestEarlyEvaluation extends BaseTest
     }
 
     @Test
-    public void testEarlyEvalInIfExpr()
+    void testEarlyEvalInIfExpr()
     {
         Context context = loadGroupFromString("main(x) ::= << <if((x))>foo<else>bar<endif> >>").getTemplate("main")
             .createContext();
@@ -72,7 +72,7 @@ public class TestEarlyEvaluation extends BaseTest
     }
 
     @Test
-    public void testEarlyEvalOfSubtemplateInIfExpr()
+    void testEarlyEvalOfSubtemplateInIfExpr()
     {
         Context
             context
@@ -83,7 +83,7 @@ public class TestEarlyEvaluation extends BaseTest
     }
 
     @Test
-    public void testEarlyEvalOfMapInIfExpr()
+    void testEarlyEvalOfMapInIfExpr()
     {
         String templates = "m ::= [\n" +
             "   \"parrt\": \"value\",\n" +
@@ -103,7 +103,7 @@ public class TestEarlyEvaluation extends BaseTest
     }
 
     @Test
-    public void testEarlyEvalOfMapInIfExprPassInHashMap()
+    void testEarlyEvalOfMapInIfExprPassInHashMap()
     {
         String templates = "main(m,x) ::= << p<x>t: <m.({p<x>t})>, <if(m.({p<x>t}))>if<else>else<endif> >>\n";
 

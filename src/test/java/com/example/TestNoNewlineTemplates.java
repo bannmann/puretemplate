@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 
-public class TestNoNewlineTemplates extends BaseTest
+class TestNoNewlineTemplates extends BaseTest
 {
     @Test
-    public void testNoNewlineTemplate()
+    void testNoNewlineTemplate()
     {
         Context context = loader.getGroup()
             .fromString("t(x) ::= <%\n" +
@@ -28,7 +28,7 @@ public class TestNoNewlineTemplates extends BaseTest
     }
 
     @Test
-    public void testWSNoNewlineTemplate()
+    void testWSNoNewlineTemplate()
     {
         Context context = loader.getGroup()
             .fromString("t(x) ::= <%\n" + "\n" + "%>\n")
@@ -40,7 +40,7 @@ public class TestNoNewlineTemplates extends BaseTest
     }
 
     @Test
-    public void testEmptyNoNewlineTemplate()
+    void testEmptyNoNewlineTemplate()
     {
         Context context = loader.getGroup()
             .fromString("t(x) ::= <%%>\n")
@@ -52,7 +52,7 @@ public class TestNoNewlineTemplates extends BaseTest
     }
 
     @Test
-    public void testIgnoreIndent()
+    void testIgnoreIndent()
     {
         Context context = loader.getGroup()
             .fromString("t(x) ::= <%\n" + "   foo\n" + "   <x>\n" + "%>\n")
@@ -64,7 +64,7 @@ public class TestNoNewlineTemplates extends BaseTest
     }
 
     @Test
-    public void testIgnoreIndentInIF()
+    void testIgnoreIndentInIF()
     {
         Context context = loader.getGroup()
             .fromString("t(x) ::= <%\n" + "   <if(x)>\n" + "       foo\n" + "   <endif>\n" + "   <x>\n" + "%>\n")
@@ -76,7 +76,7 @@ public class TestNoNewlineTemplates extends BaseTest
     }
 
     @Test
-    public void testKeepWS()
+    void testKeepWS()
     {
         Context context = loader.getGroup()
             .fromString("t(x) ::= <%\n" + "   <x> <x> hi\n" + "%>\n")
@@ -88,7 +88,7 @@ public class TestNoNewlineTemplates extends BaseTest
     }
 
     @Test
-    public void testRegion()
+    void testRegion()
     {
         Context context = loader.getGroup()
             .fromString("t(x) ::= <%\n" +

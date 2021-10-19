@@ -2,10 +2,10 @@ package org.puretemplate;
 
 import org.junit.jupiter.api.Test;
 
-public class TestTokensForDollarDelimiters extends BaseTest
+class TestTokensForDollarDelimiters extends BaseTest
 {
     @Test
-    public void testSimpleAttr()
+    void testSimpleAttr()
     {
         String template = "hi $name$";
         String
@@ -15,7 +15,7 @@ public class TestTokensForDollarDelimiters extends BaseTest
     }
 
     @Test
-    public void testString()
+    void testString()
     {
         String template = "hi $foo(a=\"$\")$";
         String
@@ -25,7 +25,7 @@ public class TestTokensForDollarDelimiters extends BaseTest
     }
 
     @Test
-    public void testEscInString()
+    void testEscInString()
     {
         String template = "hi $foo(a=\"$\\\"\")$"; // "hi $foo(a="$\"")$"
         String
@@ -35,7 +35,7 @@ public class TestTokensForDollarDelimiters extends BaseTest
     }
 
     @Test
-    public void testSubtemplate()
+    void testSubtemplate()
     {
         String template = "hi $names:{n | $n$}$";
         String expected = "[[@0,0:2='hi ',<TEXT>,1:0], [@1,3:3='$',<LDELIM>,1:3], [@2,4:8='names',<ID>,1:4], " +
@@ -46,7 +46,7 @@ public class TestTokensForDollarDelimiters extends BaseTest
     }
 
     @Test
-    public void testNestedSubtemplate()
+    void testNestedSubtemplate()
     {
         String template = "hi $names:{n | $n:{$it$}$}$";
         String

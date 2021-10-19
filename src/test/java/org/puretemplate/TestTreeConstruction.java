@@ -7,7 +7,7 @@ import org.antlr.runtime.tree.Tree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TestTreeConstruction extends org.puretemplate.gUnitBase
+class TestTreeConstruction extends org.puretemplate.gUnitBase
 {
     @BeforeEach
     public void setup()
@@ -17,7 +17,7 @@ public class TestTreeConstruction extends org.puretemplate.gUnitBase
     }
 
     @Test
-    public void test_template1() throws ReflectiveOperationException
+    void test_template1() throws ReflectiveOperationException
     {
         // gunit test on line 16
         RuleReturnScope rstruct = (RuleReturnScope) execParser("template", "<[]>", 16);
@@ -27,7 +27,7 @@ public class TestTreeConstruction extends org.puretemplate.gUnitBase
     }
 
     @Test
-    public void test_template2() throws ReflectiveOperationException
+    void test_template2() throws ReflectiveOperationException
     {
         // gunit test on line 17
         RuleReturnScope rstruct = (RuleReturnScope) execParser("template", "<[a,b]>", 17);

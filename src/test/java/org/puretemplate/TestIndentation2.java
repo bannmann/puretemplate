@@ -4,10 +4,10 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-public class TestIndentation2 extends BaseTest
+class TestIndentation2 extends BaseTest
 {
     @Test
-    public void testIndentInFrontOfTwoExpr() throws IOException
+    void testIndentInFrontOfTwoExpr() throws IOException
     {
         String templates = "list(a,b) ::= <<" + "  <a><b>" + NEWLINE + ">>" + NEWLINE;
 

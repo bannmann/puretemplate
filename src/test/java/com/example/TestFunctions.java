@@ -8,31 +8,31 @@ import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 
-public class TestFunctions extends BaseTest
+class TestFunctions extends BaseTest
 {
     @Test
-    public void testFirst()
+    void testFirst()
     {
         Context context = makeTemplateContext("<first(names)>").add("names", List.of("Ter", "Tom"));
         assertRenderingResult("Ter", context);
     }
 
     @Test
-    public void testLength()
+    void testLength()
     {
         Context context = makeTemplateContext("<length(names)>").add("names", List.of("Ter", "Tom"));
         assertRenderingResult("2", context);
     }
 
     @Test
-    public void testLengthWithNullValues()
+    void testLengthWithNullValues()
     {
         Context context = makeTemplateContext("<length(names)>").add("names", Arrays.asList("Ter", null, "Tom", null));
         assertRenderingResult("4", context);
     }
 
     @Test
-    public void testFirstOp()
+    void testFirstOp()
     {
         Context context = makeTemplateContext("<first(names)>").add("names", "Ter")
             .add("names", "Tom")
@@ -41,28 +41,28 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testFirstOpList()
+    void testFirstOpList()
     {
         Context context = makeTemplateContext("<first(names)>").add("names", Arrays.asList("Ter", "Tom", "Sriram"));
         assertRenderingResult("Ter", context);
     }
 
     @Test
-    public void testFirstOpArray()
+    void testFirstOpArray()
     {
         Context context = makeTemplateContext("<first(names)>").add("names", new String[]{ "Ter", "Tom", "Sriram" });
         assertRenderingResult("Ter", context);
     }
 
     @Test
-    public void testFirstOpPrimitiveArray()
+    void testFirstOpPrimitiveArray()
     {
         Context context = makeTemplateContext("<first(names)>").add("names", new int[]{ 0, 1, 2 });
         assertRenderingResult("0", context);
     }
 
     @Test
-    public void testTruncOp()
+    void testTruncOp()
     {
         Context context = makeTemplateContext("<trunc(names); separator=\", \">").add("names", "Ter")
             .add("names", "Tom")
@@ -71,7 +71,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testTruncOpList()
+    void testTruncOpList()
     {
         Context context = makeTemplateContext("<trunc(names); separator=\", \">").add("names",
             Arrays.asList("Ter", "Tom", "Sriram"));
@@ -79,7 +79,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testTruncOpArray()
+    void testTruncOpArray()
     {
         Context context = makeTemplateContext("<trunc(names); separator=\", \">").add("names",
             new String[]{ "Ter", "Tom", "Sriram" });
@@ -87,14 +87,14 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testTruncOpPrimitiveArray()
+    void testTruncOpPrimitiveArray()
     {
         Context context = makeTemplateContext("<trunc(names); separator=\", \">").add("names", new int[]{ 0, 1, 2 });
         assertRenderingResult("0, 1", context);
     }
 
     @Test
-    public void testRestOp()
+    void testRestOp()
     {
         Context context = makeTemplateContext("<rest(names); separator=\", \">").add("names", "Ter")
             .add("names", "Tom")
@@ -103,7 +103,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testRestOpList()
+    void testRestOpList()
     {
         Context context = makeTemplateContext("<rest(names); separator=\", \">").add("names",
             Arrays.asList("Ter", "Tom", "Sriram"));
@@ -111,7 +111,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testRestOpArray()
+    void testRestOpArray()
     {
         Context context = makeTemplateContext("<rest(names); separator=\", \">").add("names",
             new String[]{ "Ter", "Tom", "Sriram" });
@@ -119,35 +119,35 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testRestOpPrimitiveArray()
+    void testRestOpPrimitiveArray()
     {
         Context context = makeTemplateContext("<rest(names); separator=\", \">").add("names", new int[]{ 0, 1, 2 });
         assertRenderingResult("1, 2", context);
     }
 
     @Test
-    public void testRestOpEmptyList()
+    void testRestOpEmptyList()
     {
         Context context = makeTemplateContext("<rest(names); separator=\", \">").add("names", List.of());
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testRestOpEmptyArray()
+    void testRestOpEmptyArray()
     {
         Context context = makeTemplateContext("<rest(names); separator=\", \">").add("names", new String[0]);
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testRestOpEmptyPrimitiveArray()
+    void testRestOpEmptyPrimitiveArray()
     {
         Context context = makeTemplateContext("<rest(names); separator=\", \">").add("names", new int[0]);
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testReUseOfRestResult()
+    void testReUseOfRestResult()
     {
         String templates = "a(names) ::= \"<b(rest(names))>\"" + NEWLINE + "b(x) ::= \"<x>, <x>\"" + NEWLINE;
         Context context = loadGroupFromString(templates).getTemplate("a")
@@ -157,7 +157,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testReUseOfRestPrimitiveArrayResult()
+    void testReUseOfRestPrimitiveArrayResult()
     {
         String templates = "a(names) ::= \"<b(rest(names))>\"" + NEWLINE + "b(x) ::= \"<x>, <x>\"" + NEWLINE;
         Context context = loadGroupFromString(templates).getTemplate("a")
@@ -167,7 +167,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testLastOp()
+    void testLastOp()
     {
         Context context = makeTemplateContext("<last(names)>").add("names", "Ter")
             .add("names", "Tom")
@@ -176,28 +176,28 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testLastOpList()
+    void testLastOpList()
     {
         Context context = makeTemplateContext("<last(names)>").add("names", Arrays.asList("Ter", "Tom", "Sriram"));
         assertRenderingResult("Sriram", context);
     }
 
     @Test
-    public void testLastOpArray()
+    void testLastOpArray()
     {
         Context context = makeTemplateContext("<last(names)>").add("names", new String[]{ "Ter", "Tom", "Sriram" });
         assertRenderingResult("Sriram", context);
     }
 
     @Test
-    public void testLastOpPrimitiveArray()
+    void testLastOpPrimitiveArray()
     {
         Context context = makeTemplateContext("<last(names)>").add("names", new int[]{ 0, 1, 2 });
         assertRenderingResult("2", context);
     }
 
     @Test
-    public void testStripOp()
+    void testStripOp()
     {
         Context context = makeTemplateContext("<strip(names); null=\"n/a\">").add("names", null)
             .add("names", "Tom")
@@ -209,7 +209,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testStripOpList()
+    void testStripOpList()
     {
         Context context = makeTemplateContext("<strip(names); null=\"n/a\">").add("names",
             Arrays.asList(null, "Tom", null, null, "Sriram", null));
@@ -217,7 +217,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testStripOpArray()
+    void testStripOpArray()
     {
         Context context = makeTemplateContext("<strip(names); null=\"n/a\">").add("names",
             new String[]{ null, "Tom", null, null, "Sriram", null });
@@ -225,7 +225,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testLengthStrip()
+    void testLengthStrip()
     {
         Context context = makeTemplateContext("<length(strip(names))>").add("names", null)
             .add("names", "Tom")
@@ -237,7 +237,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testLengthStripList()
+    void testLengthStripList()
     {
         Context context = makeTemplateContext("<length(strip(names))>").add("names",
             Arrays.asList(null, "Tom", null, null, "Sriram", null));
@@ -245,7 +245,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testLengthStripArray()
+    void testLengthStripArray()
     {
         Context context = makeTemplateContext("<length(strip(names))>").add("names",
             new String[]{ null, "Tom", null, null, "Sriram", null });
@@ -253,7 +253,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testCombinedOp()
+    void testCombinedOp()
     {
         // replace first of yours with first of mine
         Context context = makeTemplateContext("<[first(mine),rest(yours)]; separator=\", \">").add("mine", "1")
@@ -265,40 +265,40 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testCombinedOpList()
+    void testCombinedOpList()
     {
         // replace first of yours with first of mine
         Context context = makeTemplateContext("<[first(mine),rest(yours)]; separator=\", \">").add("mine",
-            Arrays.asList("1", "2", "3"))
+                Arrays.asList("1", "2", "3"))
             .add("yours", "a")
             .add("yours", "b");
         assertRenderingResult("1, b", context);
     }
 
     @Test
-    public void testCombinedOpArray()
+    void testCombinedOpArray()
     {
         // replace first of yours with first of mine
         Context context = makeTemplateContext("<[first(mine),rest(yours)]; separator=\", \">").add("mine",
-            new String[]{ "1", "2", "3" })
+                new String[]{ "1", "2", "3" })
             .add("yours", "a")
             .add("yours", "b");
         assertRenderingResult("1, b", context);
     }
 
     @Test
-    public void testCombinedOpPrimitiveArray()
+    void testCombinedOpPrimitiveArray()
     {
         // replace first of yours with first of mine
         Context context = makeTemplateContext("<[first(mine),rest(yours)]; separator=\", \">").add("mine",
-            new int[]{ 1, 2, 3 })
+                new int[]{ 1, 2, 3 })
             .add("yours", "a")
             .add("yours", "b");
         assertRenderingResult("1, b", context);
     }
 
     @Test
-    public void testCatListAndSingleAttribute()
+    void testCatListAndSingleAttribute()
     {
         // replace first of yours with first of mine
         Context context = makeTemplateContext("<[mine,yours]; separator=\", \">").add("mine", "1")
@@ -309,27 +309,27 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testCatListAndSingleAttribute2()
+    void testCatListAndSingleAttribute2()
     {
         // replace first of yours with first of mine
         Context context = makeTemplateContext("<[mine,yours]; separator=\", \">").add("mine",
-            Arrays.asList("1", "2", "3"))
+                Arrays.asList("1", "2", "3"))
             .add("yours", "a");
         assertRenderingResult("1, 2, 3, a", context);
     }
 
     @Test
-    public void testCatArrayAndSingleAttribute()
+    void testCatArrayAndSingleAttribute()
     {
         // replace first of yours with first of mine
         Context context = makeTemplateContext("<[mine,yours]; separator=\", \">").add("mine",
-            new String[]{ "1", "2", "3" })
+                new String[]{ "1", "2", "3" })
             .add("yours", "a");
         assertRenderingResult("1, 2, 3, a", context);
     }
 
     @Test
-    public void testCatPrimitiveArrayAndSingleAttribute()
+    void testCatPrimitiveArrayAndSingleAttribute()
     {
         // replace first of yours with first of mine
         Context context = makeTemplateContext("<[mine,yours]; separator=\", \">").add("mine", new int[]{ 1, 2, 3 })
@@ -338,7 +338,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testReUseOfCat()
+    void testReUseOfCat()
     {
         String templates = "a(mine,yours) ::= \"<b([mine,yours])>\"" + NEWLINE + "b(x) ::= \"<x>, <x>\"" + NEWLINE;
         Context context = loadGroupFromString(templates).getTemplate("a")
@@ -349,7 +349,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testCatListAndEmptyAttributes()
+    void testCatListAndEmptyAttributes()
     {
         /*
          * + is overloaded to be cat strings and cat lists so the
@@ -365,37 +365,37 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testCatListAndEmptyAttributes2()
+    void testCatListAndEmptyAttributes2()
     {
         // see the comment in testCatListAndEmptyAttributes()
         Context context = makeTemplateContext("<[x,mine,y,yours,z]; separator=\", \">").add("mine",
-            Arrays.asList("1", "2", "3"))
+                Arrays.asList("1", "2", "3"))
             .add("yours", "a");
         assertRenderingResult("1, 2, 3, a", context);
     }
 
     @Test
-    public void testCatArrayAndEmptyAttributes2()
+    void testCatArrayAndEmptyAttributes2()
     {
         // see the comment in testCatListAndEmptyAttributes()
         Context context = makeTemplateContext("<[x,mine,y,yours,z]; separator=\", \">").add("mine",
-            new String[]{ "1", "2", "3" })
+                new String[]{ "1", "2", "3" })
             .add("yours", "a");
         assertRenderingResult("1, 2, 3, a", context);
     }
 
     @Test
-    public void testCatPrimitiveArrayAndEmptyAttributes()
+    void testCatPrimitiveArrayAndEmptyAttributes()
     {
         // see the comment in testCatListAndEmptyAttributes()
         Context context = makeTemplateContext("<[x,mine,y,yours,z]; separator=\", \">").add("mine",
-            new int[]{ 1, 2, 3 })
+                new int[]{ 1, 2, 3 })
             .add("yours", "a");
         assertRenderingResult("1, 2, 3, a", context);
     }
 
     @Test
-    public void testNestedOp()
+    void testNestedOp()
     {
         Context context = makeTemplateContext("<first(rest(names))>").add("names", "Ter")
             .add("names", "Tom")
@@ -404,7 +404,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testNestedOpList()
+    void testNestedOpList()
     {
         Context context = makeTemplateContext("<first(rest(names))>").add("names",
             Arrays.asList("Ter", "Tom", "Sriram"));
@@ -412,7 +412,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testNestedOpArray()
+    void testNestedOpArray()
     {
         Context context = makeTemplateContext("<first(rest(names))>").add("names",
             new String[]{ "Ter", "Tom", "Sriram" });
@@ -420,77 +420,77 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testNestedOpPrimitiveArray()
+    void testNestedOpPrimitiveArray()
     {
         Context context = makeTemplateContext("<first(rest(names))>").add("names", new int[]{ 0, 1, 2 });
         assertRenderingResult("1", context);
     }
 
     @Test
-    public void testFirstWithOneAttributeOp()
+    void testFirstWithOneAttributeOp()
     {
         Context context = makeTemplateContext("<first(names)>").add("names", "Ter");
         assertRenderingResult("Ter", context);
     }
 
     @Test
-    public void testLastWithOneAttributeOp()
+    void testLastWithOneAttributeOp()
     {
         Context context = makeTemplateContext("<last(names)>").add("names", "Ter");
         assertRenderingResult("Ter", context);
     }
 
     @Test
-    public void testLastWithLengthOneListAttributeOp()
+    void testLastWithLengthOneListAttributeOp()
     {
         Context context = makeTemplateContext("<last(names)>").add("names", List.of("Ter"));
         assertRenderingResult("Ter", context);
     }
 
     @Test
-    public void testLastWithLengthOneArrayAttributeOp()
+    void testLastWithLengthOneArrayAttributeOp()
     {
         Context context = makeTemplateContext("<last(names)>").add("names", new String[]{ "Ter" });
         assertRenderingResult("Ter", context);
     }
 
     @Test
-    public void testLastWithLengthOnePrimitiveArrayAttributeOp()
+    void testLastWithLengthOnePrimitiveArrayAttributeOp()
     {
         Context context = makeTemplateContext("<last(names)>").add("names", new int[]{ 0 });
         assertRenderingResult("0", context);
     }
 
     @Test
-    public void testRestWithOneAttributeOp()
+    void testRestWithOneAttributeOp()
     {
         Context context = makeTemplateContext("<rest(names)>").add("names", "Ter");
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testRestWithLengthOneListAttributeOp()
+    void testRestWithLengthOneListAttributeOp()
     {
         Context context = makeTemplateContext("<rest(names)>").add("names", List.of("Ter"));
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testRestWithLengthOneArrayAttributeOp()
+    void testRestWithLengthOneArrayAttributeOp()
     {
         Context context = makeTemplateContext("<rest(names)>").add("names", new String[]{ "Ter" });
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testRestWithLengthOnePrimitiveArrayAttributeOp()
+    void testRestWithLengthOnePrimitiveArrayAttributeOp()
     {
         Context context = makeTemplateContext("<rest(names)>").add("names", new int[]{ 0 });
         assertRenderingResult("", context);
     }
 
     @Test
-    public void testRepeatedRestOp()
+    void testRepeatedRestOp()
     {
         Context context = makeTemplateContext("<rest(names)>, <rest(names)>").add("names", "Ter")
             .add("names", "Tom");
@@ -498,14 +498,14 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testRepeatedRestOpList()
+    void testRepeatedRestOpList()
     {
         Context context = makeTemplateContext("<rest(names)>, <rest(names)>").add("names", Arrays.asList("Ter", "Tom"));
         assertRenderingResult("Tom, Tom", context);
     }
 
     @Test
-    public void testRepeatedRestOpArray()
+    void testRepeatedRestOpArray()
     {
         Context context = makeTemplateContext("<rest(names)>, <rest(names)>").add("names",
             new String[]{ "Ter", "Tom" });
@@ -513,14 +513,14 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testRepeatedRestOpPrimitiveArray()
+    void testRepeatedRestOpPrimitiveArray()
     {
         Context context = makeTemplateContext("<rest(names)>, <rest(names)>").add("names", new int[]{ 0, 1 });
         assertRenderingResult("1, 1", context);
     }
 
     @Test
-    public void testIncomingLists()
+    void testIncomingLists()
     {
         Context context = makeTemplateContext("<rest(names)>, <rest(names)>").add("names", "Ter")
             .add("names", "Tom");
@@ -528,7 +528,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testFirstWithCatAttribute()
+    void testFirstWithCatAttribute()
     {
         Context context = makeTemplateContext("<first([names,phones])>").add("names", "Ter")
             .add("names", "Tom")
@@ -538,7 +538,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testFirstWithListOfMaps()
+    void testFirstWithListOfMaps()
     {
         Map<String, String> m1 = Map.of("Ter", "x5707");
         Map<String, String> m2 = Map.of("Tom", "x5332");
@@ -551,7 +551,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testFirstWithListOfMaps2()
+    void testFirstWithListOfMaps2()
     {
         Map<String, String> m1 = Map.of("Ter", "x5707");
         Map<String, String> m2 = Map.of("Tom", "x5332");
@@ -565,21 +565,21 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testTrim()
+    void testTrim()
     {
         Context context = makeTemplateContext("<trim(name)>").add("name", " Ter  \n");
         assertRenderingResult("Ter", context);
     }
 
     @Test
-    public void testStrlen()
+    void testStrlen()
     {
         Context context = makeTemplateContext("<strlen(name)>").add("name", "012345");
         assertRenderingResult("6", context);
     }
 
     @Test
-    public void testReverse()
+    void testReverse()
     {
         Context context = makeTemplateContext("<reverse(names); separator=\", \">").add("names", "Ter")
             .add("names", "Tom")
@@ -588,7 +588,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testReverseList()
+    void testReverseList()
     {
         Context context = makeTemplateContext("<reverse(names); separator=\", \">").add("names",
             Arrays.asList("Ter", "Tom", "Sriram"));
@@ -596,7 +596,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testReverseArray()
+    void testReverseArray()
     {
         Context context = makeTemplateContext("<reverse(names); separator=\", \">").add("names",
             new String[]{ "Ter", "Tom", "Sriram" });
@@ -604,7 +604,7 @@ public class TestFunctions extends BaseTest
     }
 
     @Test
-    public void testReversePrimitiveArray()
+    void testReversePrimitiveArray()
     {
         Context context = makeTemplateContext("<reverse(names); separator=\", \">").add("names", new int[]{ 0, 1, 2 });
         assertRenderingResult("2, 1, 0", context);

@@ -5,10 +5,10 @@ import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Template;
 
-public class TestAttributes extends BaseTest
+class TestAttributes extends BaseTest
 {
     @Test
-    public void testNestedContext()
+    void testNestedContext()
     {
         Context inner = makeTemplateContext("harmless");
         Context outer = makeTemplateContext("something <nested>").add("nested", inner);
@@ -16,7 +16,7 @@ public class TestAttributes extends BaseTest
     }
 
     @Test
-    public void testNestedTemplate()
+    void testNestedTemplate()
     {
         Template inner = loader.getTemplate()
             .fromString("harmless")

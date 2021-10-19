@@ -7,11 +7,8 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.TimeZone;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,11 +21,10 @@ import org.puretemplate.model.DateRenderer;
 import org.puretemplate.model.ModelAdaptor;
 import org.puretemplate.model.NumberRenderer;
 import org.puretemplate.model.StringRenderer;
-import org.puretemplate.state1.GroupLoader;
 
 import com.google.common.collect.Lists;
 
-public class TestRenderers extends BaseTest
+class TestRenderers extends BaseTest
 {
     private static final GregorianCalendar CALENDAR_2005_07_05 = new GregorianCalendar(2005, JULY, 5);
     private static final ZoneId LOS_ANGELES = ZoneId.of("America/Los_Angeles");
@@ -66,7 +62,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testRendererForGroup()
+    void testRendererForGroup()
     {
         String templates = "dateThing(created) ::= \"datetime: <created>\"\n";
 
@@ -92,7 +88,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testRendererWithFormat()
+    void testRendererWithFormat()
     {
         String templates = "dateThing(created) ::= << date: <created; format=\"yyyy.MM.dd\"> >>\n";
 
@@ -104,7 +100,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testRendererWithPredefinedFormat()
+    void testRendererWithPredefinedFormat()
     {
         String templates = "dateThing(created) ::= << datetime: <created; format=\"short\"> >>\n";
 
@@ -120,7 +116,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testRendererWithPredefinedFormat2()
+    void testRendererWithPredefinedFormat2()
     {
         String templates = "dateThing(created) ::= << datetime: <created; format=\"full\"> >>\n";
 
@@ -150,7 +146,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testRendererWithPredefinedFormat3()
+    void testRendererWithPredefinedFormat3()
     {
         String templates = "dateThing(created) ::= << date: <created; format=\"date:medium\"> >>\n";
 
@@ -162,7 +158,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testRendererWithPredefinedFormat4()
+    void testRendererWithPredefinedFormat4()
     {
         String templates = "dateThing(created) ::= << time: <created; format=\"time:medium\"> >>\n";
 
@@ -174,7 +170,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testStringRendererWithFormat_cap()
+    void testStringRendererWithFormat_cap()
     {
         String templates = "foo(x) ::= << <x; format=\"cap\"> >>\n";
 
@@ -194,7 +190,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testStringRendererWithTemplateInclude_cap()
+    void testStringRendererWithTemplateInclude_cap()
     {
         // must toString the t() ref before applying format
         String templates = "foo(x) ::= << <(t()); format=\"cap\"> >>\n" + "t() ::= <<ack>>\n";
@@ -207,7 +203,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testStringRendererWithSubtemplateInclude_cap()
+    void testStringRendererWithSubtemplateInclude_cap()
     {
         String templates = "foo(x) ::= << <({ack}); format=\"cap\"> >>\n";
 
@@ -219,7 +215,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testStringRendererWithFormat_cap_emptyValue()
+    void testStringRendererWithFormat_cap_emptyValue()
     {
         String templates = "foo(x) ::= << <x; format=\"cap\"> >>\n";
 
@@ -231,7 +227,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testStringRendererWithFormat_url_encode()
+    void testStringRendererWithFormat_url_encode()
     {
         String templates = "foo(x) ::= << <x; format=\"url-encode\"> >>\n";
 
@@ -243,7 +239,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testStringRendererWithFormat_xml_encode()
+    void testStringRendererWithFormat_xml_encode()
     {
         String templates = "foo(x) ::= << <x; format=\"xml-encode\"> >>\n";
 
@@ -255,7 +251,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testStringRendererWithFormat_xml_encode_null()
+    void testStringRendererWithFormat_xml_encode_null()
     {
         String templates = "foo(x) ::= << <x; format=\"xml-encode\"> >>\n";
 
@@ -267,7 +263,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testStringRendererWithFormat_xml_encode_emoji()
+    void testStringRendererWithFormat_xml_encode_emoji()
     {
         String templates = "foo(x) ::= << <x; format=\"xml-encode\"> >>\n";
 
@@ -279,7 +275,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testStringRendererWithPrintfFormat()
+    void testStringRendererWithPrintfFormat()
     {
         String templates = "foo(x) ::= << <x; format=\"%6s\"> >>\n";
 
@@ -291,7 +287,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testNumberRendererWithPrintfFormat()
+    void testNumberRendererWithPrintfFormat()
     {
         String templates = "foo(x,y) ::= << <x; format=\"%d\"> <y; format=\"%2.3f\"> >>\n";
 
@@ -309,7 +305,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testInstanceofRenderer()
+    void testInstanceofRenderer()
     {
         String templates = "numberThing(x,y,z) ::= \"numbers: <x>, <y>; <z>\"\n";
 
@@ -327,7 +323,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testLocaleWithNumberRenderer()
+    void testLocaleWithNumberRenderer()
     {
         String templates = "foo(x,y) ::= <<\n" + "<x; format=\"%,d\"> <y; format=\"%,2.3f\">\n" + ">>\n";
 
@@ -347,7 +343,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testRendererWithFormatAndList()
+    void testRendererWithFormatAndList()
     {
         String template = "The names: <names; format=\"upper\">";
 
@@ -373,7 +369,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testRendererWithFormatAndSeparator()
+    void testRendererWithFormatAndSeparator()
     {
         String template = "The names: <names; separator=\" and \", format=\"upper\">";
 
@@ -386,7 +382,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testRendererWithFormatAndSeparatorAndNull()
+    void testRendererWithFormatAndSeparatorAndNull()
     {
         String template = "The names: <names; separator=\" and \", null=\"n/a\", format=\"upper\">";
 
@@ -397,7 +393,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testDateRendererWithLocale()
+    void testDateRendererWithLocale()
     {
         String template = "<date; format=\"dd 'de' MMMMM 'de' yyyy\">";
 
@@ -427,7 +423,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testDefaultRenderingBypassesAttributeRendererForText()
+    void testDefaultRenderingBypassesAttributeRendererForText()
     {
         String templates = "foo(x) ::= << begin <x> end >>\n";
 
@@ -443,7 +439,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testLegacyRenderingUsesAttributeRendererForText()
+    void testLegacyRenderingUsesAttributeRendererForText()
     {
         String templates = "foo(x) ::= << begin <x> end >>\n";
 
@@ -460,7 +456,7 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testOrderFreeOptions()
+    void testOrderFreeOptions()
     {
         String templates = "foo(x) ::= << begin <x> end >>\n";
 
@@ -510,12 +506,13 @@ public class TestRenderers extends BaseTest
     }
 
     @Test
-    public void testOrderFreeOptions2()
+    void testOrderFreeOptions2()
     {
         String templates = "foo(x) ::= << begin <x> end >>\n";
 
         Group blankGroup = loader.getGroup()
-            .blank().build();
+            .blank()
+            .build();
 
         Group group;
 

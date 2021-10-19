@@ -11,10 +11,10 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.puretemplate.misc.ErrorBuffer;
 
-public class TestDictionaries extends BaseTest
+class TestDictionaries extends BaseTest
 {
     @Test
-    public void testDict()
+    void testDict()
     {
         String templates = "typeInit ::= [\"int\":\"0\", \"float\":\"0.0\"] " +
             NEWLINE +
@@ -30,7 +30,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictValuesAreTemplates() throws IOException
+    void testDictValuesAreTemplates() throws IOException
     {
         String templates = "typeInit ::= [\"int\":{0<w>}, \"float\":{0.0<w>}] " +
             NEWLINE +
@@ -47,7 +47,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictKeyLookupViaTemplate() throws IOException
+    void testDictKeyLookupViaTemplate() throws IOException
     {
         // Make sure we try rendering stuff to string if not found as regular object
         String templates = "typeInit ::= [\"int\":{0<w>}, \"float\":{0.0<w>}] " +
@@ -64,7 +64,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictKeyLookupAsNonToStringableObject() throws IOException
+    void testDictKeyLookupAsNonToStringableObject() throws IOException
     {
         // Make sure we try rendering stuff to string if not found as regular object
         String templates = "foo(m,k) ::= \"<m.(k)>\"" + NEWLINE;
@@ -81,7 +81,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictMissingDefaultValueIsEmpty()
+    void testDictMissingDefaultValueIsEmpty()
     {
         String templates = "typeInit ::= [\"int\":\"0\", \"float\":\"0.0\"] " +
             NEWLINE +
@@ -98,7 +98,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictMissingDefaultValueIsEmptyForNullKey()
+    void testDictMissingDefaultValueIsEmptyForNullKey()
     {
         String templates = "typeInit ::= [\"int\":\"0\", \"float\":\"0.0\"] " +
             NEWLINE +
@@ -115,7 +115,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictHiddenByFormalArg()
+    void testDictHiddenByFormalArg()
     {
         String templates = "typeInit ::= [\"int\":\"0\", \"float\":\"0.0\"] " +
             NEWLINE +
@@ -131,7 +131,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictEmptyValueAndAngleBracketStrings()
+    void testDictEmptyValueAndAngleBracketStrings()
     {
         String templates = "typeInit ::= [\"int\":\"0\", \"float\":, \"double\":<<0.0L>>] " +
             NEWLINE +
@@ -147,7 +147,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictDefaultValue()
+    void testDictDefaultValue()
     {
         String templates = "typeInit ::= [\"int\":\"0\", default:\"null\"] " +
             NEWLINE +
@@ -163,7 +163,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictNullKeyGetsDefaultValue()
+    void testDictNullKeyGetsDefaultValue()
     {
         String templates = "typeInit ::= [\"int\":\"0\", default:\"null\"] " +
             NEWLINE +
@@ -178,7 +178,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictEmptyDefaultValue()
+    void testDictEmptyDefaultValue()
     {
         String templates = "typeInit ::= [\"int\":\"0\", default:] " +
             NEWLINE +
@@ -195,7 +195,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictDefaultValueIsKey()
+    void testDictDefaultValueIsKey()
     {
         String templates = "typeInit ::= [\"int\":\"0\", default:key] " +
             NEWLINE +
@@ -214,7 +214,7 @@ public class TestDictionaries extends BaseTest
      * Test that a map can have only the default entry.
      */
     @Test
-    public void testDictDefaultStringAsKey()
+    void testDictDefaultStringAsKey()
     {
         String templates = "typeInit ::= [\"default\":\"foo\"] " +
             NEWLINE +
@@ -233,7 +233,7 @@ public class TestDictionaries extends BaseTest
      * Test that a map can return a <b>string</b> with the word: default.
      */
     @Test
-    public void testDictDefaultIsDefaultString() throws IOException
+    void testDictDefaultIsDefaultString() throws IOException
     {
         String templates = "map ::= [default: \"default\"] " + NEWLINE + "t() ::= << <map.(\"1\")> >>" + NEWLINE;
         writeFile(tmpdir, "test.stg", templates);
@@ -243,7 +243,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictViaEnclosingTemplates()
+    void testDictViaEnclosingTemplates()
     {
         String templates = "typeInit ::= [\"int\":\"0\", \"float\":\"0.0\"] " +
             NEWLINE +
@@ -261,7 +261,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictViaEnclosingTemplates2() throws IOException
+    void testDictViaEnclosingTemplates2() throws IOException
     {
         String templates = "typeInit ::= [\"int\":\"0\", \"float\":\"0.0\"] " +
             NEWLINE +
@@ -284,7 +284,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void TestAccessDictionaryFromAnonymousTemplate() throws IOException
+    void TestAccessDictionaryFromAnonymousTemplate() throws IOException
     {
         String dir = tmpdir;
         String g = "a() ::= <<[<[\"foo\",\"a\"]:{x|<if(values.(x))><x><endif>}>]>>\n" +
@@ -300,7 +300,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void TestAccessDictionaryFromAnonymousTemplateInRegion() throws IOException
+    void TestAccessDictionaryFromAnonymousTemplateInRegion() throws IOException
     {
         String dir = tmpdir;
         String g = "a() ::= <<[<@r()>]>>\n" +
@@ -319,7 +319,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testImportDictionary()
+    void testImportDictionary()
     {
         Group root = loader.getGroup()
             .fromString("d ::= [\"a\":\"b\"]\n")
@@ -334,7 +334,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testStringsInDictionary() throws IOException
+    void testStringsInDictionary() throws IOException
     {
         String templates = "auxMap ::= [\n" +
             "   \"E\": \"electric <field>\",\n" +
@@ -361,7 +361,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testTemplatesInDictionary() throws IOException
+    void testTemplatesInDictionary() throws IOException
     {
         String templates = "auxMap ::= [\n" +
             "   \"E\": {electric <field>},\n" +
@@ -387,7 +387,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictionaryBehaviorTrue() throws IOException
+    void testDictionaryBehaviorTrue() throws IOException
     {
         String templates = "d ::= [\n" +
             "   \"x\" : true,\n" +
@@ -405,7 +405,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictionaryBehaviorFalse() throws IOException
+    void testDictionaryBehaviorFalse() throws IOException
     {
         String templates = "d ::= [\n" +
             "   \"x\" : false,\n" +
@@ -423,7 +423,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictionaryBehaviorEmptyTemplate() throws IOException
+    void testDictionaryBehaviorEmptyTemplate() throws IOException
     {
         String templates = "d ::= [\n" +
             "   \"x\" : {},\n" +
@@ -441,7 +441,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictionaryBehaviorEmptyList() throws IOException
+    void testDictionaryBehaviorEmptyList() throws IOException
     {
         String templates = "d ::= [\n" +
             "   \"x\" : [],\n" +
@@ -463,7 +463,7 @@ public class TestDictionaries extends BaseTest
      * Before the fix the following test would return %hi%
      */
     @Test
-    public void testDictionaryBehaviorNoNewlineTemplate() throws IOException
+    void testDictionaryBehaviorNoNewlineTemplate() throws IOException
     {
         String templates = "d ::= [\n" + "   \"x\" : <%hi%>\n" + "]\n" + "\n" + "t() ::= <<\n" + "<d.x>\n" + ">>\n";
 
@@ -474,7 +474,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictionarySpecialValues() throws IOException
+    void testDictionarySpecialValues() throws IOException
     {
         String templates = "t(id) ::= <<\n" +
             "<identifier.(id)>\n" +
@@ -513,7 +513,7 @@ public class TestDictionaries extends BaseTest
     }
 
     @Test
-    public void testDictionarySpecialValuesOverride() throws IOException
+    void testDictionarySpecialValuesOverride() throws IOException
     {
         String templates = "t(id) ::= <<\n" +
             "<identifier.(id)>\n" +
