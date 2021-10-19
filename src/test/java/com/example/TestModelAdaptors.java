@@ -1,6 +1,6 @@
 package com.example;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.TreeMap;
 
@@ -15,7 +15,8 @@ import org.puretemplate.exception.NoSuchPropertyException;
 import org.puretemplate.misc.ErrorBufferAllErrors;
 import org.puretemplate.model.ModelAdaptor;
 
-class TestModelAdaptors extends BaseTest
+@SuppressWarnings("java:S5786")
+public class TestModelAdaptors extends BaseTest
 {
     @NoArgsConstructor(access = AccessLevel.PUBLIC)
     protected static class UserAdaptor implements ModelAdaptor<User>

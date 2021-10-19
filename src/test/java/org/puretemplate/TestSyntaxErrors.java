@@ -1,6 +1,6 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.puretemplate.error.ErrorListener;

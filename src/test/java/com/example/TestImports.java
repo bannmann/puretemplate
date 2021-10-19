@@ -1,7 +1,7 @@
 package com.example;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -459,9 +459,8 @@ class TestImports extends BaseTest
         IllegalArgumentException thrown = obtainThrownExceptionOfType(() -> group.getTemplate("/group/a"),
             IllegalArgumentException.class);
 
-        assertTrue("exception mentions template name",
-            thrown.getMessage()
-                .startsWith("Invalid template name /group/a"));
+        assertTrue(thrown.getMessage()
+            .startsWith("Invalid template name /group/a"), "exception mentions template name");
 
         String result = errors.toString();
         assertTrue(result.contains("import illegal in group files embedded in directory-based groups"));

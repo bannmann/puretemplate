@@ -1,8 +1,9 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -23,7 +24,7 @@ class TestTypeRegistry
     {
         TypeRegistry<String> registry = new TypeRegistry<String>();
         registry.put(Object.class, "Object");
-        assertEquals("Object", registry.get(Object.class));
+        Assertions.assertEquals("Object", registry.get(Object.class));
         assertEquals("Object", registry.get(A.class));
         assertEquals("Object", registry.get(B.class));
     }

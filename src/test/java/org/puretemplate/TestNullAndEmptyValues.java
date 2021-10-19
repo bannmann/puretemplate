@@ -1,6 +1,6 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -192,7 +192,7 @@ class TestNullAndEmptyValues extends BaseTest
     {
         List<T> failed = testMatrix(singleValuedTests);
         List<T> expecting = Collections.emptyList();
-        assertArrayEquals("failed tests " + failed, expecting.toArray(), failed.toArray());
+        assertArrayEquals(expecting.toArray(), failed.toArray(), "failed tests " + failed);
     }
 
     @Test
@@ -200,7 +200,7 @@ class TestNullAndEmptyValues extends BaseTest
     {
         List<T> failed = testMatrix(multiValuedTests);
         List<T> expecting = Collections.emptyList();
-        assertArrayEquals("failed tests " + failed, expecting.toArray(), failed.toArray());
+        assertArrayEquals(expecting.toArray(), failed.toArray(), "failed tests " + failed);
     }
 
     @Test
@@ -208,7 +208,7 @@ class TestNullAndEmptyValues extends BaseTest
     {
         List<T> failed = testMatrix(listTests);
         List<T> expecting = Collections.emptyList();
-        assertArrayEquals("failed tests " + failed, expecting.toArray(), failed.toArray());
+        assertArrayEquals(expecting.toArray(), failed.toArray(), "failed tests " + failed);
     }
 
     public List<T> testMatrix(T[] tests)

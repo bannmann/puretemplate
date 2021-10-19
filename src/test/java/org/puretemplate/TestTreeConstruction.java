@@ -1,6 +1,6 @@
 package org.puretemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.antlr.runtime.RuleReturnScope;
 import org.antlr.runtime.tree.Tree;
@@ -23,7 +23,7 @@ class TestTreeConstruction extends org.puretemplate.gUnitBase
         RuleReturnScope rstruct = (RuleReturnScope) execParser("template", "<[]>", 16);
         Object actual = ((Tree) rstruct.getTree()).toStringTree();
         Object expecting = "(EXPR [)";
-        assertEquals("testing rule template", expecting, actual);
+        assertEquals(expecting, actual, "testing rule template");
     }
 
     @Test
@@ -33,6 +33,6 @@ class TestTreeConstruction extends org.puretemplate.gUnitBase
         RuleReturnScope rstruct = (RuleReturnScope) execParser("template", "<[a,b]>", 17);
         Object actual = ((Tree) rstruct.getTree()).toStringTree();
         Object expecting = "(EXPR ([ a b))";
-        assertEquals("testing rule template", expecting, actual);
+        assertEquals(expecting, actual, "testing rule template");
     }
 }
