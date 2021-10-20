@@ -2,14 +2,21 @@
 
 All contributions to this project are licensed under the three-clause BSD license; see [LICENSE](LICENSE).
 
-Like many other open source projects, PureTemplate has adopted the Developer Certificate of Origin (DCO) given below. Contributors must explicitly agree to the DCO by adding a line like the following to their commit message:
+Like many other open source projects, PureTemplate has adopted the Developer Certificate of Origin (DCO) given below.
+Contributors must explicitly agree to the DCO by adding a line like the following to their commit message:
+
 ```
 Signed-off-by: Random J Developer <random@developer.example.org>
 ```
 
-This DCO is neither a Contributor License Agreement (CLA) nor a license. See the opensource.com article [CLA vs. DCO: What's the difference?](https://opensource.com/article/18/3/cla-vs-dco-whats-difference) for details. 
+This DCO is neither a Contributor License Agreement (CLA) nor a license. See the opensource.com
+article [CLA vs. DCO: What's the difference?](https://opensource.com/article/18/3/cla-vs-dco-whats-difference) for
+details.
 
-Note that PureTemplate was forked from [StringTemplate](https://github.com/antlr/stringtemplate4), whose contributors signed a similar agreement. PureTemplate retains that agreement and the list of contributors in [upstream-contributors.txt](upstream-contributors.txt). Whenever changes in StringTemplate are integrated into PureTemplate, any new StringTemplate contributors are added to that file.
+Note that PureTemplate was forked from [StringTemplate](https://github.com/antlr/stringtemplate4), whose contributors
+signed a similar agreement. PureTemplate retains that agreement and the list of contributors
+in [upstream-contributors.txt](upstream-contributors.txt). Whenever changes in StringTemplate are integrated into
+PureTemplate, any new StringTemplate contributors are added to that file.
 
 ## Developer Certificate of Origin
 

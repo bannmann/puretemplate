@@ -1,0 +1,3 @@
+import "/lib.stg"
+a() ::= <<main a calls <bold()>!>>
+b() ::= <<main b>>

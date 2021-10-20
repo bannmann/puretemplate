@@ -1,0 +1,2 @@
+import "alphabet"
+a() ::= <<base a>>
