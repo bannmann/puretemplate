@@ -42,6 +42,8 @@
         <javadoc.output.directory.final>${project.build.directory}/apidocs</javadoc.output.directory.final>
         <javadoc.output.directory.temp>${project.build.directory}/apidocs-temp</javadoc.output.directory.temp>
         <javadoc.sources.directory>${project.build.directory}/generated-sources/delombok-for-javadoc</javadoc.sources.directory>
+        <lombok.core.version>1.18.22</lombok.core.version>
+        <lombok.plugin.version>1.18.20.0</lombok.plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <mizool.version>0.45</mizool.version>
@@ -153,9 +155,6 @@
                         <sourcepath>${javadoc.sources.directory};${silverchain.outputDirectory}</sourcepath>
                         <doclint>none</doclint>
                         <reportOutputDirectory>${javadoc.output.directory.final}</reportOutputDirectory>
-
-                        <!-- see https://stackoverflow.com/a/52603413/7641 -->
-                        <additionalJOption>--no-module-directories</additionalJOption>
                     </configuration>
                 </plugin>
                 <plugin>
