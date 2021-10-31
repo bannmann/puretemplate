@@ -9,12 +9,19 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apiguardian.api.API;
+
 /**
  * A renderer for {@link Date} and {@link Calendar} objects. It understands a variety of format names as shown in {@link
  * #formatToInt} field. By default it assumes {@code "short"} format. A prefix of {@code "date:"} or {@code "time:"}
- * shows only those components of the time object.
+ * shows only those components of the time object.<br>
+ * <br>
+ * <b>API status:</b> {@link API.Status#MAINTAINED} because PureTemplate will most likely fix
+ * <a href="https://github.com/antlr/stringtemplate4/issues/288">antlr/stringtemplate4#288</a> by replacing this with
+ * two distinct classes for {@link Date} and {@link Calendar}.
  */
 // using <Object> because this can handle Date and Calendar objects, which don't have a common supertype.
+@API(status = API.Status.MAINTAINED)
 public class DateRenderer implements AttributeRenderer<Object>
 {
     public static final Map<String, Integer> formatToInt = Map.ofEntries(entry("short", DateFormat.SHORT),

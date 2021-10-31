@@ -4,16 +4,20 @@ import java.io.Serializable;
 
 import lombok.Value;
 
+import org.apiguardian.api.API;
+
 /**
  * A line number and char position within a line.  Used by the source mapping stuff to map address to range within a
  * template.
  */
+@API(status = API.Status.STABLE)
 @Value
 public class Coordinates implements Serializable
 {
     /**
      * Given {@code index} into string {@code s}, compute the line and char position in line.
      */
+    @API(status = API.Status.INTERNAL)
     public static Coordinates getLineCharPosition(String s, int index)
     {
         int line = 1;

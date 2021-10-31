@@ -1,7 +1,9 @@
 package org.puretemplate.debug;
 
+import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
+@API(status = API.Status.EXPERIMENTAL)
 public class EvalExprEvent extends InterpEvent
 {
     /**

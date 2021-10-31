@@ -4,7 +4,9 @@ import lombok.Getter;
 
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.Token;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.MAINTAINED)
 @Getter
 public final class GroupCompilationMessage extends Message
 {

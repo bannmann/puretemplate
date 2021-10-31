@@ -2,6 +2,8 @@ package org.puretemplate.model;
 
 import java.util.Locale;
 
+import org.apiguardian.api.API;
+
 /**
  * This interface describes an object that knows how to format or otherwise render an object appropriately. There is one
  * renderer registered per group for a given Java type.
@@ -14,6 +16,7 @@ import java.util.Locale;
  *
  * @param <T> the type of values this renderer can handle.
  */
+@API(status = API.Status.STABLE)
 public interface AttributeRenderer<T>
 {
     String toString(T value, String formatString, Locale locale);

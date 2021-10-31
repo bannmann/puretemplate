@@ -2,8 +2,10 @@ package org.puretemplate.debug;
 
 import lombok.Getter;
 
+import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
+@API(status = API.Status.EXPERIMENTAL)
 public class InterpEvent
 {
     @Getter

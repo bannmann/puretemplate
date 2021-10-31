@@ -1,5 +1,8 @@
 package org.puretemplate.debug;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.EXPERIMENTAL)
 public class AddAttributeEvent extends ConstructionEvent
 {
     String name;

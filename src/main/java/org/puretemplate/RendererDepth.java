@@ -1,7 +1,9 @@
 package org.puretemplate;
 
+import org.apiguardian.api.API;
 import org.puretemplate.model.AttributeRenderer;
 
+@API(status = API.Status.STABLE)
 public enum RendererDepth
 {
     /**

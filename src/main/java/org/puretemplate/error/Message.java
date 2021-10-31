@@ -6,12 +6,14 @@ import java.io.StringWriter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
 /**
  * Upon error, ST creates a {@link Message} or subclass instance and notifies the listener.  This root class is used for
  * IO and internal errors.
  */
+@API(status = API.Status.MAINTAINED)
 @Getter
 @AllArgsConstructor
 public class Message

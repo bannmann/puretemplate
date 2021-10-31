@@ -3,12 +3,14 @@ package org.puretemplate.error;
 import lombok.Getter;
 
 import org.antlr.runtime.Token;
+import org.apiguardian.api.API;
 import org.puretemplate.Parsing;
 
 /**
  * Used for semantic errors that occur at compile time not during interpretation. For ST parsing ONLY not group
  * parsing.
  */
+@API(status = API.Status.MAINTAINED)
 @Getter
 public final class TemplateCompilationMessage extends Message
 {

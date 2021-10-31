@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.apiguardian.api.API;
 import org.puretemplate.error.ErrorListener;
 
 /**
@@ -12,6 +13,7 @@ import org.puretemplate.error.ErrorListener;
  * A context is intended to be used from one thread only. Unlike with {@link Template}, there are no plans to make
  * contexts thread-safe.
  */
+@API(status = API.Status.STABLE)
 @NotThreadSafe
 public interface Context
 {

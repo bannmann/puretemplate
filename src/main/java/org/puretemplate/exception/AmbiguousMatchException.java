@@ -28,9 +28,12 @@
  */
 package org.puretemplate.exception;
 
+import org.apiguardian.api.API;
+
 /**
  * @author Sam Harwell
  */
+@API(status = API.Status.STABLE)
 public final class AmbiguousMatchException extends RuntimeException
 {
     public AmbiguousMatchException(String message)

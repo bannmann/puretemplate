@@ -3,9 +3,12 @@ package org.puretemplate;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.apiguardian.api.API;
+
 /**
  * Provides shared configuration to templates and a way for them to resolve references to other templates.
  */
+@API(status = API.Status.STABLE)
 @Immutable
 @ThreadSafe
 public interface Group

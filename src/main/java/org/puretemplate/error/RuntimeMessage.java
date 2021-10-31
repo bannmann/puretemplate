@@ -1,10 +1,12 @@
 package org.puretemplate.error;
 
+import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
 /**
  * Used to track errors that occur in the ST interpreter.
  */
+@API(status = API.Status.MAINTAINED)
 public final class RuntimeMessage extends Message
 {
     public RuntimeMessage(ErrorType error, Location location)

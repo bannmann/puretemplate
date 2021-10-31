@@ -2,8 +2,9 @@ package org.puretemplate.model;
 
 import java.util.Map;
 
-import org.puretemplate.exception.NoSuchPropertyException;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE)
 public class MapModelAdaptor implements ModelAdaptor<Map<?, ?>>
 {
     @Override
