@@ -20,11 +20,10 @@ public enum RendererDepth
 
     /**
      * Recursively register the renderer for all imported groups.
-     *
-     * TODO figure out how to do this without changing the state of those groups (when used directly)
      */
     RECURSIVE
         {
+            // TODO figure out how to do this without changing the state of those groups (when used directly)
             @Override
             <T> void register(STGroup stGroup, Class<T> type, AttributeRenderer<? super T> renderer)
             {

@@ -8,7 +8,7 @@ import org.apiguardian.api.API;
 public class MapModelAdaptor implements ModelAdaptor<Map<?, ?>>
 {
     @Override
-    public Object getProperty(Map<?, ?> model, Object property, String propertyName) throws NoSuchPropertyException
+    public Object getProperty(Map<?, ?> model, Object property, String propertyName)
     {
         Object value;
         if (property == null)

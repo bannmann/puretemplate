@@ -31,7 +31,9 @@ public interface ModelAdaptor<T>
      * <br>
      * <b>API status:</b> {@link API.Status#MAINTAINED} because passing the property as both an {@link Object} and a
      * {@link String} could be replaced by an {@link Object}-only variant. Feedback welcome.
+     *
+     * @throws NoSuchPropertyException if the property is missing
      */
     @API(status = API.Status.MAINTAINED)
-    Object getProperty(T model, Object property, String propertyName) throws NoSuchPropertyException;
+    Object getProperty(T model, Object property, String propertyName);
 }
