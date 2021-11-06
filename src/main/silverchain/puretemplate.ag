@@ -21,36 +21,40 @@ import org.puretemplate.model.AggregateBuilder;
 import org.puretemplate.model.AttributeRenderer;
 import org.puretemplate.model.ModelAdaptor;
 
+$FROM_STRING =
+    fromString(String source)
+    | fromReader(Reader reader)
+    | fromReader(InputSupplier<Reader> readerSupplier);
+
+$FROM_STREAM =
+    fromInputStream(InputStream inputStream)
+    | fromInputStream(InputSupplier<InputStream> inputStreamSupplier)
+    | fromResourceFile(String absolutePath)
+    | fromResourceFile(ClassLoader classLoader, String absolutePath)
+    | fromResourceFile(Class<?> reference, String relativePath)
+    | fromFile(Path file)
+    | fromFile(File file)
+    | fromFile(String filePath);
+
+$USING_CHARSET = usingCharset(Charset charset);
+
+$WITH_DELIMITERS = withDelimiters(char start, char stop);
+
 TemplateLoader
 {
     Template
 
     (
-        (
-            fromString(String source)
-            | fromReader(Reader reader)
-            | fromReader(InputSupplier<Reader> readerSupplier)
-        )
+        $FROM_STRING
         |
         (
-            (
-                fromInputStream(InputStream inputStream)
-                | fromInputStream(InputSupplier<InputStream> inputStreamSupplier)
-                | fromResourceFile(String absolutePath)
-                | fromResourceFile(ClassLoader classLoader, String absolutePath)
-                | fromResourceFile(Class<?> reference, String relativePath)
-                | fromFile(Path file)
-                | fromFile(File file)
-                | fromFile(String filePath)
-            )
-
-            usingCharset(Charset charset)
-            ?
+            $FROM_STREAM
+            $USING_CHARSET?
         )
     )
 
     (
-        withDelimiters(char start, char stop)
+        $WITH_DELIMITERS
         | attachedToGroup(Group group)
     )
     ?
@@ -58,25 +62,23 @@ TemplateLoader
     build();
 }
 
+$UNRESTRICTED_GROUP_OPTIONS =
+(
+    importTemplates(Group otherGroup) |
+    registerModelAdaptor<T>(Class<T> attributeType, ModelAdaptor<? super T> adaptor) |
+    registerAttributeRenderer<T>(Class<T> attributeType, AttributeRenderer<? super T> renderer, RendererDepth depth)
+);
+
 GroupLoader
 {
     Group
 
     (
-        (fromString(String source) | fromReader(Reader reader))
+        $FROM_STRING
         |
         (
             (
-                (
-                    fromInputStream(InputSupplier<InputStream> inputStreamSupplier)
-                    | fromInputStream(InputStream inputStream)
-                    | fromResourceFile(String absolutePath)
-                    | fromResourceFile(ClassLoader classLoader, String absolutePath)
-                    | fromResourceFile(Class<?> reference, String relativePath)
-                    | fromFile(Path file)
-                    | fromFile(File file)
-                    | fromFile(String filePath)
-                )
+                $FROM_STREAM
                 | fromDirectory(String directoryPath)
                 | fromDirectory(File directory)
                 | fromDirectory(Path directory)
@@ -84,37 +86,38 @@ GroupLoader
                 | fromResourceDirectory(Class<?> reference, String relativePath)
             )
 
-            usingCharset(Charset charset)
-            ?
+            $USING_CHARSET?
         )
         |
         blank()
     )
 
     // Allow only one call of each with*() method, but in any order, and mixed with other, unrestricted methods
-    ( importTemplates(Group otherGroup) | registerModelAdaptor<T>(Class<T> attributeType, ModelAdaptor<? super T> adaptor) | registerAttributeRenderer<T>(Class<T> attributeType, AttributeRenderer<? super T> renderer, RendererDepth depth) )*
+    $UNRESTRICTED_GROUP_OPTIONS*
     {
         (
-            withDelimiters(char start, char stop)?
-            ( importTemplates(Group otherGroup) | registerModelAdaptor<T>(Class<T> attributeType, ModelAdaptor<? super T> adaptor) | registerAttributeRenderer<T>(Class<T> attributeType, AttributeRenderer<? super T> renderer, RendererDepth depth) )*
+            $WITH_DELIMITERS?
+            $UNRESTRICTED_GROUP_OPTIONS*
         ),
         (
             withErrorListener(ErrorListener listener)?
-            ( importTemplates(Group otherGroup) | registerModelAdaptor<T>(Class<T> attributeType, ModelAdaptor<? super T> adaptor) | registerAttributeRenderer<T>(Class<T> attributeType, AttributeRenderer<? super T> renderer, RendererDepth depth) )*
+            $UNRESTRICTED_GROUP_OPTIONS*
         ),
         (
             withLegacyRendering()?
-            ( importTemplates(Group otherGroup) | registerModelAdaptor<T>(Class<T> attributeType, ModelAdaptor<? super T> adaptor) | registerAttributeRenderer<T>(Class<T> attributeType, AttributeRenderer<? super T> renderer, RendererDepth depth) )*
+            $UNRESTRICTED_GROUP_OPTIONS*
         )
     }
 
     build();
 }
 
+$WITH_LINE_WRAPPING = withLineWrapping(int lineLength)?;
+
 Renderer
 {
     int
-    withLineWrapping(int lineLength)?
+    $WITH_LINE_WRAPPING
     (
         intoWriter(Writer writer)
         |
@@ -133,7 +136,7 @@ Renderer
     ;
 
     String
-    withLineWrapping(int lineLength)?
+    $WITH_LINE_WRAPPING
     intoString()
     ;
 }
