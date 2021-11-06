@@ -63,11 +63,9 @@ TemplateLoader
 }
 
 $UNRESTRICTED_GROUP_OPTIONS =
-(
-    importTemplates(Group otherGroup) |
-    registerModelAdaptor<T>(Class<T> attributeType, ModelAdaptor<? super T> adaptor) |
-    registerAttributeRenderer<T>(Class<T> attributeType, AttributeRenderer<? super T> renderer, RendererDepth depth)
-);
+    importTemplates(Group otherGroup)
+    | registerModelAdaptor<T>(Class<T> attributeType, ModelAdaptor<? super T> adaptor)
+    | registerAttributeRenderer<T>(Class<T> attributeType, AttributeRenderer<? super T> renderer, RendererDepth depth);
 
 GroupLoader
 {
@@ -85,7 +83,6 @@ GroupLoader
                 | fromResourceDirectory(String absolutePath)
                 | fromResourceDirectory(Class<?> reference, String relativePath)
             )
-
             $USING_CHARSET?
         )
         |
@@ -112,31 +109,25 @@ GroupLoader
     build();
 }
 
-$WITH_LINE_WRAPPING = withLineWrapping(int lineLength)?;
+$WITH_LINE_WRAPPING = withLineWrapping(int lineLength);
 
 Renderer
 {
     int
-    $WITH_LINE_WRAPPING
+    $WITH_LINE_WRAPPING?
     (
         intoWriter(Writer writer)
-        |
-        intoOutputStream(OutputStream outputStream)
-        |
-        intoOutputStream(OutputStream outputStream, Charset charset)
-        |
-        intoFile(File file) throws IOException
-        |
-        intoFile(File file, Charset charset) throws IOException
-        |
-        intoFile(Path file) throws IOException
-        |
-        intoFile(Path file, Charset charset, OpenOption... options) throws IOException
+        | intoOutputStream(OutputStream outputStream)
+        | intoOutputStream(OutputStream outputStream, Charset charset)
+        | intoFile(File file) throws IOException
+        | intoFile(File file, Charset charset) throws IOException
+        | intoFile(Path file) throws IOException
+        | intoFile(Path file, Charset charset, OpenOption... options) throws IOException
     )
     ;
 
     String
-    $WITH_LINE_WRAPPING
+    $WITH_LINE_WRAPPING?
     intoString()
     ;
 }
@@ -144,121 +135,37 @@ Renderer
 AggregateBuilder
 {
     Aggregate
-    properties(
-        String nameA,
-        String nameB
-    )
-    withValues(
-        Object valueA,
-        Object valueB
-    )
+    properties(String nameA, String nameB)
+    withValues(Object valueA, Object valueB)
     ;
 
     Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC
-    )
+    properties(String nameA, String nameB, String nameC)
+    withValues(Object valueA, Object valueB, Object valueC)
     ;
 
     Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD
-    )
+    properties(String nameA, String nameB, String nameC, String nameD)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD)
     ;
 
     Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD,
-        String nameE
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD,
-        Object valueE
-    )
+    properties(String nameA, String nameB, String nameC, String nameD, String nameE)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD, Object valueE)
     ;
 
     Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD,
-        String nameE,
-        String nameF
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD,
-        Object valueE,
-        Object valueF
-    )
+    properties(String nameA, String nameB, String nameC, String nameD, String nameE, String nameF)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD, Object valueE, Object valueF)
     ;
 
     Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD,
-        String nameE,
-        String nameF,
-        String nameG
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD,
-        Object valueE,
-        Object valueF,
-        Object valueG
-    )
+    properties(String nameA, String nameB, String nameC, String nameD, String nameE, String nameF, String nameG)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD, Object valueE, Object valueF, Object valueG)
     ;
 
     Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD,
-        String nameE,
-        String nameF,
-        String nameG,
-        String nameH
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD,
-        Object valueE,
-        Object valueF,
-        Object valueG,
-        Object valueH
-    )
+    properties(String nameA, String nameB, String nameC, String nameD, String nameE, String nameF, String nameG, String nameH)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD, Object valueE, Object valueF, Object valueG, Object valueH)
     ;
 }
