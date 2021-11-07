@@ -3,10 +3,7 @@ package org.puretemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.puretemplate.debug.EvalTemplateEvent;
-import org.puretemplate.debug.InterpEvent;
 import org.puretemplate.misc.Coordinates;
-import org.puretemplate.misc.Interval;
 import org.puretemplate.misc.Location;
 
 class InstanceScope
@@ -79,9 +76,29 @@ class InstanceScope
         {
             return null;
         }
+
         // get left edge and get line/col
         int i = interval.getA();
-        return Coordinates.getLineCharPosition(st.getSourceText(), i);
+        int line = 1;
+        int charPos = 0;
+        int p = 0;
+        while (p < i)
+        {
+            // don't care about s[index] itself; count before
+            if (st.getSourceText()
+                .charAt(p) == '\n')
+            {
+                line++;
+                charPos = 0;
+            }
+            else
+            {
+                charPos++;
+            }
+            p++;
+        }
+
+        return new Coordinates(line, charPos);
     }
 
     public String getReference()

@@ -1,10 +1,8 @@
-package org.puretemplate.debug;
+package org.puretemplate;
 
-import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
-@API(status = API.Status.EXPERIMENTAL)
-public class EvalExprEvent extends InterpEvent
+class EvalExprEvent extends InterpEvent
 {
     /**
      * Index of first char in template.

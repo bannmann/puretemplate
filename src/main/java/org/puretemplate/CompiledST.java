@@ -11,7 +11,6 @@ import java.util.Map;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
-import org.puretemplate.misc.Interval;
 
 /**
  * The result of compiling an {@link ST}.  Contains all the bytecode instructions, string table, bytecode address to

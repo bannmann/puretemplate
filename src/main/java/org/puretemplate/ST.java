@@ -10,11 +10,7 @@ import java.util.Locale;
 
 import lombok.NonNull;
 
-import org.puretemplate.debug.AddAttributeEvent;
-import org.puretemplate.debug.ConstructionEvent;
-import org.puretemplate.debug.InterpEvent;
 import org.puretemplate.error.ErrorListener;
-import org.puretemplate.misc.Interval;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;

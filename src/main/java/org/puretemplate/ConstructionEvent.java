@@ -1,12 +1,9 @@
-package org.puretemplate.debug;
-
-import org.apiguardian.api.API;
+package org.puretemplate;
 
 /**
  * An event that happens when building ST trees, adding attributes etc...
  */
-@API(status = API.Status.EXPERIMENTAL)
-public class ConstructionEvent
+class ConstructionEvent implements Event
 {
     public Throwable stack;
 

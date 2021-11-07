@@ -1,10 +1,8 @@
-package org.puretemplate.debug;
+package org.puretemplate;
 
-import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
-@API(status = API.Status.EXPERIMENTAL)
-public class IndentEvent extends EvalExprEvent
+class IndentEvent extends EvalExprEvent
 {
     public IndentEvent(Location location, int start, int stop, int exprStartChar, int exprStopChar)
     {

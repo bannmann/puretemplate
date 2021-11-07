@@ -3,7 +3,6 @@ package org.puretemplate;
 import java.io.IOException;
 import java.util.Locale;
 
-import org.puretemplate.debug.EvalExprEvent;
 import org.puretemplate.error.ErrorType;
 
 class DefaultInterpreter extends AbstractInterpreter

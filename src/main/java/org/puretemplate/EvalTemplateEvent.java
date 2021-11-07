@@ -1,10 +1,8 @@
-package org.puretemplate.debug;
+package org.puretemplate;
 
-import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
-@API(status = API.Status.EXPERIMENTAL)
-public class EvalTemplateEvent extends InterpEvent
+class EvalTemplateEvent extends InterpEvent
 {
     public EvalTemplateEvent(Location location, int exprStartChar, int exprStopChar)
     {

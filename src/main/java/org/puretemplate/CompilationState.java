@@ -5,7 +5,6 @@ import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.puretemplate.error.ErrorType;
-import org.puretemplate.misc.Interval;
 
 /**
  * Temporary data used during construction and functions that fill it / use it. Result is {@link #impl} {@link

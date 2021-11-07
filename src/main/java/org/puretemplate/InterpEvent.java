@@ -1,12 +1,10 @@
-package org.puretemplate.debug;
+package org.puretemplate;
 
 import lombok.Getter;
 
-import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
-@API(status = API.Status.EXPERIMENTAL)
-public class InterpEvent
+class InterpEvent implements Event
 {
     @Getter
     protected final Location location;
