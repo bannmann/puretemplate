@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * Provides details about the part of the template source code that caused an error.
+ */
 @Value
 public class Location implements Serializable
 {

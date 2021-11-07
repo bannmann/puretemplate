@@ -7,8 +7,7 @@ import org.apiguardian.api.API;
 import org.puretemplate.Parsing;
 
 /**
- * Used for semantic errors that occur at compile time not during interpretation. For ST parsing ONLY not group
- * parsing.
+ * Used for errors while compiling template files.
  */
 @API(status = API.Status.MAINTAINED)
 @Getter

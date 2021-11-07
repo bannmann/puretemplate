@@ -17,7 +17,7 @@ import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.puretemplate.error.ErrorType;
-import org.puretemplate.exception.TemplateException;
+import org.puretemplate.exception.CompilationException;
 
 /**
  * A compiler for a single template.
@@ -216,6 +216,6 @@ class Compiler
             String msg = parser.getErrorMessage(re, parser.getTokenNames());
             group.errMgr.compileTimeError(ErrorType.SYNTAX_ERROR, templateToken, re.token, msg);
         }
-        throw new TemplateException(); // we have reported the error, so just blast out
+        throw new CompilationException(); // we have reported the error, so just blast out
     }
 }

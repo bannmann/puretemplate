@@ -1,7 +1,7 @@
 package com.example;
 
 import static java.util.Calendar.JULY;
-import static org.puretemplate.RendererDepth.NON_RECURSIVE;
+import static org.puretemplate.Loader.RendererDepth.NON_RECURSIVE;
 
 import java.time.ZoneId;
 import java.util.Calendar;

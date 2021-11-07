@@ -7,6 +7,9 @@ import org.antlr.runtime.Token;
 import org.apiguardian.api.API;
 import org.puretemplate.Parsing;
 
+/**
+ * Used for errors encountered by the lexer.
+ */
 @API(status = API.Status.MAINTAINED)
 @Getter
 public final class LexerMessage extends Message

@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import lombok.NonNull;
 
 import org.apiguardian.api.API;
+import org.puretemplate.exception.CompilationException;
 
 class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoaderAction
 {
@@ -180,6 +181,11 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
         }
     }
 
+    /**
+     * Loads and returns the template.
+     *
+     * @throws CompilationException if the template could not be compiled.
+     */
     @Override
     public Template build()
     {

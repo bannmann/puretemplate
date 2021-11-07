@@ -7,7 +7,7 @@ import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
 /**
- * {@code <name>} where {@code name} is not found up the dynamic scoping chain.
+ * Thrown when an attempt is made to access a context attribute which does not exist.
  */
 @API(status = API.Status.STABLE)
 @Getter

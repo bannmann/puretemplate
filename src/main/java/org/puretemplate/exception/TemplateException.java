@@ -2,14 +2,22 @@ package org.puretemplate.exception;
 
 import org.apiguardian.api.API;
 
+/**
+ * Base class of PureTemplate exceptions.
+ */
 @API(status = API.Status.STABLE)
-public class TemplateException extends RuntimeException
+public abstract class TemplateException extends RuntimeException
 {
-    public TemplateException()
+    TemplateException()
     {
     }
 
-    public TemplateException(String message, Throwable cause)
+    TemplateException(String message)
+    {
+        super(message);
+    }
+
+    TemplateException(String message, Throwable cause)
     {
         super(message, cause);
     }

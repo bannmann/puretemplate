@@ -10,8 +10,8 @@ import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
 /**
- * Upon error, ST creates a {@link Message} or subclass instance and notifies the listener.  This root class is used for
- * IO and internal errors.
+ * Provides details about an error for use by an {@link ErrorListener}. This root class is used for IO and internal
+ * errors.
  */
 @API(status = API.Status.MAINTAINED)
 @Getter

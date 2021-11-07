@@ -4,7 +4,7 @@ import org.apiguardian.api.API;
 import org.puretemplate.misc.Location;
 
 /**
- * Used to track errors that occur in the ST interpreter.
+ * Used to track errors that occur while interpreting templates and groups.
  */
 @API(status = API.Status.MAINTAINED)
 public final class RuntimeMessage extends Message

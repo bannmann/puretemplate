@@ -9,7 +9,7 @@ class RendererHandle<T> implements Handle
 {
     Class<T> type;
     AttributeRenderer<? super T> renderer;
-    RendererDepth depth;
+    Loader.RendererDepth depth;
 
     @Override
     public void registerWith(STGroup stGroup)

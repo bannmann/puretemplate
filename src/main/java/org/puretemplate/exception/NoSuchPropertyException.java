@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.apiguardian.api.API;
 
 /**
- * For {@code <a.b>}, object {@code a} does not have a property {@code b}.
+ * Thrown when an object does not have the property requested by the template.
  */
 @API(status = API.Status.STABLE)
 @Getter
