@@ -170,7 +170,7 @@
             <plugin>
                 <groupId>com.github.bannmann.maven.silverchain</groupId>
                 <artifactId>silverchain-maven-plugin</artifactId>
-                <version>0.1</version>
+                <version>0.2</version>
                 <configuration>
                     <inputFile>src/main/silverchain/puretemplate.ag</inputFile>
                 </configuration>
