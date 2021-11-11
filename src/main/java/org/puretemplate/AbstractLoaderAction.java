@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
@@ -87,14 +86,6 @@ abstract class AbstractLoaderAction
     public void fromString(String source)
     {
         this.source = new ReaderSource("<string>", () -> new StringReader(source));
-    }
-
-    public void usingCharset(Charset charset)
-    {
-        if (source instanceof InputStreamSource)
-        {
-            this.source = ((InputStreamSource) this.source).withCharset(charset);
-        }
     }
 
     public void withDelimiters(char start, char stop)
