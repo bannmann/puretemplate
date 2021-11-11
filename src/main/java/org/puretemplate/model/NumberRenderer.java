@@ -15,10 +15,10 @@ import org.apiguardian.api.API;
  * Date} conversions using the format string.</p>
  */
 @API(status = API.Status.STABLE)
-public class NumberRenderer implements AttributeRenderer<Object>
+public class NumberRenderer implements AttributeRenderer<Number>
 {
     @Override
-    public String toString(Object value, String formatString, Locale locale)
+    public String toString(Number value, String formatString, Locale locale)
     {
         if (formatString == null)
         {

@@ -17,7 +17,7 @@ import org.puretemplate.Context;
 import org.puretemplate.Group;
 import org.puretemplate.Template;
 import org.puretemplate.misc.ErrorBuffer;
-import org.puretemplate.model.DateRenderer;
+import org.puretemplate.model.ObjectTypedDateRenderer;
 import org.puretemplate.model.ModelAdaptor;
 import org.puretemplate.model.NumberRenderer;
 import org.puretemplate.model.StringRenderer;
@@ -83,7 +83,7 @@ class TestRenderers extends BaseTest
     {
         return loader.getGroup()
             .fromString(templates)
-            .registerAttributeRenderer(GregorianCalendar.class, new DateRenderer(), NON_RECURSIVE)
+            .registerAttributeRenderer(GregorianCalendar.class, new ObjectTypedDateRenderer(), NON_RECURSIVE)
             .build();
     }
 
@@ -399,7 +399,7 @@ class TestRenderers extends BaseTest
 
         Group group = loader.getGroup()
             .blank()
-            .registerAttributeRenderer(Calendar.class, new DateRenderer(), NON_RECURSIVE)
+            .registerAttributeRenderer(Calendar.class, new ObjectTypedDateRenderer(), NON_RECURSIVE)
             .build();
 
         Context context = loader.getTemplate()

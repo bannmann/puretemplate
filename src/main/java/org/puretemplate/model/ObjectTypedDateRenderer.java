@@ -22,7 +22,7 @@ import org.apiguardian.api.API;
  */
 // using <Object> because this can handle Date and Calendar objects, which don't have a common supertype.
 @API(status = API.Status.MAINTAINED)
-public class DateRenderer implements AttributeRenderer<Object>
+public class ObjectTypedDateRenderer implements AttributeRenderer<Object>
 {
     public static final Map<String, Integer> formatToInt = Map.ofEntries(entry("short", DateFormat.SHORT),
         entry("medium", DateFormat.MEDIUM),
