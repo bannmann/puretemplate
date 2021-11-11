@@ -163,7 +163,7 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
     }
 
     @Override
-    public void attachedToGroup(Group group)
+    public void attachedToGroup(@NonNull Group group)
     {
         parentGroup = group;
     }

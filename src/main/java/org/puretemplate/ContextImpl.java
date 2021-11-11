@@ -41,7 +41,7 @@ class ContextImpl implements Context
     }
 
     @Override
-    public Context setErrorListener(ErrorListener errorListener)
+    public Context setErrorListener(@NonNull ErrorListener errorListener)
     {
         this.errorListener = errorListener;
         return this;

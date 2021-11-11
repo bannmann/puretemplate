@@ -21,8 +21,8 @@ import org.puretemplate.error.ErrorListener;
 @RequiredArgsConstructor
 class RendererAction implements IRendererAction
 {
-    private final ST st;
-    private final Locale locale;
+    private final @NonNull ST st;
+    private final @NonNull Locale locale;
     private final ErrorListener errorListener;
 
     private int lineWidth = STWriter.NO_WRAP;

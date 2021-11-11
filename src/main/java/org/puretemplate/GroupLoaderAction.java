@@ -19,6 +19,8 @@ import org.puretemplate.model.AttributeRenderer;
 import org.puretemplate.model.ModelAdaptor;
 import org.puretemplate.model.StringRenderer;
 
+import com.github.mizool.core.validation.Nullable;
+
 class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate.IGroupLoaderAction
 {
     private Path directory;
@@ -29,7 +31,7 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
     private ErrorListener errorListener;
 
     @Override
-    public void fromDirectory(String directoryPath)
+    public void fromDirectory(@NonNull String directoryPath)
     {
         fromDirectory(Path.of(directoryPath));
     }
@@ -47,7 +49,7 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
     }
 
     @Override
-    public void fromResourceDirectory(Class<?> reference, String relativePath)
+    public void fromResourceDirectory(@NonNull Class<?> reference, @NonNull String relativePath)
     {
         fromDirectory(Resources.get(reference, relativePath));
     }
@@ -261,10 +263,10 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
     /**
      * Sets the error listener to use during loading and rendering.
      *
-     * @param listener the listener to use
+     * @param listener the listener to use, {@code null} to remove a previously set listener (if any)
      */
     @Override
-    public void withErrorListener(ErrorListener listener)
+    public void withErrorListener(@Nullable ErrorListener listener)
     {
         this.errorListener = listener;
     }
