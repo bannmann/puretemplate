@@ -18,7 +18,7 @@ import org.apiguardian.api.API;
 public class NumberRenderer implements AttributeRenderer<Number>
 {
     @Override
-    public String toString(Number value, String formatString, Locale locale)
+    public String render(Number value, String formatString, Locale locale)
     {
         if (formatString == null)
         {

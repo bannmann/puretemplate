@@ -20,7 +20,7 @@ import org.apiguardian.api.API;
 public class StringRenderer implements AttributeRenderer<String>
 {
     @Override
-    public String toString(String value, String formatString, Locale locale)
+    public String render(String value, String formatString, Locale locale)
     {
         if (formatString == null)
         {

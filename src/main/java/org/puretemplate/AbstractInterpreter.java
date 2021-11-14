@@ -922,7 +922,7 @@ abstract class AbstractInterpreter implements Interpreter
         AttributeRenderer<? super T> r = scope.st.impl.nativeGroup.getAttributeRenderer(attributeType);
         if (r != null)
         {
-            return r.toString(attributeType.cast(o), formatString, locale);
+            return r.render(attributeType.cast(o), formatString, locale);
         }
         else
         {

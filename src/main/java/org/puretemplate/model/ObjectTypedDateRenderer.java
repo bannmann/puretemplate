@@ -38,7 +38,7 @@ public class ObjectTypedDateRenderer implements AttributeRenderer<Object>
         entry("time:full", DateFormat.FULL));
 
     @Override
-    public String toString(Object value, String formatString, Locale locale)
+    public String render(Object value, String formatString, Locale locale)
     {
         Date d;
         if (formatString == null)
