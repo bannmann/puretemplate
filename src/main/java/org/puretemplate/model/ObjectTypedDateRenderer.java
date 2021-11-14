@@ -13,8 +13,8 @@ import org.apiguardian.api.API;
 
 /**
  * A renderer for {@link Date} and {@link Calendar} objects. It understands a variety of format names as shown in {@link
- * #formatToInt} field. By default it assumes {@code "short"} format. A prefix of {@code "date:"} or {@code "time:"}
- * shows only those components of the time object.<br>
+ * #FORMATS} field. By default it assumes {@code "short"} format. A prefix of {@code "date:"} or {@code "time:"} shows
+ * only those components of the time object.<br>
  * <br>
  * <b>API status:</b> {@link API.Status#MAINTAINED} because PureTemplate will most likely fix
  * <a href="https://github.com/antlr/stringtemplate4/issues/288">antlr/stringtemplate4#288</a> by replacing this with
@@ -24,7 +24,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.MAINTAINED)
 public class ObjectTypedDateRenderer implements AttributeRenderer<Object>
 {
-    public static final Map<String, Integer> formatToInt = Map.ofEntries(entry("short", DateFormat.SHORT),
+    private static final Map<String, Integer> FORMATS = Map.ofEntries(entry("short", DateFormat.SHORT),
         entry("medium", DateFormat.MEDIUM),
         entry("long", DateFormat.LONG),
         entry("full", DateFormat.FULL),
@@ -40,41 +40,46 @@ public class ObjectTypedDateRenderer implements AttributeRenderer<Object>
     @Override
     public String render(Object value, String formatString, Locale locale)
     {
-        Date d;
+        Date date = getDate(value);
+        DateFormat dateFormat = getDateFormat(formatString, locale);
+        return dateFormat.format(date);
+    }
+
+    private Date getDate(Object value)
+    {
+        if (value instanceof Calendar)
+        {
+            return ((Calendar) value).getTime();
+        }
+        else
+        {
+            return (Date) value;
+        }
+    }
+
+    private DateFormat getDateFormat(String formatString, Locale locale)
+    {
         if (formatString == null)
         {
             formatString = "short";
         }
-        if (value instanceof Calendar)
+        Integer style = FORMATS.get(formatString);
+
+        if (style == null)
         {
-            d = ((Calendar) value).getTime();
+            return new SimpleDateFormat(formatString, locale);
         }
-        else
+
+        if (formatString.startsWith("date:"))
         {
-            d = (Date) value;
+            return DateFormat.getDateInstance(style, locale);
         }
-        Integer styleI = formatToInt.get(formatString);
-        DateFormat f;
-        if (styleI == null)
+
+        if (formatString.startsWith("time:"))
         {
-            f = new SimpleDateFormat(formatString, locale);
+            return DateFormat.getTimeInstance(style, locale);
         }
-        else
-        {
-            int style = styleI.intValue();
-            if (formatString.startsWith("date:"))
-            {
-                f = DateFormat.getDateInstance(style, locale);
-            }
-            else if (formatString.startsWith("time:"))
-            {
-                f = DateFormat.getTimeInstance(style, locale);
-            }
-            else
-            {
-                f = DateFormat.getDateTimeInstance(style, style, locale);
-            }
-        }
-        return f.format(d);
+
+        return DateFormat.getDateTimeInstance(style, style, locale);
     }
 }
