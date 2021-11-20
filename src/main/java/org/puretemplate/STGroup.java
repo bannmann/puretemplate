@@ -845,23 +845,18 @@ abstract class STGroup
         return createInterpreterInternal(locale, errorManager, false);
     }
 
-    Interpreter createInterpreter(Locale locale, ErrorManager errorManager)
+    Interpreter createInterpreter(ErrorManager errorManager)
     {
-        return createInterpreterInternal(locale, errorManager, false);
+        return createInterpreterInternal(Locale.ROOT, errorManager, false);
     }
 
-    Interpreter createDebuggingInterpreter(Locale locale)
+    Interpreter createDebuggingInterpreter()
     {
-        return createInterpreterInternal(locale, errMgr, true);
+        return createInterpreterInternal(Locale.ROOT, errMgr, true);
     }
 
-    private Interpreter createInterpreterInternal(Locale locale, ErrorManager errorManager, boolean debug)
+    private Interpreter createInterpreterInternal(@NonNull Locale locale, ErrorManager errorManager, boolean debug)
     {
-        if (locale == null)
-        {
-            locale = Locale.getDefault();
-        }
-
         if (legacyRendering)
         {
             return new LegacyInterpreter(this, locale, errorManager, debug);

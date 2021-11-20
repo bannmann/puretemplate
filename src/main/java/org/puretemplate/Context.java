@@ -39,7 +39,21 @@ public interface Context
      */
     Context remove(String name);
 
+    /**
+     * Sets the locale to use for formatting operations. Otherwise, the context defaults to {@link Locale#ROOT}.
+     *
+     * @param locale the locale to use, must not be {@code null}.
+     */
     Context setLocale(Locale locale);
+
+    /**
+     * Sets the locale for formatting operations to the system default. Otherwise, the context defaults to {@link
+     * Locale#ROOT}.
+     * <br>
+     * <br>
+     * Invoking this is equivalent to {@code setLocale(Locale.getDefault(Locale.Category.FORMAT))}.
+     */
+    Context useSystemDefaultLocale();
 
     /**
      * Sets the error listener to use during rendering. Defaults to the template/group settings.

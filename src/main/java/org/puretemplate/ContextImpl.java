@@ -15,7 +15,7 @@ class ContextImpl implements Context
     @NonNull
     private final ST st;
 
-    private Locale locale = Locale.getDefault(Locale.Category.FORMAT);
+    private Locale locale = Locale.ROOT;
 
     private ErrorListener errorListener;
 
@@ -34,10 +34,16 @@ class ContextImpl implements Context
     }
 
     @Override
-    public Context setLocale(Locale locale)
+    public Context setLocale(@NonNull Locale locale)
     {
         this.locale = locale;
         return this;
+    }
+
+    @Override
+    public Context useSystemDefaultLocale()
+    {
+        return setLocale(Locale.getDefault(Locale.Category.FORMAT));
     }
 
     @Override

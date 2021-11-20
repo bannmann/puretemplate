@@ -1,6 +1,5 @@
 package org.puretemplate;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -427,17 +426,9 @@ class ST
     }
 
     @Deprecated(forRemoval = true)
-    public int write(STWriter out) throws IOException
+    public int write(STWriter out)
     {
-        Interpreter interp = groupThatCreatedThisInstance.createInterpreter(Locale.getDefault(),
-            impl.nativeGroup.errMgr);
-        return interp.exec(this, out);
-    }
-
-    @Deprecated(forRemoval = true)
-    public int write(STWriter out, Locale locale)
-    {
-        Interpreter interp = groupThatCreatedThisInstance.createInterpreter(locale, impl.nativeGroup.errMgr);
+        Interpreter interp = groupThatCreatedThisInstance.createInterpreter(impl.nativeGroup.errMgr);
         return interp.exec(this, out);
     }
 
@@ -450,20 +441,10 @@ class ST
     @Deprecated(forRemoval = true)
     public String render()
     {
-        return render(Locale.ROOT);
-    }
-
-    public String render(Locale locale)
-    {
-        return render(locale, STWriter.NO_WRAP);
-    }
-
-    public String render(Locale locale, int lineWidth)
-    {
         StringWriter out = new StringWriter();
         STWriter wr = new AutoIndentWriter(out);
-        wr.setLineWidth(lineWidth);
-        write(wr, locale);
+        Interpreter interp = groupThatCreatedThisInstance.createInterpreter(impl.nativeGroup.errMgr);
+        interp.exec(this, wr);
         return out.toString();
     }
 
@@ -471,25 +452,9 @@ class ST
 
     public List<InterpEvent> getEvents()
     {
-        return getEvents(Locale.getDefault());
-    }
-
-    public List<InterpEvent> getEvents(int lineWidth)
-    {
-        return getEvents(Locale.getDefault(), lineWidth);
-    }
-
-    public List<InterpEvent> getEvents(Locale locale)
-    {
-        return getEvents(locale, STWriter.NO_WRAP);
-    }
-
-    public List<InterpEvent> getEvents(Locale locale, int lineWidth)
-    {
         StringWriter out = new StringWriter();
         STWriter wr = new AutoIndentWriter(out);
-        wr.setLineWidth(lineWidth);
-        Interpreter interp = groupThatCreatedThisInstance.createDebuggingInterpreter(locale);
+        Interpreter interp = groupThatCreatedThisInstance.createDebuggingInterpreter();
         interp.exec(this, wr); // render and track events
         return interp.getEvents();
     }
