@@ -29,7 +29,7 @@ class Compiler
     public static final int TEMPLATE_INITIAL_CODE_SIZE = 15;
 
     public static final Map<String, Interpreter.Option> supportedOptions = Map.ofEntries(entry("anchor",
-        Interpreter.Option.ANCHOR),
+            Interpreter.Option.ANCHOR),
         entry("format", Interpreter.Option.FORMAT),
         entry("null", Interpreter.Option.NULL),
         entry("separator", Interpreter.Option.SEPARATOR),

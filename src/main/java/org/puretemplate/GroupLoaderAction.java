@@ -226,7 +226,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      */
     @Override
     public <T> void registerAttributeRenderer(
-        @NonNull Class<T> attributeType, @NonNull AttributeRenderer<? super T> renderer, @NonNull Loader.RendererDepth depth)
+        @NonNull Class<T> attributeType,
+        @NonNull AttributeRenderer<? super T> renderer,
+        @NonNull Loader.RendererDepth depth)
     {
         handles.add(new RendererHandle<>(attributeType, renderer, depth));
     }
