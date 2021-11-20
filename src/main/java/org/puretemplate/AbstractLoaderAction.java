@@ -11,6 +11,8 @@ import java.nio.file.Path;
 
 import lombok.NonNull;
 
+import org.puretemplate.misc.InputSupplier;
+
 import com.google.common.io.CharStreams;
 
 abstract class AbstractLoaderAction

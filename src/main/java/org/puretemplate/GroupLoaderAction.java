@@ -14,6 +14,7 @@ import lombok.NonNull;
 
 import org.apiguardian.api.API;
 import org.puretemplate.error.ErrorListener;
+import org.puretemplate.misc.InputSupplier;
 import org.puretemplate.model.Aggregate;
 import org.puretemplate.model.AttributeRenderer;
 import org.puretemplate.model.ModelAdaptor;

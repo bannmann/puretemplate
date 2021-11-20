@@ -10,6 +10,7 @@ import lombok.NonNull;
 
 import org.apiguardian.api.API;
 import org.puretemplate.exception.CompilationException;
+import org.puretemplate.misc.InputSupplier;
 
 class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoaderAction
 {
