@@ -447,14 +447,10 @@ class ST
         return interp.exec(this, out);
     }
 
+    @Deprecated(forRemoval = true)
     public String render()
     {
-        return render(Locale.getDefault());
-    }
-
-    public String render(int lineWidth)
-    {
-        return render(Locale.getDefault(), lineWidth);
+        return render(Locale.ROOT);
     }
 
     public String render(Locale locale)
@@ -522,28 +518,5 @@ class ST
     public Interval getInterval(int ip)
     {
         return impl.sourceMap[ip];
-    }
-
-    /**
-     * <pre>
-     * ST.format("&lt;%1&gt;:&lt;%2&gt;", n, p);
-     * </pre>
-     */
-    public static String format(String template, Object... attributes)
-    {
-        return format(STWriter.NO_WRAP, template, attributes);
-    }
-
-    public static String format(int lineWidth, String template, Object... attributes)
-    {
-        template = template.replaceAll("%([0-9]+)", "arg$1");
-        ST st = new ST(template);
-        int i = 1;
-        for (Object a : attributes)
-        {
-            st.add("arg" + i, a);
-            i++;
-        }
-        return st.render(lineWidth);
     }
 }

@@ -61,8 +61,9 @@ It is planned to extend this comparison. The following should be considered a "s
     ```
 
 ### Removals
-The following StringTemplate features were removed, with no plans to bring them back. However, suggestions on how to build APIs that enable other projects to provide corresponding plugins are welcome.
+The following StringTemplate features were removed. However, feel free to [create an issue](https://github.com/puretemplate/puretemplate/issues/new) asking to bring back one of them or enable other projects to provide corresponding plugins.
 
 * User interface (`STViz`)
 * Ability to unload templates / groups
+* Static [`format()`](https://javadoc.io/doc/org.antlr/ST4/latest/org/stringtemplate/v4/ST.html#format-java.lang.String-java.lang.Object...-) method for anonymous template with positional arguments
 * Support for StringTemplate v3 style template directories (`STRawGroupDir`)
