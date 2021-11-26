@@ -236,15 +236,7 @@ abstract class STGroup
      */
     public ST createSingleton(Token templateToken)
     {
-        String template;
-        if (templateToken.getType() == GroupParser.BIGSTRING || templateToken.getType() == GroupParser.BIGSTRING_NO_NL)
-        {
-            template = Misc.strip(templateToken.getText(), 2);
-        }
-        else
-        {
-            template = Misc.strip(templateToken.getText(), 1);
-        }
+        String template = Misc.strip(templateToken.getText(), Parsing.getTemplateDelimiterSize(templateToken));
         CompiledST impl = compile(getFileName(), null, null, template, templateToken);
         ST st = createStringTemplateInternally(impl);
         st.groupThatCreatedThisInstance = this;
@@ -545,14 +537,14 @@ abstract class STGroup
      * Compile a template.
      */
     CompiledST compile(
-        String srcName,
+        String sourceName,
         String name,
         List<FormalArgument> args,
         String template,
         Token templateToken) // for error location
     {
         Compiler c = new Compiler(this);
-        return c.compile(srcName, name, args, template, templateToken);
+        return c.compile(sourceName, name, args, template, templateToken);
     }
 
     /**

@@ -98,11 +98,11 @@ class Compiler
      * Compile full template with respect to a list of formal arguments.
      */
     public CompiledST compile(
-        String srcName, String name, List<FormalArgument> args, String template, Token templateToken)
+        String sourceName, String name, List<FormalArgument> args, String template, Token templateToken)
     {
         ANTLRStringStream is = new ANTLRStringStream(template);
-        is.name = srcName != null
-            ? srcName
+        is.name = sourceName != null
+            ? sourceName
             : name;
         STLexer lexer;
         if (templateToken != null && templateToken.getType() == GroupParser.BIGSTRING_NO_NL)

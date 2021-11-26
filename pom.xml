@@ -319,7 +319,6 @@
                                 <configuration>
                                     <reportOutputDirectory>${javadoc.output.directory.temp}</reportOutputDirectory>
                                     <sourceFileExcludes>
-                                        <sourceFileExclude>org/puretemplate/Parsing.java</sourceFileExclude>
                                         <sourceFileExclude>org/puretemplate/fs/*.java</sourceFileExclude>
                                         <sourceFileExclude>**/state*/*.java</sourceFileExclude>
                                     </sourceFileExcludes>

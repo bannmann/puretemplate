@@ -3,14 +3,9 @@ package org.puretemplate;
 import lombok.experimental.UtilityClass;
 
 import org.antlr.runtime.Token;
-import org.apiguardian.api.API;
 
-/**
- * Internal API class, do not use.
- */
-@API(status = API.Status.INTERNAL)
 @UtilityClass
-public class Parsing
+class Parsing
 {
     public int getTemplateDelimiterSize(Token token)
     {
