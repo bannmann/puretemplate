@@ -40,16 +40,16 @@ public interface Context
     Context remove(String name);
 
     /**
-     * Sets the locale to use for formatting operations. Otherwise, the context defaults to {@link Locale#ROOT}.
+     * Sets the locale to use for formatting operations. If no locale is set for the template group or the context,
+     * PureTemplate defaults to {@link Locale#ROOT}.
      *
      * @param locale the locale to use, must not be {@code null}.
      */
     Context setLocale(Locale locale);
 
     /**
-     * Sets the locale for formatting operations to the system default. Otherwise, the context defaults to {@link
-     * Locale#ROOT}.
-     * <br>
+     * Sets the locale to use for formatting operations. If no locale is set for the template group or the context,
+     * PureTemplate defaults to {@link Locale#ROOT}.<br>
      * <br>
      * Invoking this is equivalent to {@code setLocale(Locale.getDefault(Locale.Category.FORMAT))}.
      */
@@ -60,5 +60,11 @@ public interface Context
      */
     Context setErrorListener(ErrorListener errorListener);
 
+    /**
+     * Renders the template using the values and settings in this Context.
+     *
+     * @return the initial state of the fluent API. See <a href="package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     Renderer render();
 }

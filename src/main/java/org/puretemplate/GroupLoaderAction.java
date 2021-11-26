@@ -31,30 +31,50 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
     private boolean legacyRendering;
     private ErrorListener errorListener;
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void fromDirectory(@NonNull String directoryPath)
     {
         fromDirectory(Path.of(directoryPath));
     }
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void fromDirectory(@NonNull File directory)
     {
         fromDirectory(directory.toPath());
     }
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void fromDirectory(@NonNull Path directory)
     {
         this.directory = directory;
     }
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void fromResourceDirectory(@NonNull Class<?> reference, @NonNull String relativePath)
     {
         fromDirectory(Resources.get(reference, relativePath));
     }
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void fromResourceDirectory(@NonNull String absolutePath)
     {
@@ -65,6 +85,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Loads content from the file with the given path.
      *
      * @param filePath path to the file to read
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromFile(@NonNull String filePath)
@@ -76,6 +99,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Loads content from the given file.
      *
      * @param file the file to read
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromFile(@NonNull File file)
@@ -87,6 +113,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Loads content from the file referenced by the given path.
      *
      * @param file path to the file to read
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromFile(@NonNull Path file)
@@ -98,6 +127,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Loads content from the given input stream supplier. The stream is consumed entirely, but not closed.
      *
      * @param inputStreamSupplier a supplier for the input stream to use
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromInputStream(@NonNull InputSupplier<InputStream> inputStreamSupplier)
@@ -109,6 +141,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Loads content from the given input stream. The stream is consumed entirely, but not closed.
      *
      * @param inputStream the input stream to use
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromInputStream(@NonNull InputStream inputStream)
@@ -120,6 +155,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Loads content from the given reader supplier. The reader is consumed entirely, but not closed.
      *
      * @param readerSupplier a supplier for the reader to use
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromReader(@NonNull InputSupplier<Reader> readerSupplier)
@@ -131,6 +169,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Loads content from the given reader. The reader is consumed entirely, but not closed.
      *
      * @param reader the reader to use
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromReader(@NonNull Reader reader)
@@ -146,6 +187,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      *
      * @param reference class from the package that the path is relative to
      * @param relativePath resource file path relative to the package of the given class
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @API(status = API.Status.EXPERIMENTAL)
     @Override
@@ -163,6 +207,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * @param classLoader <b>ignored</b>
      * @param absolutePath the absolute path of the resource to load
      *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     *
      * @deprecated This method does not yet use the {@code classLoader} argument.
      */
     @API(status = API.Status.EXPERIMENTAL)
@@ -178,6 +225,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Loads content from a resource file with the given absolute path.
      *
      * @param absolutePath the absolute path of the resource to load
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromResourceFile(@NonNull String absolutePath)
@@ -189,6 +239,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Loads content from the given string.
      *
      * @param source content to load
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromString(@NonNull String source)
@@ -201,6 +254,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      *
      * @param start the start delimiter
      * @param stop the stop delimiter
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void withDelimiters(char start, char stop)
@@ -208,12 +264,20 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
         super.withDelimiters(start, stop);
     }
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void blank()
     {
         fromString("");
     }
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void importTemplates(@NonNull Group otherGroup)
     {
@@ -223,6 +287,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
     /**
      * Register a renderer for all objects of a particular "kind" for all templates evaluated relative to this group.
      * Use {@code r} to render if object in question is an instance of {@code attributeType}.
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public <T> void registerAttributeRenderer(
@@ -239,6 +306,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * {@link Aggregate}. Adaptors you add have priority over default adaptors.
      * <br>
      * If an adaptor for type {@code T} already exists, it is replaced by the {@code adaptor} argument.
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public <T> void registerModelAdaptor(@NonNull Class<T> attributeType, @NonNull ModelAdaptor<? super T> adaptor)
@@ -252,6 +322,10 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
         handles.add(new AdaptorHandle<>(attributeType, adaptor));
     }
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void usingCharset(@NonNull Charset charset)
     {
@@ -267,6 +341,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * Sets the error listener to use during loading and rendering.
      *
      * @param listener the listener to use, {@code null} to remove a previously set listener (if any)
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void withErrorListener(@Nullable ErrorListener listener)
@@ -280,6 +357,9 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
      * The default behavior of PureTemplate is to apply registered renderers (e.g. {@link StringRenderer}) to attribute
      * expressions only. StringTemplate, however, always applied attribute renderers to text elements, as well. If you
      * need backwards compatibility, use this method to revert to the classic behavior.
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void withLegacyRendering()
@@ -287,6 +367,10 @@ class GroupLoaderAction extends AbstractLoaderAction implements org.puretemplate
         legacyRendering = true;
     }
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public Group build()
     {

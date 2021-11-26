@@ -49,6 +49,12 @@ public final class Aggregate
         }
     }
 
+    /**
+     * Builds an Aggregate.
+     *
+     * @return the initial state of the fluent API. See <a href="package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     public static AggregateBuilder build()
     {
         return new AggregateBuilder();

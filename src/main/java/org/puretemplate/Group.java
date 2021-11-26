@@ -13,6 +13,11 @@ import org.apiguardian.api.API;
 @ThreadSafe
 public interface Group
 {
+    /**
+     * Gets the name of this template group.
+     *
+     * @return the name
+     */
     String getName();
 
     /**

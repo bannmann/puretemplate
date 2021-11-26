@@ -20,6 +20,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Loads content from the file with the given path.
      *
      * @param filePath path to the file to read
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromFile(@NonNull String filePath)
@@ -31,6 +34,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Loads content from the given file.
      *
      * @param file the file to read
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromFile(@NonNull File file)
@@ -42,6 +48,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Loads content from the file referenced by the given path.
      *
      * @param file path to the file to read
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromFile(@NonNull Path file)
@@ -53,6 +62,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Loads content from the given input stream supplier. The stream is consumed entirely, but not closed.
      *
      * @param inputStreamSupplier a supplier for the input stream to use
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromInputStream(@NonNull InputSupplier<InputStream> inputStreamSupplier)
@@ -64,6 +76,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Loads content from the given input stream. The stream is consumed entirely, but not closed.
      *
      * @param inputStream the input stream to use
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromInputStream(@NonNull InputStream inputStream)
@@ -75,6 +90,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Loads content from the given reader supplier. The reader is consumed entirely, but not closed.
      *
      * @param readerSupplier a supplier for the reader to use
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromReader(@NonNull InputSupplier<Reader> readerSupplier)
@@ -86,6 +104,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Loads content from the given reader. The reader is consumed entirely, but not closed.
      *
      * @param reader the reader to use
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromReader(@NonNull Reader reader)
@@ -101,6 +122,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      *
      * @param reference class from the package that the path is relative to
      * @param relativePath resource file path relative to the package of the given class
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @API(status = API.Status.EXPERIMENTAL)
     @Override
@@ -118,6 +142,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * @param classLoader <b>ignored</b>
      * @param absolutePath the absolute path of the resource to load
      *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     *
      * @deprecated This method does not yet use the {@code classLoader} argument.
      */
     @API(status = API.Status.EXPERIMENTAL)
@@ -133,6 +160,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Loads content from a resource file with the given absolute path.
      *
      * @param absolutePath the absolute path of the resource to load
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromResourceFile(@NonNull String absolutePath)
@@ -144,6 +174,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Loads content from the given string.
      *
      * @param source content to load
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void fromString(@NonNull String source)
@@ -156,6 +189,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      *
      * @param start the start delimiter
      * @param stop the stop delimiter
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     @Override
     public void withDelimiters(char start, char stop)
@@ -163,6 +199,13 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
         super.withDelimiters(start, stop);
     }
 
+    /**
+     *
+     * @param group
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void attachedToGroup(@NonNull Group group)
     {
@@ -173,6 +216,9 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
      * Specify an alternate charset to use. If this method is not called, PureTemplate defaults to UTF-8.
      *
      * @param charset the charset to use
+     *
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
      */
     public void usingCharset(@NonNull Charset charset)
     {

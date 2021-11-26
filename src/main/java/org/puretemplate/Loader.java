@@ -29,7 +29,7 @@ public final class Loader
          */
         RECURSIVE
             {
-                // TODO figure out how to do this without changing the state of those groups (when used directly)
+                // TODO do this without changing the state (configuration) of those groups (maybe by cloning them all?)
                 @Override
                 <T> void register(STGroup stGroup, Class<T> type, AttributeRenderer<? super T> renderer)
                 {
@@ -58,11 +58,23 @@ public final class Loader
         }
     }
 
+    /**
+     * Loads a template.
+     *
+     * @return the initial state of the fluent API. See <a href="package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     public TemplateLoader getTemplate()
     {
         return new TemplateLoader();
     }
 
+    /**
+     * Loads a group.
+     *
+     * @return the initial state of the fluent API. See <a href="package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     public GroupLoader getGroup()
     {
         return new GroupLoader();
