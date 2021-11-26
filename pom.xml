@@ -141,6 +141,19 @@
                     <version>1.4.1</version>
                 </plugin>
                 <plugin>
+                    <groupId>io.reformanda.semper</groupId>
+                    <artifactId>dependencyversion-maven-plugin</artifactId>
+                    <version>1.0.1</version>
+                    <executions>
+                        <execution>
+                            <id>set-all</id>
+                            <goals>
+                                <goal>set-version</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.2.0</version>
@@ -164,6 +177,10 @@
                         <sourcepath>${javadoc.sources.directory};${silverchain.outputDirectory}</sourcepath>
                         <doclint>none</doclint>
                         <reportOutputDirectory>${javadoc.output.directory.final}</reportOutputDirectory>
+                        <links>
+                            <link>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${org.apiguardian:apiguardian-api:jar.version}/</link>
+                            <link>https://javadoc.io/doc/com.google.code.findbugs/jsr305/${com.google.code.findbugs:jsr305:jar.version}/</link>
+                        </links>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -190,6 +207,10 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.reformanda.semper</groupId>
+                <artifactId>dependencyversion-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.antlr</groupId>
