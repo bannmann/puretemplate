@@ -2,8 +2,6 @@ package org.puretemplate;
 
 import java.util.List;
 
-import org.puretemplate.debug.InterpEvent;
-
 interface Interpreter
 {
     enum Option

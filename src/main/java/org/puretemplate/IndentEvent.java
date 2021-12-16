@@ -1,8 +1,8 @@
-package org.puretemplate.debug;
+package org.puretemplate;
 
 import org.puretemplate.misc.Location;
 
-public class IndentEvent extends EvalExprEvent
+class IndentEvent extends EvalExprEvent
 {
     public IndentEvent(Location location, int start, int stop, int exprStartChar, int exprStopChar)
     {

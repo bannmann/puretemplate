@@ -2,6 +2,9 @@ package org.puretemplate.model;
 
 import lombok.experimental.UtilityClass;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.INTERNAL)
 @UtilityClass
 public class Maps
 {

@@ -10,12 +10,12 @@ import java.nio.file.Path;
 
 import org.puretemplate.Group;
 import org.puretemplate.GroupLoader;
-import org.puretemplate.InputSupplier;
+import org.puretemplate.Loader.RendererDepth;
 import org.puretemplate.Renderer;
-import org.puretemplate.RendererDepth;
 import org.puretemplate.Template;
 import org.puretemplate.TemplateLoader;
 import org.puretemplate.error.ErrorListener;
+import org.puretemplate.misc.InputSupplier;
 import org.puretemplate.model.Aggregate;
 import org.puretemplate.model.AggregateBuilder;
 import org.puretemplate.model.AttributeRenderer;

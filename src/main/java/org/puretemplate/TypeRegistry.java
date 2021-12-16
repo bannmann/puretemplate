@@ -80,8 +80,8 @@ class TypeRegistry<V> implements Map<Class<?>, V>
     /**
      * {@inheritDoc}
      *
-     * @throws AmbiguousMatchException if the registry contains more than value mapped to a maximally-specific type from
-     * which {@code key} is derived.
+     * @throws AmbiguousMatchException if the registry contains more than one value mapped to a maximally-specific type
+     * from which {@code key} is derived.
      */
     public V get(Object key)
     {

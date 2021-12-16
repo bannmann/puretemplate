@@ -236,15 +236,7 @@ abstract class STGroup
      */
     public ST createSingleton(Token templateToken)
     {
-        String template;
-        if (templateToken.getType() == GroupParser.BIGSTRING || templateToken.getType() == GroupParser.BIGSTRING_NO_NL)
-        {
-            template = Misc.strip(templateToken.getText(), 2);
-        }
-        else
-        {
-            template = Misc.strip(templateToken.getText(), 1);
-        }
+        String template = Misc.strip(templateToken.getText(), Parsing.getTemplateDelimiterSize(templateToken));
         CompiledST impl = compile(getFileName(), null, null, template, templateToken);
         ST st = createStringTemplateInternally(impl);
         st.groupThatCreatedThisInstance = this;
@@ -545,14 +537,14 @@ abstract class STGroup
      * Compile a template.
      */
     CompiledST compile(
-        String srcName,
+        String sourceName,
         String name,
         List<FormalArgument> args,
         String template,
         Token templateToken) // for error location
     {
         Compiler c = new Compiler(this);
-        return c.compile(srcName, name, args, template, templateToken);
+        return c.compile(sourceName, name, args, template, templateToken);
     }
 
     /**
@@ -845,23 +837,18 @@ abstract class STGroup
         return createInterpreterInternal(locale, errorManager, false);
     }
 
-    Interpreter createInterpreter(Locale locale, ErrorManager errorManager)
+    Interpreter createInterpreter(ErrorManager errorManager)
     {
-        return createInterpreterInternal(locale, errorManager, false);
+        return createInterpreterInternal(Locale.ROOT, errorManager, false);
     }
 
-    Interpreter createDebuggingInterpreter(Locale locale)
+    Interpreter createDebuggingInterpreter()
     {
-        return createInterpreterInternal(locale, errMgr, true);
+        return createInterpreterInternal(Locale.ROOT, errMgr, true);
     }
 
-    private Interpreter createInterpreterInternal(Locale locale, ErrorManager errorManager, boolean debug)
+    private Interpreter createInterpreterInternal(@NonNull Locale locale, ErrorManager errorManager, boolean debug)
     {
-        if (locale == null)
-        {
-            locale = Locale.getDefault();
-        }
-
         if (legacyRendering)
         {
             return new LegacyInterpreter(this, locale, errorManager, debug);

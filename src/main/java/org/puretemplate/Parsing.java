@@ -4,11 +4,8 @@ import lombok.experimental.UtilityClass;
 
 import org.antlr.runtime.Token;
 
-/**
- * Internal API class, do not use.
- */
 @UtilityClass
-public class Parsing
+class Parsing
 {
     public int getTemplateDelimiterSize(Token token)
     {

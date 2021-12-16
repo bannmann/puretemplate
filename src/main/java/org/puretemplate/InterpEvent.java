@@ -1,10 +1,10 @@
-package org.puretemplate.debug;
+package org.puretemplate;
 
 import lombok.Getter;
 
 import org.puretemplate.misc.Location;
 
-public class InterpEvent
+class InterpEvent implements Event
 {
     @Getter
     protected final Location location;

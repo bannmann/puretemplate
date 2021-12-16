@@ -1,7 +1,12 @@
 package com.example;
 
 import static java.util.Calendar.JULY;
-import static org.puretemplate.RendererDepth.NON_RECURSIVE;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.puretemplate.Loader.RendererDepth.NON_RECURSIVE;
 
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -9,17 +14,17 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Group;
 import org.puretemplate.Template;
 import org.puretemplate.misc.ErrorBuffer;
-import org.puretemplate.model.DateRenderer;
+import org.puretemplate.model.AttributeRenderer;
 import org.puretemplate.model.ModelAdaptor;
 import org.puretemplate.model.NumberRenderer;
+import org.puretemplate.model.ObjectTypedDateRenderer;
 import org.puretemplate.model.StringRenderer;
 
 import com.google.common.collect.Lists;
@@ -41,24 +46,43 @@ class TestRenderers extends BaseTest
         return value.toUpperCase();
     }
 
-    String javaVersion = System.getProperty("java.version");
-
-    // Make sure to use the US Locale during the tests
-    private Locale origLocale;
-
-    @BeforeEach
-    @Override
-    public void setUp()
+    @Test
+    void testRendererWithSystemDefaultLocale()
     {
-        super.setUp();
-        origLocale = Locale.getDefault();
-        Locale.setDefault(Locale.US);
+        String templates = "test(arg) ::= \"<arg>\"\n";
+
+        AttributeRenderer<Number> mockRenderer = mockAttributeRenderer(Number.class);
+
+        Locale originalDefaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.GERMANY);
+        try
+        {
+            Context context = loader.getGroup()
+                .fromString(templates)
+                .registerAttributeRenderer(Number.class, mockRenderer, NON_RECURSIVE)
+                .build()
+                .getTemplate("test")
+                .createContext()
+                .useSystemDefaultLocale()
+                .add("arg", 1337);
+
+            context.render()
+                .intoString();
+
+            verify(mockRenderer).render(1337, null, Locale.GERMANY);
+        }
+        finally
+        {
+            Locale.setDefault(originalDefaultLocale);
+        }
     }
 
-    @AfterEach
-    public void tearDown()
+    @SuppressWarnings({ "unchecked", "unused" })
+    private <T> AttributeRenderer<T> mockAttributeRenderer(Class<T> attributeClass)
     {
-        Locale.setDefault(origLocale);
+        AttributeRenderer<T> mock = Mockito.mock(AttributeRenderer.class);
+        when(mock.render(any(), any(), any(Locale.class))).thenReturn("");
+        return mock;
     }
 
     @Test
@@ -68,13 +92,10 @@ class TestRenderers extends BaseTest
 
         Context context = getGroupWithDateRenderer(templates).getTemplate("dateThing")
             .createContext()
+            .setLocale(Locale.US)
             .add("created", CALENDAR_2005_07_05);
 
         String expecting = "datetime: 7/5/05, 12:00 AM";
-        if (javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8"))
-        {
-            expecting = "datetime: 7/5/05 12:00 AM";
-        }
 
         assertRenderingResult(expecting, context);
     }
@@ -83,7 +104,7 @@ class TestRenderers extends BaseTest
     {
         return loader.getGroup()
             .fromString(templates)
-            .registerAttributeRenderer(GregorianCalendar.class, new DateRenderer(), NON_RECURSIVE)
+            .registerAttributeRenderer(GregorianCalendar.class, new ObjectTypedDateRenderer(), NON_RECURSIVE)
             .build();
     }
 
@@ -106,13 +127,10 @@ class TestRenderers extends BaseTest
 
         Context context = getGroupWithDateRenderer(templates).getTemplate("dateThing")
             .createContext()
+            .setLocale(Locale.US)
             .add("created", CALENDAR_2005_07_05);
 
-        String expecting = " datetime: 7/5/05, 12:00 AM ";
-        if (javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8"))
-        {
-            expecting = " datetime: 7/5/05 12:00 AM ";
-        }
+        assertRenderingResult(" datetime: 7/5/05, 12:00 AM ", context);
     }
 
     @Test
@@ -122,13 +140,8 @@ class TestRenderers extends BaseTest
 
         Context context = getGroupWithDateRenderer(templates).getTemplate("dateThing")
             .createContext()
+            .setLocale(Locale.US)
             .add("created", withZoneSameLocal(CALENDAR_2005_07_05, LOS_ANGELES));
-
-        String expecting = " datetime: Tuesday, July 5, 2005 at 12:00:00 AM Pacific Daylight Time ";
-        if (javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8"))
-        {
-            expecting = " datetime: Tuesday, July 5, 2005 12:00:00 AM PDT ";
-        }
 
         TimeZone origTimeZone = TimeZone.getDefault();
         try
@@ -136,7 +149,7 @@ class TestRenderers extends BaseTest
             // set Timezone to "PDT"
             TimeZone.setDefault(TimeZone.getTimeZone(LOS_ANGELES));
 
-            assertRenderingResult(expecting, context);
+            assertRenderingResult(" datetime: Tuesday, July 5, 2005 at 12:00:00 AM Pacific Daylight Time ", context);
         }
         finally
         {
@@ -152,6 +165,7 @@ class TestRenderers extends BaseTest
 
         Context context = getGroupWithDateRenderer(templates).getTemplate("dateThing")
             .createContext()
+            .setLocale(Locale.US)
             .add("created", CALENDAR_2005_07_05);
 
         assertRenderingResult(" date: Jul 5, 2005 ", context);
@@ -164,6 +178,7 @@ class TestRenderers extends BaseTest
 
         Context context = getGroupWithDateRenderer(templates).getTemplate("dateThing")
             .createContext()
+            .setLocale(Locale.US)
             .add("created", CALENDAR_2005_07_05);
 
         assertRenderingResult(" time: 12:00:00 AM ", context);
@@ -399,7 +414,7 @@ class TestRenderers extends BaseTest
 
         Group group = loader.getGroup()
             .blank()
-            .registerAttributeRenderer(Calendar.class, new DateRenderer(), NON_RECURSIVE)
+            .registerAttributeRenderer(Calendar.class, new ObjectTypedDateRenderer(), NON_RECURSIVE)
             .build();
 
         Context context = loader.getTemplate()
@@ -413,13 +428,7 @@ class TestRenderers extends BaseTest
         cal.set(2012, Calendar.JUNE, 12);
         context.add("date", cal);
 
-        String expected = "12 de junho de 2012";
-        if (javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8"))
-        {
-            expected = "12 de Junho de 2012";
-        }
-
-        assertRenderingResult(expected, context);
+        assertRenderingResult("12 de junho de 2012", context);
     }
 
     @Test

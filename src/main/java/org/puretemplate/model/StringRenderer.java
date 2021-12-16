@@ -4,6 +4,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
+import org.apiguardian.api.API;
+
 /**
  * This render knows to perform a few format operations on {@link String} objects:
  * <ul>
@@ -14,10 +16,11 @@ import java.util.Locale;
  *  <li>{@code xml-encode}:</li>
  * </ul>
  */
+@API(status = API.Status.STABLE)
 public class StringRenderer implements AttributeRenderer<String>
 {
     @Override
-    public String toString(String value, String formatString, Locale locale)
+    public String render(String value, String formatString, Locale locale)
     {
         if (formatString == null)
         {

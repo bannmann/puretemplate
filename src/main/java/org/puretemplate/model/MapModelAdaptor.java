@@ -2,12 +2,13 @@ package org.puretemplate.model;
 
 import java.util.Map;
 
-import org.puretemplate.exception.NoSuchPropertyException;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE)
 public class MapModelAdaptor implements ModelAdaptor<Map<?, ?>>
 {
     @Override
-    public Object getProperty(Map<?, ?> model, Object property, String propertyName) throws NoSuchPropertyException
+    public Object getProperty(Map<?, ?> model, Object property, String propertyName)
     {
         Object value;
         if (property == null)

@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Value;
 
+import org.puretemplate.misc.InputSupplier;
+
 @Value
 class ReaderSource implements Source
 {

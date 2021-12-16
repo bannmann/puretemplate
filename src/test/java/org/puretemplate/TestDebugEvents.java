@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.puretemplate.debug.InterpEvent;
 
 class TestDebugEvents extends BaseTest
 {

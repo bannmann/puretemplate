@@ -3,9 +3,12 @@ package org.puretemplate.error;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import org.apiguardian.api.API;
+
 /**
- * All the errors that can happen and how to generate a message.
+ * Defines the types of errors that PureTemplate reports to listeners.
  */
+@API(status = API.Status.MAINTAINED)
 @Getter
 @RequiredArgsConstructor
 public enum ErrorType

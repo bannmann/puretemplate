@@ -86,7 +86,7 @@ class AggregateBuilderAction implements IAggregateBuilderAction
         setProperties(nameA, nameB, nameC, nameD, nameE, nameF, nameG, nameH);
     }
 
-    public Aggregate build(Object... values)
+    private Aggregate build(Object... values)
     {
         Aggregate result = new Aggregate();
         zipConsume(Arrays.stream(names), Arrays.stream(values), result::put);

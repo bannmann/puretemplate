@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.apiguardian.api.API;
 import org.puretemplate.error.ErrorListener;
 
 /**
@@ -12,6 +13,7 @@ import org.puretemplate.error.ErrorListener;
  * A context is intended to be used from one thread only. Unlike with {@link Template}, there are no plans to make
  * contexts thread-safe.
  */
+@API(status = API.Status.STABLE)
 @NotThreadSafe
 public interface Context
 {
@@ -37,12 +39,32 @@ public interface Context
      */
     Context remove(String name);
 
+    /**
+     * Sets the locale to use for formatting operations. If no locale is set for the template group or the context,
+     * PureTemplate defaults to {@link Locale#ROOT}.
+     *
+     * @param locale the locale to use, must not be {@code null}.
+     */
     Context setLocale(Locale locale);
+
+    /**
+     * Sets the locale to use for formatting operations. If no locale is set for the template group or the context,
+     * PureTemplate defaults to {@link Locale#ROOT}.<br>
+     * <br>
+     * Invoking this is equivalent to {@code setLocale(Locale.getDefault(Locale.Category.FORMAT))}.
+     */
+    Context useSystemDefaultLocale();
 
     /**
      * Sets the error listener to use during rendering. Defaults to the template/group settings.
      */
     Context setErrorListener(ErrorListener errorListener);
 
+    /**
+     * Renders the template using the values and settings in this Context.
+     *
+     * @return the initial state of the fluent API. See <a href="package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     Renderer render();
 }
