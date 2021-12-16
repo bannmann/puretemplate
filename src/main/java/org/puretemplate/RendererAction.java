@@ -21,12 +21,16 @@ import org.puretemplate.error.ErrorListener;
 @RequiredArgsConstructor
 class RendererAction implements IRendererAction
 {
-    private final ST st;
-    private final Locale locale;
+    private final @NonNull ST st;
+    private final @NonNull Locale locale;
     private final ErrorListener errorListener;
 
     private int lineWidth = STWriter.NO_WRAP;
 
+    /**
+     * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     @Override
     public void withLineWrapping(int lineWidth)
     {
@@ -37,30 +41,45 @@ class RendererAction implements IRendererAction
         this.lineWidth = lineWidth;
     }
 
+    /**
+     * @return the number of bytes written
+     */
     @Override
     public int intoFile(@NonNull File file) throws IOException
     {
         return intoFile(file.toPath());
     }
 
+    /**
+     * @return the number of bytes written
+     */
     @Override
     public int intoFile(@NonNull File file, @NonNull Charset charset) throws IOException
     {
         return intoFile(file.toPath(), charset);
     }
 
+    /**
+     * @return the number of bytes written
+     */
     @Override
     public int intoFile(@NonNull Path file) throws IOException
     {
         return intoFile(file, StandardCharsets.UTF_8);
     }
 
+    /**
+     * @return the number of bytes written
+     */
     @Override
     public int intoFile(@NonNull Path file, @NonNull Charset charset, OpenOption... options) throws IOException
     {
         return intoOutputStream(Files.newOutputStream(file, options), charset);
     }
 
+    /**
+     * @return the number of bytes written
+     */
     @Override
     public int intoWriter(@NonNull Writer writer)
     {
@@ -69,18 +88,27 @@ class RendererAction implements IRendererAction
         return st.write(stWriter, locale, errorListener);
     }
 
+    /**
+     * @return the number of bytes written
+     */
     @Override
     public int intoOutputStream(@NonNull OutputStream outputStream)
     {
         return intoOutputStream(outputStream, StandardCharsets.UTF_8);
     }
 
+    /**
+     * @return the number of bytes written
+     */
     @Override
     public int intoOutputStream(@NonNull OutputStream outputStream, @NonNull Charset charset)
     {
         return intoWriter(new OutputStreamWriter(outputStream, charset));
     }
 
+    /**
+     * @return the rendering result
+     */
     @Override
     public String intoString()
     {

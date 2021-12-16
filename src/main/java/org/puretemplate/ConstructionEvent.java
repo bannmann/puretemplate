@@ -1,9 +1,9 @@
-package org.puretemplate.debug;
+package org.puretemplate;
 
 /**
  * An event that happens when building ST trees, adding attributes etc...
  */
-public class ConstructionEvent
+class ConstructionEvent implements Event
 {
     public Throwable stack;
 

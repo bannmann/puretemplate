@@ -1,6 +1,6 @@
-package org.puretemplate.debug;
+package org.puretemplate;
 
-public class AddAttributeEvent extends ConstructionEvent
+class AddAttributeEvent extends ConstructionEvent
 {
     String name;
     /**

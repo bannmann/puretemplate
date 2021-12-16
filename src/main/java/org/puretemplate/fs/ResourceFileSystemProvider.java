@@ -20,10 +20,12 @@ import java.nio.file.spi.FileSystemProvider;
 import java.util.Map;
 import java.util.Set;
 
+import org.apiguardian.api.API;
 import org.kohsuke.MetaInfServices;
 
 import com.github.mizool.core.exception.NotYetImplementedException;
 
+@API(status = API.Status.INTERNAL)
 @MetaInfServices
 public class ResourceFileSystemProvider extends FileSystemProvider
 {

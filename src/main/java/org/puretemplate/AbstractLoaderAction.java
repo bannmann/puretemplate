@@ -6,9 +6,12 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+
+import lombok.NonNull;
+
+import org.puretemplate.misc.InputSupplier;
 
 import com.google.common.io.CharStreams;
 
@@ -20,7 +23,7 @@ abstract class AbstractLoaderAction
     protected Path file;
     protected DelimiterConfig delimiterConfig = DEFAULT_DELIMITER_CONFIG;
 
-    protected static String loadFrom(Source source)
+    protected static String loadFrom(@NonNull Source source)
     {
         try (Reader reader = source.open())
         {
@@ -33,68 +36,60 @@ abstract class AbstractLoaderAction
         }
     }
 
-    public void fromFile(String filePath)
+    public void fromFile(@NonNull String filePath)
     {
         fromFile(Path.of(filePath));
     }
 
-    public void fromFile(File file)
+    public void fromFile(@NonNull File file)
     {
         fromFile(file.toPath());
     }
 
-    public void fromFile(Path file)
+    public void fromFile(@NonNull Path file)
     {
         this.source = new FileSource(file, StandardCharsets.UTF_8);
         this.file = file;
     }
 
-    public void fromInputStream(InputSupplier<InputStream> inputStreamSupplier)
+    public void fromInputStream(@NonNull InputSupplier<InputStream> inputStreamSupplier)
     {
         source = new DefaultInputStreamSource("<stream>", inputStreamSupplier, StandardCharsets.UTF_8);
     }
 
-    public void fromInputStream(InputStream inputStream)
+    public void fromInputStream(@NonNull InputStream inputStream)
     {
         fromInputStream(() -> inputStream);
     }
 
-    public void fromReader(InputSupplier<Reader> readerSupplier)
+    public void fromReader(@NonNull InputSupplier<Reader> readerSupplier)
     {
         this.source = new ReaderSource("<reader>", readerSupplier);
     }
 
-    public void fromReader(Reader reader)
+    public void fromReader(@NonNull Reader reader)
     {
         fromReader(() -> reader);
     }
 
-    public void fromResourceFile(Class<?> reference, String relativePath)
+    public void fromResourceFile(@NonNull Class<?> reference, @NonNull String relativePath)
     {
         fromFile(Resources.get(reference, relativePath));
     }
 
-    public void fromResourceFile(ClassLoader classLoader, String absolutePath)
+    public void fromResourceFile(@NonNull ClassLoader classLoader, @NonNull String absolutePath)
     {
         fromFile(Resources.get(classLoader, absolutePath));
     }
 
-    public void fromResourceFile(String absolutePath)
+    public void fromResourceFile(@NonNull String absolutePath)
     {
         fromFile(Resources.get(absolutePath));
     }
 
-    public void fromString(String source)
+    public void fromString(@NonNull String source)
     {
         this.source = new ReaderSource("<string>", () -> new StringReader(source));
-    }
-
-    public void usingCharset(Charset charset)
-    {
-        if (source instanceof InputStreamSource)
-        {
-            this.source = ((InputStreamSource) this.source).withCharset(charset);
-        }
     }
 
     public void withDelimiters(char start, char stop)

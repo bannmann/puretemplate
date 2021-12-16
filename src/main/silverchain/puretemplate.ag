@@ -1,238 +1,171 @@
-org.puretemplate.TemplateLoader
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+
+import org.puretemplate.Group;
+import org.puretemplate.GroupLoader;
+import org.puretemplate.Loader.RendererDepth;
+import org.puretemplate.Renderer;
+import org.puretemplate.Template;
+import org.puretemplate.TemplateLoader;
+import org.puretemplate.error.ErrorListener;
+import org.puretemplate.misc.InputSupplier;
+import org.puretemplate.model.Aggregate;
+import org.puretemplate.model.AggregateBuilder;
+import org.puretemplate.model.AttributeRenderer;
+import org.puretemplate.model.ModelAdaptor;
+
+$FROM_STRING =
+    fromString(String source)
+    | fromReader(Reader reader)
+    | fromReader(InputSupplier<Reader> readerSupplier);
+
+$FROM_STREAM =
+    fromInputStream(InputStream inputStream)
+    | fromInputStream(InputSupplier<InputStream> inputStreamSupplier)
+    | fromResourceFile(String absolutePath)
+    | fromResourceFile(ClassLoader classLoader, String absolutePath)
+    | fromResourceFile(Class<?> reference, String relativePath)
+    | fromFile(Path file)
+    | fromFile(File file)
+    | fromFile(String filePath);
+
+$USING_CHARSET = usingCharset(Charset charset);
+
+$WITH_DELIMITERS = withDelimiters(char start, char stop);
+
+TemplateLoader
 {
-    org.puretemplate.Template
+    Template
 
     (
-        (
-            fromString(String source)
-            | fromReader(java.io.Reader reader)
-            | fromReader(org.puretemplate.InputSupplier<java.io.Reader> readerSupplier)
-        )
+        $FROM_STRING
         |
         (
-            (
-                fromInputStream(java.io.InputStream inputStream)
-                | fromInputStream(org.puretemplate.InputSupplier<java.io.InputStream> inputStreamSupplier)
-                | fromResourceFile(String absolutePath)
-                | fromResourceFile(ClassLoader classLoader, String absolutePath)
-                | fromResourceFile(Class<?> reference, String relativePath)
-                | fromFile(java.nio.file.Path file)
-                | fromFile(java.io.File file)
-                | fromFile(String filePath)
-            )
-
-            usingCharset(java.nio.charset.Charset charset)
-            ?
+            $FROM_STREAM
+            $USING_CHARSET?
         )
     )
 
     (
-        withDelimiters(char start, char stop)
-        | attachedToGroup(org.puretemplate.Group group)
+        $WITH_DELIMITERS
+        | attachedToGroup(Group group)
     )
     ?
 
     build();
 }
 
-org.puretemplate.GroupLoader
+$UNRESTRICTED_GROUP_OPTIONS =
+    importTemplates(Group otherGroup)
+    | registerModelAdaptor<T>(Class<T> attributeType, ModelAdaptor<? super T> adaptor)
+    | registerAttributeRenderer<T>(Class<T> attributeType, AttributeRenderer<? super T> renderer, RendererDepth depth);
+
+GroupLoader
 {
-    org.puretemplate.Group
+    Group
 
     (
-        (fromString(String source) | fromReader(java.io.Reader reader))
+        $FROM_STRING
         |
         (
             (
-                (
-                    fromInputStream(org.puretemplate.InputSupplier<java.io.InputStream> inputStreamSupplier)
-                    | fromInputStream(java.io.InputStream inputStream)
-                    | fromResourceFile(String absolutePath)
-                    | fromResourceFile(ClassLoader classLoader, String absolutePath)
-                    | fromResourceFile(Class<?> reference, String relativePath)
-                    | fromFile(java.nio.file.Path file)
-                    | fromFile(java.io.File file)
-                    | fromFile(String filePath)
-                )
+                $FROM_STREAM
                 | fromDirectory(String directoryPath)
-                | fromDirectory(java.io.File directory)
-                | fromDirectory(java.nio.file.Path directory)
+                | fromDirectory(File directory)
+                | fromDirectory(Path directory)
                 | fromResourceDirectory(String absolutePath)
                 | fromResourceDirectory(Class<?> reference, String relativePath)
             )
-
-            usingCharset(java.nio.charset.Charset charset)
-            ?
+            $USING_CHARSET?
         )
         |
         blank()
     )
 
     // Allow only one call of each with*() method, but in any order, and mixed with other, unrestricted methods
-    ( importTemplates(org.puretemplate.Group otherGroup) | registerModelAdaptor<T>(Class<T> attributeType, org.puretemplate.model.ModelAdaptor<? super T> adaptor) | registerAttributeRenderer<T>(Class<T> attributeType, org.puretemplate.model.AttributeRenderer<? super T> renderer, org.puretemplate.RendererDepth depth) )*
+    $UNRESTRICTED_GROUP_OPTIONS*
     {
         (
-            withDelimiters(char start, char stop)?
-            ( importTemplates(org.puretemplate.Group otherGroup) | registerModelAdaptor<T>(Class<T> attributeType, org.puretemplate.model.ModelAdaptor<? super T> adaptor) | registerAttributeRenderer<T>(Class<T> attributeType, org.puretemplate.model.AttributeRenderer<? super T> renderer, org.puretemplate.RendererDepth depth) )*
+            $WITH_DELIMITERS?
+            $UNRESTRICTED_GROUP_OPTIONS*
         ),
         (
-            withErrorListener(org.puretemplate.error.ErrorListener listener)?
-            ( importTemplates(org.puretemplate.Group otherGroup) | registerModelAdaptor<T>(Class<T> attributeType, org.puretemplate.model.ModelAdaptor<? super T> adaptor) | registerAttributeRenderer<T>(Class<T> attributeType, org.puretemplate.model.AttributeRenderer<? super T> renderer, org.puretemplate.RendererDepth depth) )*
+            withErrorListener(ErrorListener listener)?
+            $UNRESTRICTED_GROUP_OPTIONS*
         ),
         (
             withLegacyRendering()?
-            ( importTemplates(org.puretemplate.Group otherGroup) | registerModelAdaptor<T>(Class<T> attributeType, org.puretemplate.model.ModelAdaptor<? super T> adaptor) | registerAttributeRenderer<T>(Class<T> attributeType, org.puretemplate.model.AttributeRenderer<? super T> renderer, org.puretemplate.RendererDepth depth) )*
+            $UNRESTRICTED_GROUP_OPTIONS*
         )
     }
 
     build();
 }
 
-org.puretemplate.Renderer
+$WITH_LINE_WRAPPING = withLineWrapping(int lineLength);
+
+Renderer
 {
     int
-    withLineWrapping(int lineLength)?
+    $WITH_LINE_WRAPPING?
     (
-        intoWriter(java.io.Writer writer)
-        |
-        intoOutputStream(java.io.OutputStream outputStream)
-        |
-        intoOutputStream(java.io.OutputStream outputStream, java.nio.charset.Charset charset)
-        |
-        intoFile(java.io.File file) throws java.io.IOException
-        |
-        intoFile(java.io.File file, java.nio.charset.Charset charset) throws java.io.IOException
-        |
-        intoFile(java.nio.file.Path file) throws java.io.IOException
-        |
-        intoFile(java.nio.file.Path file, java.nio.charset.Charset charset, java.nio.file.OpenOption... options) throws java.io.IOException
+        intoWriter(Writer writer)
+        | intoOutputStream(OutputStream outputStream)
+        | intoOutputStream(OutputStream outputStream, Charset charset)
+        | intoFile(File file) throws IOException
+        | intoFile(File file, Charset charset) throws IOException
+        | intoFile(Path file) throws IOException
+        | intoFile(Path file, Charset charset, OpenOption... options) throws IOException
     )
     ;
 
     String
-    withLineWrapping(int lineLength)?
+    $WITH_LINE_WRAPPING?
     intoString()
     ;
 }
 
-org.puretemplate.model.AggregateBuilder
+AggregateBuilder
 {
-    org.puretemplate.model.Aggregate
-    properties(
-        String nameA,
-        String nameB
-    )
-    withValues(
-        Object valueA,
-        Object valueB
-    )
+    Aggregate
+    properties(String nameA, String nameB)
+    withValues(Object valueA, Object valueB)
     ;
 
-    org.puretemplate.model.Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC
-    )
+    Aggregate
+    properties(String nameA, String nameB, String nameC)
+    withValues(Object valueA, Object valueB, Object valueC)
     ;
 
-    org.puretemplate.model.Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD
-    )
+    Aggregate
+    properties(String nameA, String nameB, String nameC, String nameD)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD)
     ;
 
-    org.puretemplate.model.Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD,
-        String nameE
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD,
-        Object valueE
-    )
+    Aggregate
+    properties(String nameA, String nameB, String nameC, String nameD, String nameE)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD, Object valueE)
     ;
 
-    org.puretemplate.model.Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD,
-        String nameE,
-        String nameF
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD,
-        Object valueE,
-        Object valueF
-    )
+    Aggregate
+    properties(String nameA, String nameB, String nameC, String nameD, String nameE, String nameF)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD, Object valueE, Object valueF)
     ;
 
-    org.puretemplate.model.Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD,
-        String nameE,
-        String nameF,
-        String nameG
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD,
-        Object valueE,
-        Object valueF,
-        Object valueG
-    )
+    Aggregate
+    properties(String nameA, String nameB, String nameC, String nameD, String nameE, String nameF, String nameG)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD, Object valueE, Object valueF, Object valueG)
     ;
 
-    org.puretemplate.model.Aggregate
-    properties(
-        String nameA,
-        String nameB,
-        String nameC,
-        String nameD,
-        String nameE,
-        String nameF,
-        String nameG,
-        String nameH
-    )
-    withValues(
-        Object valueA,
-        Object valueB,
-        Object valueC,
-        Object valueD,
-        Object valueE,
-        Object valueF,
-        Object valueG,
-        Object valueH
-    )
+    Aggregate
+    properties(String nameA, String nameB, String nameC, String nameD, String nameE, String nameF, String nameG, String nameH)
+    withValues(Object valueA, Object valueB, Object valueC, Object valueD, Object valueE, Object valueF, Object valueG, Object valueH)
     ;
 }

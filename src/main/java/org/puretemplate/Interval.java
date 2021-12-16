@@ -1,4 +1,4 @@
-package org.puretemplate.misc;
+package org.puretemplate;
 
 import lombok.Value;
 
@@ -6,7 +6,7 @@ import lombok.Value;
  * An inclusive interval {@code a..b}.  Used to track ranges in output and template patterns (for debugging).
  */
 @Value
-public class Interval
+class Interval
 {
     int a;
     int b;

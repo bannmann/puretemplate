@@ -3,8 +3,6 @@ package org.puretemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.puretemplate.misc.Interval;
-
 class BytecodeDisassembler
 {
     CompiledST code;

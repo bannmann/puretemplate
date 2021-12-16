@@ -8,8 +8,10 @@ import java.util.Map;
 
 import lombok.NonNull;
 
+import org.apiguardian.api.API;
 import org.puretemplate.exception.NoSuchPropertyException;
 
+@API(status = API.Status.STABLE)
 public class ObjectModelAdaptor<T> implements ModelAdaptor<T>
 {
     protected static final Member INVALID_MEMBER;

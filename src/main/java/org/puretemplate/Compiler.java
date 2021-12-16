@@ -17,7 +17,7 @@ import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.puretemplate.error.ErrorType;
-import org.puretemplate.exception.TemplateException;
+import org.puretemplate.exception.CompilationException;
 
 /**
  * A compiler for a single template.
@@ -29,7 +29,7 @@ class Compiler
     public static final int TEMPLATE_INITIAL_CODE_SIZE = 15;
 
     public static final Map<String, Interpreter.Option> supportedOptions = Map.ofEntries(entry("anchor",
-        Interpreter.Option.ANCHOR),
+            Interpreter.Option.ANCHOR),
         entry("format", Interpreter.Option.FORMAT),
         entry("null", Interpreter.Option.NULL),
         entry("separator", Interpreter.Option.SEPARATOR),
@@ -98,11 +98,11 @@ class Compiler
      * Compile full template with respect to a list of formal arguments.
      */
     public CompiledST compile(
-        String srcName, String name, List<FormalArgument> args, String template, Token templateToken)
+        String sourceName, String name, List<FormalArgument> args, String template, Token templateToken)
     {
         ANTLRStringStream is = new ANTLRStringStream(template);
-        is.name = srcName != null
-            ? srcName
+        is.name = sourceName != null
+            ? sourceName
             : name;
         STLexer lexer;
         if (templateToken != null && templateToken.getType() == GroupParser.BIGSTRING_NO_NL)
@@ -216,6 +216,6 @@ class Compiler
             String msg = parser.getErrorMessage(re, parser.getTokenNames());
             group.errMgr.compileTimeError(ErrorType.SYNTAX_ERROR, templateToken, re.token, msg);
         }
-        throw new TemplateException(); // we have reported the error, so just blast out
+        throw new CompilationException(); // we have reported the error, so just blast out
     }
 }

@@ -1,8 +1,8 @@
-package org.puretemplate.debug;
+package org.puretemplate;
 
 import org.puretemplate.misc.Location;
 
-public class EvalExprEvent extends InterpEvent
+class EvalExprEvent extends InterpEvent
 {
     /**
      * Index of first char in template.

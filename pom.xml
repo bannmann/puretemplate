@@ -10,7 +10,7 @@
     <groupId>org.puretemplate</groupId>
     <artifactId>puretemplate</artifactId>
 
-    <version>5.0.0-beta.1</version>
+    <version>5.0.0-beta.2</version>
     <packaging>jar</packaging>
 
     <name>PureTemplate</name>
@@ -42,6 +42,8 @@
         <javadoc.output.directory.final>${project.build.directory}/apidocs</javadoc.output.directory.final>
         <javadoc.output.directory.temp>${project.build.directory}/apidocs-temp</javadoc.output.directory.temp>
         <javadoc.sources.directory>${project.build.directory}/generated-sources/delombok-for-javadoc</javadoc.sources.directory>
+        <lombok.core.version>1.18.22</lombok.core.version>
+        <lombok.plugin.version>1.18.20.0</lombok.plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <mizool.version>0.45</mizool.version>
@@ -77,6 +79,11 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
+                <groupId>org.apiguardian</groupId>
+                <artifactId>apiguardian-api</artifactId>
+                <version>1.1.2</version>
+            </dependency>
+            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>5.8.1</version>
@@ -102,8 +109,13 @@
             <artifactId>antlr-runtime</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apiguardian</groupId>
+            <artifactId>apiguardian-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>
@@ -129,15 +141,46 @@
                     <version>1.4.1</version>
                 </plugin>
                 <plugin>
+                    <groupId>io.reformanda.semper</groupId>
+                    <artifactId>dependencyversion-maven-plugin</artifactId>
+                    <version>1.0.1</version>
+                    <executions>
+                        <execution>
+                            <id>set-all</id>
+                            <goals>
+                                <goal>set-version</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <executions>
+                        <execution>
+                            <id>default-jar</id>
+                            <configuration>
+                                <archive>
+                                    <manifestEntries>
+                                        <Automatic-Module-Name>org.puretemplate</Automatic-Module-Name>
+                                    </manifestEntries>
+                                </archive>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <sourcepath>${javadoc.sources.directory};${silverchain.outputDirectory}</sourcepath>
                         <doclint>none</doclint>
                         <reportOutputDirectory>${javadoc.output.directory.final}</reportOutputDirectory>
-
-                        <!-- see https://stackoverflow.com/a/52603413/7641 -->
-                        <additionalJOption>--no-module-directories</additionalJOption>
+                        <links>
+                            <link>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${org.apiguardian:apiguardian-api:jar.version}/</link>
+                            <link>https://javadoc.io/doc/com.google.code.findbugs/jsr305/${com.google.code.findbugs:jsr305:jar.version}/</link>
+                        </links>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -153,7 +196,7 @@
             <plugin>
                 <groupId>com.github.bannmann.maven.silverchain</groupId>
                 <artifactId>silverchain-maven-plugin</artifactId>
-                <version>0.1</version>
+                <version>0.2</version>
                 <configuration>
                     <inputFile>src/main/silverchain/puretemplate.ag</inputFile>
                 </configuration>
@@ -164,6 +207,10 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.reformanda.semper</groupId>
+                <artifactId>dependencyversion-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.antlr</groupId>
@@ -293,7 +340,6 @@
                                 <configuration>
                                     <reportOutputDirectory>${javadoc.output.directory.temp}</reportOutputDirectory>
                                     <sourceFileExcludes>
-                                        <sourceFileExclude>org/puretemplate/Parsing.java</sourceFileExclude>
                                         <sourceFileExclude>org/puretemplate/fs/*.java</sourceFileExclude>
                                         <sourceFileExclude>**/state*/*.java</sourceFileExclude>
                                     </sourceFileExcludes>

@@ -2,19 +2,22 @@ package org.puretemplate.model;
 
 import java.util.Locale;
 
+import org.apiguardian.api.API;
+
 /**
- * This interface describes an object that knows how to format or otherwise render an object appropriately. There is one
- * renderer registered per group for a given Java type.
- *
- * <p>
- * If the format string passed to the renderer is not recognized then simply call {@link Object#toString}.</p>
- *
- * <p>
- * {@code formatString} can be {@code null} but {@code locale} will at least be {@link Locale#getDefault}.</p>
+ * Renders or formats attributes appropriately. There is one renderer registered per group for a given Java type.
  *
  * @param <T> the type of values this renderer can handle.
  */
+@API(status = API.Status.STABLE)
 public interface AttributeRenderer<T>
 {
-    String toString(T value, String formatString, Locale locale);
+    /**
+     * Renders the given value as a {@link String}.
+     *
+     * @param value the object to render, never {@code null}
+     * @param formatString format string or {@code null} if unspecified
+     * @param locale the active locale, never {@code null}
+     */
+    String render(T value, String formatString, Locale locale);
 }

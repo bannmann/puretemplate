@@ -11,6 +11,8 @@ import lombok.NonNull;
 import lombok.Value;
 import lombok.With;
 
+import org.puretemplate.misc.InputSupplier;
+
 @Value
 class DefaultInputStreamSource implements InputStreamSource
 {

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
+import org.apiguardian.api.API;
+
 /**
  * An automatically created aggregate of properties.
  *
@@ -34,9 +36,11 @@ import lombok.RequiredArgsConstructor;
  *     .withValues("Tom", "Burns", 34)}</pre>
  * Then, use {@link org.puretemplate.Context#add(String, Object)} to add the aggregate just like any other object.</p>
  */
+@API(status = API.Status.STABLE)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class Aggregate
 {
+    @API(status = API.Status.STABLE)
     public static final class AggregateBuilder extends AggregateBuilder0
     {
         private AggregateBuilder()
@@ -45,6 +49,12 @@ public final class Aggregate
         }
     }
 
+    /**
+     * Builds an Aggregate.
+     *
+     * @return the initial state of the fluent API. See <a href="package-summary.html#fluent-api-usage-notes">Usage
+     * notes for fluent APIs in PureTemplate</a> for details.
+     */
     public static AggregateBuilder build()
     {
         return new AggregateBuilder();
