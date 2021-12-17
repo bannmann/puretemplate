@@ -76,7 +76,7 @@ class CompilationState
 
     public void func(Token templateToken, CommonTree id)
     {
-        Bytecode.Instruction functionInstruction = Compiler.functions.get(id.getText());
+        Bytecode.Instruction functionInstruction = Compiler.FUNCTIONS.get(id.getText());
         if (functionInstruction == null)
         {
             errMgr.compileTimeError(ErrorType.NO_SUCH_FUNCTION, templateToken, id.token);

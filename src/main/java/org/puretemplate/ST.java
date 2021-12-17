@@ -54,12 +54,12 @@ class ST
         /**
          * Record who made us? {@link ConstructionEvent} creates {@link Exception} to grab stack
          */
-        public ConstructionEvent newSTEvent;
+        ConstructionEvent newSTEvent;
 
         /**
          * Track construction-time add attribute "events"; used for ST user-level debugging
          */
-        public Multimap<String, AddAttributeEvent> addAttrEvents = MultimapBuilder.linkedHashKeys()
+        private final Multimap<String, AddAttributeEvent> addAttrEvents = MultimapBuilder.linkedHashKeys()
             .arrayListValues()
             .build();
     }

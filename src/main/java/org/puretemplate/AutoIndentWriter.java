@@ -30,30 +30,30 @@ class AutoIndentWriter implements STWriter
     /**
      * Stack of integer anchors (char positions in line); avoid {@link Integer} creation overhead.
      */
-    public int[] anchors = new int[10];
-    public int anchors_sp = -1;
+    private int[] anchors = new int[10];
+    private int anchors_sp = -1;
 
     /**
      * {@code \n} or {@code \r\n}?
      */
-    public String newline;
+    private final String newline;
 
-    public Writer out = null;
-    public boolean atStartOfLine = true;
+    protected Writer out = null;
+    private boolean atStartOfLine = true;
 
     /**
      * Track char position in the line (later we can think about tabs). Indexed from 0. We want to keep {@code
      * charPosition <= }{@link #lineWidth}. This is the position we are <em>about</em> to write, not the position last
      * written to.
      */
-    public int charPosition = 0;
+    private int charPosition = 0;
 
     /**
      * The absolute char index into the output of the next char to be written.
      */
-    public int charIndex = 0;
+    private int charIndex = 0;
 
-    public int lineWidth = NO_WRAP;
+    private int lineWidth = NO_WRAP;
 
     public AutoIndentWriter(Writer out, String newline)
     {

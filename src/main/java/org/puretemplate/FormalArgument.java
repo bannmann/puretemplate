@@ -12,27 +12,27 @@ import org.antlr.runtime.Token;
  */
 final class FormalArgument
 {
-    public String name;
+    String name;
 
     /**
      * which argument is it? from 0..n-1
      */
-    public int index;
+    int index;
 
     /**
      * If they specified default value {@code x=y}, store the token here
      */
-    public Token defaultValueToken;
+    Token defaultValueToken;
 
     /**
      * {@code x="str", x=true, x=false}
      */
-    public Object defaultValue;
+    Object defaultValue;
 
     /**
      * {@code x={...}}
      */
-    public CompiledST compiledDefaultValue;
+    CompiledST compiledDefaultValue;
 
     public FormalArgument(String name)
     {

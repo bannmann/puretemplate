@@ -19,7 +19,7 @@ import org.antlr.runtime.tree.CommonTree;
  */
 class CompiledST implements Cloneable
 {
-    public String name;
+    String name;
 
     /**
      * Every template knows where it is relative to the group that loaded it. The prefix is the relative path from the
@@ -34,51 +34,51 @@ class CompiledST implements Cloneable
      * <p>
      * Always ends with {@code "/"}.</p>
      */
-    public String prefix = "/";
+    String prefix = "/";
 
     /**
      * The original, immutable pattern (not really used again after initial "compilation"). Useful for debugging.  Even
      * for subtemplates, this is entire overall template.
      */
-    public String template;
+    String template;
 
     /**
      * The token that begins template definition; could be {@code <@r>} of region.
      */
-    public Token templateDefStartToken;
+    Token templateDefStartToken;
 
     /**
      * Overall token stream for template (debug only).
      */
-    public TokenStream tokens;
+    TokenStream tokens;
 
     /**
      * How do we interpret syntax of template? (debug only)
      */
-    public CommonTree ast;
+    CommonTree ast;
 
-    public Map<String, FormalArgument> formalArguments;
+    Map<String, FormalArgument> formalArguments;
 
-    public boolean hasFormalArgs;
+    boolean hasFormalArgs;
 
-    public int numberOfArgsWithDefaultValues;
+    int numberOfArgsWithDefaultValues;
 
     /**
      * A list of all regions and subtemplates.
      */
-    public List<CompiledST> implicitlyDefinedTemplates;
+    private List<CompiledST> implicitlyDefinedTemplates;
 
     /**
      * The group that physically defines this {@link ST} definition. We use it to initiate interpretation via {@link
      * ST#toString}. From there, it becomes field {@code AbstractInterpreter.group} and is fixed until rendering
      * completes.
      */
-    public STGroup nativeGroup = STGroup.defaultGroup;
+    STGroup nativeGroup = STGroup.defaultGroup;
 
     /**
      * Does this template come from a {@code <@region>...<@end>} embedded in another template?
      */
-    public boolean isRegion;
+    boolean isRegion;
 
     /**
      * If someone refs {@code <@r()>} in template t, an implicit
@@ -89,27 +89,27 @@ class CompiledST implements Cloneable
      * is defined, but you can overwrite this def by defining your own. We need to prevent more than one manual def
      * though. Between this var and {@link #isRegion} we can determine these cases.</p>
      */
-    public ST.RegionType regionDefType;
+    ST.RegionType regionDefType;
 
-    public boolean isAnonSubtemplate;
+    boolean isAnonSubtemplate;
 
     /**
      * string operands of instructions
      */
-    public String[] strings;
+    String[] strings;
 
     /**
      * byte-addressable code memory. For efficiency, this stores opcodes instead of references to the {@link
      * Bytecode.Instruction} enum.
      */
-    public byte[] instrs;
+    byte[] instrs;
 
-    public int codeSize;
+    int codeSize;
 
     /**
      * maps IP to range in template pattern
      */
-    public Interval[] sourceMap;
+    Interval[] sourceMap;
 
     public CompiledST()
     {

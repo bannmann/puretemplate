@@ -145,7 +145,7 @@ class STLexer implements TokenSource
      * templates. Otherwise, we know whether a <code>'}'</code> and the outermost subtemplate to send this back to
      * outside mode.
      */
-    public int subtemplateDepth = 0; // start out *not* in a {...} subtemplate
+    int subtemplateDepth = 0; // start out *not* in a {...} subtemplate
 
     ErrorManager errMgr;
 

@@ -54,9 +54,9 @@ abstract class STGroup
      */
     protected final List<STGroup> imports = Collections.synchronizedList(new ArrayList<>());
 
-    public char delimiterStartChar;
+    char delimiterStartChar;
 
-    public char delimiterStopChar;
+    char delimiterStopChar;
 
     /**
      * Maps template name to {@link CompiledST} object. This map is synchronized.
@@ -130,19 +130,13 @@ abstract class STGroup
      */
     public static boolean trackCreationEvents = false;
 
-    /**
-     * v3 compatibility; used to iterate across {@link Map#values()} instead of v4's default {@link Map#keySet()}. But
-     * to convert ANTLR templates, it's too hard to find without static typing in templates.
-     */
-    public boolean iterateAcrossValues = false;
-
-    public static STGroup defaultGroup = new LegacyBareStGroup();
+    static STGroup defaultGroup = new LegacyBareStGroup();
 
     /**
      * The {@link ErrorManager} for entire group; all compilations and executions. This gets copied to parsers, walkers,
      * and interpreters.
      */
-    public ErrorManager errMgr = STGroup.DEFAULT_ERR_MGR;
+    ErrorManager errMgr = STGroup.DEFAULT_ERR_MGR;
 
     @VisibleForTesting
     public STGroup()

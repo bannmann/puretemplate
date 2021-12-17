@@ -5,7 +5,7 @@ package org.puretemplate;
  */
 class ConstructionEvent implements Event
 {
-    public Throwable stack;
+    private final Throwable stack;
 
     public ConstructionEvent()
     {

@@ -1440,16 +1440,8 @@ abstract class AbstractInterpreter implements Interpreter
         }
         else if (o instanceof Map)
         {
-            if (scope.st.groupThatCreatedThisInstance.iterateAcrossValues)
-            {
-                iter = ((Map<?, ?>) o).values()
-                    .iterator();
-            }
-            else
-            {
-                iter = ((Map<?, ?>) o).keySet()
-                    .iterator();
-            }
+            iter = ((Map<?, ?>) o).keySet()
+                .iterator();
         }
         if (iter == null)
         {
