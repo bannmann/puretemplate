@@ -247,8 +247,8 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
         // Parent group is mutually exclusive with specifying delimiters
         if (parentGroup != null)
         {
-            InternalGroup parentGroupInternal = (InternalGroup) this.parentGroup;
-            return new ST(parentGroupInternal.getStGroup(), sourceText);
+            AbstractGroup<?> parentGroupInternal = (AbstractGroup<?>) this.parentGroup;
+            return new ST(parentGroupInternal.stGroup, sourceText);
         }
         else
         {
