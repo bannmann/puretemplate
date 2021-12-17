@@ -124,7 +124,7 @@ abstract class STGroup
      * For debugging with {@link STViz}. Records where in code an {@link ST} was created and where code added
      * attributes.
      */
-    public static boolean trackCreationEvents = false;
+    public static boolean trackCreationEvents;
 
     static STGroup defaultGroup = new LegacyBareStGroup();
 

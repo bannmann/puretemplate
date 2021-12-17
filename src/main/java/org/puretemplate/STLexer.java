@@ -138,14 +138,14 @@ class STLexer implements TokenSource
     /**
      * This keeps track of the current mode of the lexer. Are we inside or outside an ST expression?
      */
-    boolean scanningInsideExpr = false;
+    boolean scanningInsideExpr;
 
     /**
      * To be able to properly track the inside/outside mode, we need to track how deeply nested we are in some
      * templates. Otherwise, we know whether a <code>'}'</code> and the outermost subtemplate to send this back to
      * outside mode.
      */
-    int subtemplateDepth = 0; // start out *not* in a {...} subtemplate
+    int subtemplateDepth;
 
     ErrorManager errMgr;
 

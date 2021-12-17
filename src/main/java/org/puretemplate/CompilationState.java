@@ -26,7 +26,7 @@ class CompilationState
      * Track instruction location within {@code impl.}{@link CompiledST#instrs instrs} array; this is next address to
      * write to. Byte-addressable memory.
      */
-    int ip = 0;
+    int ip;
 
     TokenStream tokens;
 

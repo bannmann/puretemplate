@@ -38,7 +38,7 @@ class AutoIndentWriter implements STWriter
      */
     private final String newline;
 
-    protected Writer out = null;
+    protected Writer out;
     private boolean atStartOfLine = true;
 
     /**
@@ -46,12 +46,12 @@ class AutoIndentWriter implements STWriter
      * charPosition <= }{@link #lineWidth}. This is the position we are <em>about</em> to write, not the position last
      * written to.
      */
-    private int charPosition = 0;
+    private int charPosition;
 
     /**
      * The absolute char index into the output of the next char to be written.
      */
-    private int charIndex = 0;
+    private int charIndex;
 
     private int lineWidth = NO_WRAP;
 

@@ -56,7 +56,7 @@ abstract class AbstractInterpreter implements Interpreter
     /**
      * The number of characters written on this template line so far.
      */
-    int nwline = 0;
+    int nwline;
 
     /**
      * Render template with respect to this group.
@@ -76,7 +76,7 @@ abstract class AbstractInterpreter implements Interpreter
     /**
      * Dump bytecode instructions as they are executed. This field is mostly for StringTemplate development.
      */
-    public static boolean trace = false;
+    public static boolean trace;
 
     /**
      * If {@link #trace} is {@code true}, track trace here.
@@ -87,7 +87,7 @@ abstract class AbstractInterpreter implements Interpreter
     /**
      * When {@code true}, track events inside templates and in {@link #events}.
      */
-    public boolean debug = false;
+    public boolean debug;
 
     /**
      * Track everything happening in interpreter across all templates if {@link #debug}. The last event in this field is
