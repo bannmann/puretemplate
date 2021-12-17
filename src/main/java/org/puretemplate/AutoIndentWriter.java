@@ -31,7 +31,7 @@ class AutoIndentWriter implements STWriter
      * Stack of integer anchors (char positions in line); avoid {@link Integer} creation overhead.
      */
     private int[] anchors = new int[10];
-    private int anchors_sp = -1;
+    private int anchorIndex = -1;
 
     /**
      * {@code \n} or {@code \r\n}?
@@ -93,20 +93,20 @@ class AutoIndentWriter implements STWriter
     @Override
     public void pushAnchorPoint()
     {
-        if ((anchors_sp + 1) >= anchors.length)
+        if ((anchorIndex + 1) >= anchors.length)
         {
             int[] a = new int[anchors.length * 2];
             System.arraycopy(anchors, 0, a, 0, anchors.length - 1);
             anchors = a;
         }
-        anchors_sp++;
-        anchors[anchors_sp] = charPosition;
+        anchorIndex++;
+        anchors[anchorIndex] = charPosition;
     }
 
     @Override
     public void popAnchorPoint()
     {
-        anchors_sp--;
+        anchorIndex--;
     }
 
     @Override
@@ -228,9 +228,9 @@ class AutoIndentWriter implements STWriter
         // If current anchor is beyond current indent width, indent to anchor
         // *after* doing indents (might tabs in there or whatever)
         int indentWidth = n;
-        if (anchors_sp >= 0 && anchors[anchors_sp] > indentWidth)
+        if (anchorIndex >= 0 && anchors[anchorIndex] > indentWidth)
         {
-            int remainder = anchors[anchors_sp] - indentWidth;
+            int remainder = anchors[anchorIndex] - indentWidth;
             for (int i = 1; i <= remainder; i++)
             {
                 out.write(' ');
