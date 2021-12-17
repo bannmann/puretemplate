@@ -4,13 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.Test;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
 
+@Slf4j
 class TestCompiler extends BaseTest
 {
-
     @Test
     void testAttr()
     {
@@ -69,7 +71,7 @@ class TestCompiler extends BaseTest
         String template = "<super.foo()>";
         CompiledST code = new Compiler().compile(template);
         String asmExpected = "super_new 0 0, write";
-        code.dump();
+        code.dump(log::info);
         String asmResult = code.instrs();
         assertEquals(asmExpected, asmResult);
         String stringsExpected = "[foo]";

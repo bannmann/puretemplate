@@ -1,16 +1,18 @@
 package org.puretemplate;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
+import org.slf4j.Logger;
 
 /**
  * The result of compiling an {@link ST}.  Contains all the bytecode instructions, string table, bytecode address to
@@ -283,28 +285,24 @@ class CompiledST implements Cloneable
         return dis.instrs();
     }
 
-    public void dump()
+    public void dump(Consumer<String> printer)
     {
         BytecodeDisassembler dis = new BytecodeDisassembler(this);
-        System.out.println(name + ":");
-        System.out.println(dis.disassemble());
-        System.out.println("Strings:");
-        System.out.println(dis.strings());
-        System.out.println("Bytecode to template map:");
-        System.out.println(dis.sourceMap());
+        printer.accept(name + ":");
+        printer.accept(dis.disassemble());
+        printer.accept("Strings:");
+        printer.accept(dis.strings());
+        printer.accept("Bytecode to template map:");
+        printer.accept(dis.sourceMap());
     }
 
-    public String disasm()
+    public String getDumpOutput()
     {
-        BytecodeDisassembler dis = new BytecodeDisassembler(this);
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        pw.println(dis.disassemble());
-        pw.println("Strings:");
-        pw.println(dis.strings());
-        pw.println("Bytecode to template map:");
-        pw.println(dis.sourceMap());
-        pw.close();
-        return sw.toString();
+        try (StringBuilderWriter result = new StringBuilderWriter();
+             PrintWriter printWriter = new PrintWriter(result))
+        {
+            dump(printWriter::println);
+            return result.toString();
+        }
     }
 }

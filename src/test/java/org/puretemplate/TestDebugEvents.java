@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.Test;
 
+@Slf4j
 class TestDebugEvents extends BaseTest
 {
     @Test
@@ -48,7 +51,7 @@ class TestDebugEvents extends BaseTest
         writeFile(tmpdir, "t.stg", templates);
         STGroup group = STGroupFilePath.createWithDefaults(tmpdir + "/" + "t.stg");
         ST st = group.getInstanceOf("t");
-        group.getInstanceOf("u").impl.dump();
+        group.getInstanceOf("u").impl.dump(log::info);
         List<InterpEvent> events = st.getEvents();
         String expected = "[EvalExprEvent{self=/t(), expr='[', exprStartChar=0, exprStopChar=0, start=0, stop=0}," +
             " IndentEvent{self=/u(), expr=' ', exprStartChar=0, exprStopChar=0, start=1, stop=1}," +
@@ -73,7 +76,7 @@ class TestDebugEvents extends BaseTest
         //                       01 2        01 2 3
         STGroupString g = new STGroupString(templates);
         ST st = g.getInstanceOf("t");
-        st.impl.dump();
+        st.impl.dump(log::info);
         List<InterpEvent> events = st.getEvents();
         int n = NEWLINE.length();
         String expected = "[EvalExprEvent{self=/t(), expr='[', exprStartChar=0, exprStopChar=0, start=0, stop=0}, " +

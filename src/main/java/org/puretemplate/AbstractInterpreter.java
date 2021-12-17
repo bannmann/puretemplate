@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import org.puretemplate.error.ErrorType;
 import org.puretemplate.exception.NoSuchAttributeException;
@@ -36,6 +38,7 @@ import org.puretemplate.model.ModelAdaptor;
  * <p>
  * We create a new interpreter for each invocation of {@link ST#render}, or {@link ST#getEvents}.</p>
  */
+@Slf4j
 abstract class AbstractInterpreter implements Interpreter
 {
     public static final int DEFAULT_OPERAND_STACK_SIZE = 100;
@@ -469,8 +472,10 @@ abstract class AbstractInterpreter implements Interpreter
                     nwline += n1;
                     break;
                 default:
-                    errMgr.internalError(scope.toLocation(), "invalid bytecode @ " + (ip - 1) + ": " + opcode, null);
-                    self.impl.dump();
+                    String dump = self.impl.getDumpOutput();
+                    errMgr.internalError(scope.toLocation(),
+                        MessageFormat.format("invalid bytecode @ {0}: {1}\n{2}", ip - 1, opcode, dump),
+                        null);
             }
             prevOpcode = opcode;
         }
