@@ -2,9 +2,8 @@ package org.puretemplate;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Essentially a char filter that knows how to auto-indent output by maintaining a stack of indent levels.
@@ -24,9 +23,9 @@ import java.util.Stack;
 class AutoIndentWriter implements STWriter
 {
     /**
-     * Stack of indents. Use {@link List} as it's much faster than {@link Stack}. Grows from 0..n-1.
+     * Stack of indents. Use {@link Deque} to rule out accidental misuse (e.g. indexed access).
      */
-    public List<String> indents = new ArrayList<>();
+    private final Deque<String> indents = new ArrayDeque<>();
 
     /**
      * Stack of integer anchors (char positions in line); avoid {@link Integer} creation overhead.
@@ -59,7 +58,6 @@ class AutoIndentWriter implements STWriter
     public AutoIndentWriter(Writer out, String newline)
     {
         this.out = out;
-        indents.add(null); // start with no indent
         this.newline = newline;
     }
 
@@ -83,13 +81,13 @@ class AutoIndentWriter implements STWriter
     @Override
     public void pushIndentation(String indent)
     {
-        indents.add(indent);
+        indents.addLast(indent);
     }
 
     @Override
     public String popIndentation()
     {
-        return indents.remove(indents.size() - 1);
+        return indents.removeLast();
     }
 
     @Override
@@ -223,11 +221,8 @@ class AutoIndentWriter implements STWriter
         int n = 0;
         for (String ind : indents)
         {
-            if (ind != null)
-            {
-                n += ind.length();
-                out.write(ind);
-            }
+            n += ind.length();
+            out.write(ind);
         }
 
         // If current anchor is beyond current indent width, indent to anchor
