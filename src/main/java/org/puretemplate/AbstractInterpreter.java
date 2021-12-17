@@ -118,10 +118,7 @@ abstract class AbstractInterpreter implements Interpreter
     protected int exec(@NonNull STWriter out, @NonNull InstanceScope scope)
     {
         final ST self = scope.st;
-        if (trace)
-        {
-            System.out.println("exec(" + self.getName() + ")");
-        }
+        log.debug("exec({})", self.getName());
         try
         {
             setDefaultArguments(out, scope);
@@ -1661,10 +1658,7 @@ abstract class AbstractInterpreter implements Interpreter
         {
             executeTrace.add(s);
         }
-        if (trace)
-        {
-            System.out.println(s);
-        }
+        log.debug("{}", s);
     }
 
     protected void printForTrace(StringBuilder tr, InstanceScope scope, Object o)

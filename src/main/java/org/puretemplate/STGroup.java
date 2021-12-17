@@ -2,6 +2,7 @@ package org.puretemplate;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -120,11 +121,6 @@ abstract class STGroup
     public static final ErrorManager DEFAULT_ERR_MGR = new ErrorManager(ErrorListeners.SYSTEM_ERR);
 
     /**
-     * Watch loading of groups and templates.
-     */
-    public static boolean verbose = false;
-
-    /**
      * For debugging with {@link STViz}. Records where in code an {@link ST} was created and where code added
      * attributes.
      */
@@ -166,10 +162,7 @@ abstract class STGroup
         {
             return null;
         }
-        if (verbose)
-        {
-            System.out.println(getName() + ".getInstanceOf(" + name + ")");
-        }
+        log.debug("{}.getInstanceOf({})", getName(), name);
         if (name.charAt(0) != '/')
         {
             name = "/" + name;
@@ -207,10 +200,7 @@ abstract class STGroup
         {
             fullyQualifiedName = scope.st.impl.prefix + name;
         }
-        if (verbose)
-        {
-            System.out.println("getEmbeddedInstanceOf(" + fullyQualifiedName + ")");
-        }
+        log.debug("getEmbeddedInstanceOf({})", fullyQualifiedName);
         ST st = getInstanceOf(fullyQualifiedName);
         if (st == null)
         {
@@ -259,17 +249,11 @@ abstract class STGroup
         {
             name = "/" + name;
         }
-        if (verbose)
-        {
-            System.out.println(getName() + ".lookupTemplate(" + name + ")");
-        }
+        log.debug("{}.lookupTemplate({})", getName(), name);
         CompiledST code = rawGetTemplate(name);
         if (code == NOT_FOUND_ST)
         {
-            if (verbose)
-            {
-                System.out.println(name + " previously seen as not found");
-            }
+            log.debug("{} previously seen as not found", name);
             return null;
         }
         // try to load from disk and look up again
@@ -283,18 +267,12 @@ abstract class STGroup
         }
         if (code == null)
         {
-            if (verbose)
-            {
-                System.out.println(name + " recorded not found");
-            }
+            log.debug("{} recorded not found", name);
             templates.put(name, NOT_FOUND_ST);
         }
-        if (verbose)
+        if (code != null)
         {
-            if (code != null)
-            {
-                System.out.println(getName() + ".lookupTemplate(" + name + ") found");
-            }
+            log.debug("{}.lookupTemplate({}) found", getName(), name);
         }
         return code;
     }
@@ -323,24 +301,15 @@ abstract class STGroup
         }
         for (STGroup g : imports)
         {
-            if (verbose)
-            {
-                System.out.println("checking " + g.getName() + " for imported " + name);
-            }
+            log.debug("checking {} for imported {}", g.getName(), name);
             CompiledST code = g.lookupTemplate(name);
             if (code != null)
             {
-                if (verbose)
-                {
-                    System.out.println(g.getName() + ".lookupImportedTemplate(" + name + ") found");
-                }
+                log.debug("{}.lookupImportedTemplate({}) found", g.getName(), name);
                 return code;
             }
         }
-        if (verbose)
-        {
-            System.out.println(name + " not found in " + getName() + " imports");
-        }
+        log.debug("{} not found in {} imports", name, getName());
         return null;
     }
 
@@ -403,10 +372,7 @@ abstract class STGroup
     CompiledST defineTemplate(
         String fullyQualifiedTemplateName, Token nameT, List<FormalArgument> args, String template, Token templateToken)
     {
-        if (verbose)
-        {
-            System.out.println("defineTemplate(" + fullyQualifiedTemplateName + ")");
-        }
+        log.debug("defineTemplate({})", fullyQualifiedTemplateName);
         if (fullyQualifiedTemplateName == null || fullyQualifiedTemplateName.length() == 0)
         {
             throw new IllegalArgumentException("empty template name");
