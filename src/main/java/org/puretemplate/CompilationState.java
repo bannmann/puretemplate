@@ -26,7 +26,7 @@ class CompilationState
      * Track instruction location within {@code impl.}{@link CompiledST#instrs instrs} array; this is next address to
      * write to. Byte-addressable memory.
      */
-    int ip = 0;
+    int ip;
 
     TokenStream tokens;
 
@@ -76,7 +76,7 @@ class CompilationState
 
     public void func(Token templateToken, CommonTree id)
     {
-        Bytecode.Instruction functionInstruction = Compiler.functions.get(id.getText());
+        Bytecode.Instruction functionInstruction = Compiler.FUNCTIONS.get(id.getText());
         if (functionInstruction == null)
         {
             errMgr.compileTimeError(ErrorType.NO_SUCH_FUNCTION, templateToken, id.token);

@@ -1,16 +1,18 @@
 package org.puretemplate;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
+import org.slf4j.Logger;
 
 /**
  * The result of compiling an {@link ST}.  Contains all the bytecode instructions, string table, bytecode address to
@@ -19,7 +21,7 @@ import org.antlr.runtime.tree.CommonTree;
  */
 class CompiledST implements Cloneable
 {
-    public String name;
+    String name;
 
     /**
      * Every template knows where it is relative to the group that loaded it. The prefix is the relative path from the
@@ -34,51 +36,51 @@ class CompiledST implements Cloneable
      * <p>
      * Always ends with {@code "/"}.</p>
      */
-    public String prefix = "/";
+    String prefix = "/";
 
     /**
      * The original, immutable pattern (not really used again after initial "compilation"). Useful for debugging.  Even
      * for subtemplates, this is entire overall template.
      */
-    public String template;
+    String template;
 
     /**
      * The token that begins template definition; could be {@code <@r>} of region.
      */
-    public Token templateDefStartToken;
+    Token templateDefStartToken;
 
     /**
      * Overall token stream for template (debug only).
      */
-    public TokenStream tokens;
+    TokenStream tokens;
 
     /**
      * How do we interpret syntax of template? (debug only)
      */
-    public CommonTree ast;
+    CommonTree ast;
 
-    public Map<String, FormalArgument> formalArguments;
+    Map<String, FormalArgument> formalArguments;
 
-    public boolean hasFormalArgs;
+    boolean hasFormalArgs;
 
-    public int numberOfArgsWithDefaultValues;
+    int numberOfArgsWithDefaultValues;
 
     /**
      * A list of all regions and subtemplates.
      */
-    public List<CompiledST> implicitlyDefinedTemplates;
+    private List<CompiledST> implicitlyDefinedTemplates;
 
     /**
      * The group that physically defines this {@link ST} definition. We use it to initiate interpretation via {@link
      * ST#toString}. From there, it becomes field {@code AbstractInterpreter.group} and is fixed until rendering
      * completes.
      */
-    public STGroup nativeGroup = STGroup.defaultGroup;
+    STGroup nativeGroup = STGroup.defaultGroup;
 
     /**
      * Does this template come from a {@code <@region>...<@end>} embedded in another template?
      */
-    public boolean isRegion;
+    boolean isRegion;
 
     /**
      * If someone refs {@code <@r()>} in template t, an implicit
@@ -89,27 +91,27 @@ class CompiledST implements Cloneable
      * is defined, but you can overwrite this def by defining your own. We need to prevent more than one manual def
      * though. Between this var and {@link #isRegion} we can determine these cases.</p>
      */
-    public ST.RegionType regionDefType;
+    ST.RegionType regionDefType;
 
-    public boolean isAnonSubtemplate;
+    boolean isAnonSubtemplate;
 
     /**
      * string operands of instructions
      */
-    public String[] strings;
+    String[] strings;
 
     /**
      * byte-addressable code memory. For efficiency, this stores opcodes instead of references to the {@link
      * Bytecode.Instruction} enum.
      */
-    public byte[] instrs;
+    byte[] instrs;
 
-    public int codeSize;
+    int codeSize;
 
     /**
      * maps IP to range in template pattern
      */
-    public Interval[] sourceMap;
+    Interval[] sourceMap;
 
     public CompiledST()
     {
@@ -283,28 +285,24 @@ class CompiledST implements Cloneable
         return dis.instrs();
     }
 
-    public void dump()
+    public void dump(Consumer<String> printer)
     {
         BytecodeDisassembler dis = new BytecodeDisassembler(this);
-        System.out.println(name + ":");
-        System.out.println(dis.disassemble());
-        System.out.println("Strings:");
-        System.out.println(dis.strings());
-        System.out.println("Bytecode to template map:");
-        System.out.println(dis.sourceMap());
+        printer.accept(name + ":");
+        printer.accept(dis.disassemble());
+        printer.accept("Strings:");
+        printer.accept(dis.strings());
+        printer.accept("Bytecode to template map:");
+        printer.accept(dis.sourceMap());
     }
 
-    public String disasm()
+    public String getDumpOutput()
     {
-        BytecodeDisassembler dis = new BytecodeDisassembler(this);
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        pw.println(dis.disassemble());
-        pw.println("Strings:");
-        pw.println(dis.strings());
-        pw.println("Bytecode to template map:");
-        pw.println(dis.sourceMap());
-        pw.close();
-        return sw.toString();
+        try (StringBuilderWriter result = new StringBuilderWriter();
+             PrintWriter printWriter = new PrintWriter(result))
+        {
+            dump(printWriter::println);
+            return result.toString();
+        }
     }
 }

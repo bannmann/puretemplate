@@ -40,7 +40,7 @@ class Compiler
     public static final Map<String, String> defaultOptionValues = Map.ofEntries(entry("anchor", "true"),
         entry("wrap", "\n"));
 
-    public static Map<String, Bytecode.Instruction> functions = createLookupMap(Bytecode.Instruction.FIRST,
+    public static final Map<String, Bytecode.Instruction> FUNCTIONS = createLookupMap(Bytecode.Instruction.FIRST,
         Bytecode.Instruction.LAST,
         Bytecode.Instruction.REST,
         Bytecode.Instruction.TRUNC,
@@ -63,9 +63,9 @@ class Compiler
     /**
      * Name subtemplates {@code _sub1}, {@code _sub2}, ...
      */
-    public static AtomicInteger subtemplateCount = new AtomicInteger(0);
+    static AtomicInteger subtemplateCount = new AtomicInteger(0);
 
-    public STGroup group;
+    private STGroup group;
 
     public Compiler()
     {

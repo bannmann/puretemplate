@@ -12,47 +12,20 @@ import lombok.NonNull;
 
 import org.puretemplate.error.ErrorListener;
 
+import com.github.mizool.core.validation.Nullable;
 import com.google.common.io.CharStreams;
 
 @Immutable
 @ThreadSafe
-class StringGroupImpl implements InternalGroup
+final class StringGroupImpl extends AbstractGroup<STGroupString>
 {
-    private final String name;
-    private final STGroup stGroup;
-
-    public StringGroupImpl(
-        @NonNull Source source,
-        @NonNull DelimiterConfig delimiterConfig,
-        boolean legacyRendering,
-        ErrorListener errorListener,
-        @NonNull List<Handle> handles,
-        List<Group> imports)
+    private static STGroupString createStGroup(Source source, DelimiterConfig delimiterConfig)
     {
         try (Reader reader = source.open())
         {
-            name = Misc.getUnqualifiedName(source.getName());
+            String sourceName = Misc.getUnqualifiedName(source.getName());
             String sourceText = CharStreams.toString(reader);
-
-            stGroup = new STGroupString(name, sourceText, delimiterConfig.getStart(), delimiterConfig.getStop());
-            stGroup.setLegacyRendering(legacyRendering);
-
-            if (errorListener != null)
-            {
-                stGroup.setListener(errorListener);
-            }
-
-            for (Handle handle : handles)
-            {
-                handle.registerWith(stGroup);
-            }
-
-            stGroup.load();
-
-            imports.stream()
-                .map(InternalGroup.class::cast)
-                .map(InternalGroup::getStGroup)
-                .forEach(stGroup::importTemplates);
+            return new STGroupString(sourceName, sourceText, delimiterConfig.getStart(), delimiterConfig.getStop());
         }
         catch (IOException e)
         {
@@ -61,21 +34,20 @@ class StringGroupImpl implements InternalGroup
         }
     }
 
+    public StringGroupImpl(
+        @NonNull Source source,
+        @NonNull DelimiterConfig delimiterConfig,
+        boolean legacyRendering,
+        @Nullable ErrorListener errorListener,
+        @NonNull List<Handle> handles,
+        @NonNull List<Group> imports)
+    {
+        super(createStGroup(source, delimiterConfig), legacyRendering, errorListener, handles, imports);
+    }
+
     @Override
     public String getName()
     {
-        return name;
-    }
-
-    @Override
-    public STGroup getStGroup()
-    {
-        return stGroup;
-    }
-
-    @Override
-    public Template getTemplate(@NonNull String name)
-    {
-        return new TemplateImpl(() -> stGroup.obtainInstanceOf(name));
+        return stGroup.getFileName();
     }
 }

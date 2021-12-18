@@ -8,9 +8,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.Test;
 import org.puretemplate.misc.ErrorBuffer;
 
+@Slf4j
 class TestDictionaries extends BaseTest
 {
     @Test
@@ -39,7 +42,7 @@ class TestDictionaries extends BaseTest
         writeFile(tmpdir, "test.stg", templates);
         STGroup group = STGroupFilePath.createWithDefaults(tmpdir + "/" + "test.stg");
         ST st = group.getInstanceOf("var");
-        st.impl.dump();
+        st.impl.dump(log::info);
         st.add("w", "L");
         st.add("type", "int");
         st.add("name", "x");

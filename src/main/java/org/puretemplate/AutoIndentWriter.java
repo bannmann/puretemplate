@@ -2,9 +2,8 @@ package org.puretemplate;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Essentially a char filter that knows how to auto-indent output by maintaining a stack of indent levels.
@@ -24,42 +23,41 @@ import java.util.Stack;
 class AutoIndentWriter implements STWriter
 {
     /**
-     * Stack of indents. Use {@link List} as it's much faster than {@link Stack}. Grows from 0..n-1.
+     * Stack of indents. Use {@link Deque} to rule out accidental misuse (e.g. indexed access).
      */
-    public List<String> indents = new ArrayList<>();
+    private final Deque<String> indents = new ArrayDeque<>();
 
     /**
      * Stack of integer anchors (char positions in line); avoid {@link Integer} creation overhead.
      */
-    public int[] anchors = new int[10];
-    public int anchors_sp = -1;
+    private int[] anchors = new int[10];
+    private int anchorIndex = -1;
 
     /**
      * {@code \n} or {@code \r\n}?
      */
-    public String newline;
+    private final String newline;
 
-    public Writer out = null;
-    public boolean atStartOfLine = true;
+    protected Writer out;
+    private boolean atStartOfLine = true;
 
     /**
      * Track char position in the line (later we can think about tabs). Indexed from 0. We want to keep {@code
      * charPosition <= }{@link #lineWidth}. This is the position we are <em>about</em> to write, not the position last
      * written to.
      */
-    public int charPosition = 0;
+    private int charPosition;
 
     /**
      * The absolute char index into the output of the next char to be written.
      */
-    public int charIndex = 0;
+    private int charIndex;
 
-    public int lineWidth = NO_WRAP;
+    private int lineWidth = NO_WRAP;
 
     public AutoIndentWriter(Writer out, String newline)
     {
         this.out = out;
-        indents.add(null); // start with no indent
         this.newline = newline;
     }
 
@@ -83,32 +81,32 @@ class AutoIndentWriter implements STWriter
     @Override
     public void pushIndentation(String indent)
     {
-        indents.add(indent);
+        indents.addLast(indent);
     }
 
     @Override
     public String popIndentation()
     {
-        return indents.remove(indents.size() - 1);
+        return indents.removeLast();
     }
 
     @Override
     public void pushAnchorPoint()
     {
-        if ((anchors_sp + 1) >= anchors.length)
+        if ((anchorIndex + 1) >= anchors.length)
         {
             int[] a = new int[anchors.length * 2];
             System.arraycopy(anchors, 0, a, 0, anchors.length - 1);
             anchors = a;
         }
-        anchors_sp++;
-        anchors[anchors_sp] = charPosition;
+        anchorIndex++;
+        anchors[anchorIndex] = charPosition;
     }
 
     @Override
     public void popAnchorPoint()
     {
-        anchors_sp--;
+        anchorIndex--;
     }
 
     @Override
@@ -223,19 +221,16 @@ class AutoIndentWriter implements STWriter
         int n = 0;
         for (String ind : indents)
         {
-            if (ind != null)
-            {
-                n += ind.length();
-                out.write(ind);
-            }
+            n += ind.length();
+            out.write(ind);
         }
 
         // If current anchor is beyond current indent width, indent to anchor
         // *after* doing indents (might tabs in there or whatever)
         int indentWidth = n;
-        if (anchors_sp >= 0 && anchors[anchors_sp] > indentWidth)
+        if (anchorIndex >= 0 && anchors[anchorIndex] > indentWidth)
         {
-            int remainder = anchors[anchors_sp] - indentWidth;
+            int remainder = anchors[anchorIndex] - indentWidth;
             for (int i = 1; i <= remainder; i++)
             {
                 out.write(' ');

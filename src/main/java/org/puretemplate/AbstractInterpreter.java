@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import org.puretemplate.error.ErrorType;
 import org.puretemplate.exception.NoSuchAttributeException;
@@ -36,6 +38,7 @@ import org.puretemplate.model.ModelAdaptor;
  * <p>
  * We create a new interpreter for each invocation of {@link ST#render}, or {@link ST#getEvents}.</p>
  */
+@Slf4j
 abstract class AbstractInterpreter implements Interpreter
 {
     public static final int DEFAULT_OPERAND_STACK_SIZE = 100;
@@ -53,7 +56,7 @@ abstract class AbstractInterpreter implements Interpreter
     /**
      * The number of characters written on this template line so far.
      */
-    int nwline = 0;
+    int nwline;
 
     /**
      * Render template with respect to this group.
@@ -73,7 +76,7 @@ abstract class AbstractInterpreter implements Interpreter
     /**
      * Dump bytecode instructions as they are executed. This field is mostly for StringTemplate development.
      */
-    public static boolean trace = false;
+    public static boolean trace;
 
     /**
      * If {@link #trace} is {@code true}, track trace here.
@@ -84,7 +87,7 @@ abstract class AbstractInterpreter implements Interpreter
     /**
      * When {@code true}, track events inside templates and in {@link #events}.
      */
-    public boolean debug = false;
+    public boolean debug;
 
     /**
      * Track everything happening in interpreter across all templates if {@link #debug}. The last event in this field is
@@ -115,10 +118,7 @@ abstract class AbstractInterpreter implements Interpreter
     protected int exec(@NonNull STWriter out, @NonNull InstanceScope scope)
     {
         final ST self = scope.st;
-        if (trace)
-        {
-            System.out.println("exec(" + self.getName() + ")");
-        }
+        log.debug("exec({})", self.getName());
         try
         {
             setDefaultArguments(out, scope);
@@ -469,8 +469,10 @@ abstract class AbstractInterpreter implements Interpreter
                     nwline += n1;
                     break;
                 default:
-                    errMgr.internalError(scope.toLocation(), "invalid bytecode @ " + (ip - 1) + ": " + opcode, null);
-                    self.impl.dump();
+                    String dump = self.impl.getDumpOutput();
+                    errMgr.internalError(scope.toLocation(),
+                        MessageFormat.format("invalid bytecode @ {0}: {1}\n{2}", ip - 1, opcode, dump),
+                        null);
             }
             prevOpcode = opcode;
         }
@@ -1440,16 +1442,8 @@ abstract class AbstractInterpreter implements Interpreter
         }
         else if (o instanceof Map)
         {
-            if (scope.st.groupThatCreatedThisInstance.iterateAcrossValues)
-            {
-                iter = ((Map<?, ?>) o).values()
-                    .iterator();
-            }
-            else
-            {
-                iter = ((Map<?, ?>) o).keySet()
-                    .iterator();
-            }
+            iter = ((Map<?, ?>) o).keySet()
+                .iterator();
         }
         if (iter == null)
         {
@@ -1664,10 +1658,7 @@ abstract class AbstractInterpreter implements Interpreter
         {
             executeTrace.add(s);
         }
-        if (trace)
-        {
-            System.out.println(s);
-        }
+        log.debug("{}", s);
     }
 
     protected void printForTrace(StringBuilder tr, InstanceScope scope, Object o)

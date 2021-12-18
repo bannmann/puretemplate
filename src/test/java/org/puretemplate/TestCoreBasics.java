@@ -7,6 +7,8 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.Test;
 import org.puretemplate.error.RuntimeMessage;
 import org.puretemplate.exception.NoSuchPropertyException;
@@ -14,6 +16,7 @@ import org.puretemplate.misc.ErrorBufferAllErrors;
 
 import com.google.common.collect.ImmutableMap;
 
+@Slf4j
 class TestCoreBasics extends BaseTest
 {
     @Test
@@ -213,7 +216,7 @@ class TestCoreBasics extends BaseTest
         String template = "load <box(\"arg\")>;";
         ST st = new ST(template);
         st.impl.nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
-        st.impl.dump();
+        st.impl.dump(log::info);
         st.add("name", "Ter");
         assertRenderingResult("load kewl arg daddy;", st);
     }
@@ -224,7 +227,7 @@ class TestCoreBasics extends BaseTest
         String template = "load <box({})>;";
         ST st = new ST(template);
         st.impl.nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
-        st.impl.dump();
+        st.impl.dump(log::info);
         st.add("name", "Ter");
         assertRenderingResult("load kewl  daddy;", st);
     }
@@ -596,7 +599,7 @@ class TestCoreBasics extends BaseTest
         writeFile(dir, "group.stg", groupFile);
         STGroup group = STGroupFilePath.createWithDefaults(dir + "/group.stg");
         ST st = group.getInstanceOf("a");
-        st.impl.dump();
+        st.impl.dump(log::info);
         assertRenderingResult("foo" + NEWLINE + "bar", st);
     }
 
@@ -914,7 +917,7 @@ class TestCoreBasics extends BaseTest
     {
         String template = "<a:t(x,y),u()>";
         ST st = new ST(template);
-        st.impl.dump();
+        st.impl.dump(log::info);
     }
 
     @Test

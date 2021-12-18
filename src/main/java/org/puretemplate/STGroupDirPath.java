@@ -60,10 +60,7 @@ class STGroupDirPath extends GreenfieldStGroup
     @Override
     protected CompiledST load(String relativeName)
     {
-        if (verbose)
-        {
-            System.out.println("STGroupPath.load(" + relativeName + ")");
-        }
+        log.debug("load({})", relativeName);
 
         if (!relativeName.startsWith("/"))
         {
@@ -112,10 +109,7 @@ class STGroupDirPath extends GreenfieldStGroup
     public CompiledST loadTemplateFile(Path filePath, InputStream inputStream)
     {
         String unqualifiedName = Misc.getUnqualifiedName(filePath);
-        if (verbose)
-        {
-            System.out.println("loadTemplateFile(" + unqualifiedName + ") in groupdir " + "from " + directory);
-        }
+        log.debug("loadTemplateFile({}) in groupdir from {}", unqualifiedName, directory);
 
         ANTLRInputStream fs;
         try
@@ -125,10 +119,6 @@ class STGroupDirPath extends GreenfieldStGroup
         }
         catch (IOException ioe)
         {
-            if (verbose)
-            {
-                System.out.println(filePath + " doesn't exist");
-            }
             errMgr.ioError(null, ErrorType.NO_SUCH_TEMPLATE, ioe, filePath.toString());
             return null;
         }
