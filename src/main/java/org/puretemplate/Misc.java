@@ -2,7 +2,6 @@ package org.puretemplate;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Iterator;
 
 import lombok.experimental.UtilityClass;
 
@@ -17,21 +16,6 @@ class Misc
     public static boolean referenceEquals(Object x, Object y)
     {
         return x == y;
-    }
-
-    // Seriously: why isn't this built in to java?
-    public static String join(Iterator<?> iter, String separator)
-    {
-        StringBuilder buf = new StringBuilder();
-        while (iter.hasNext())
-        {
-            buf.append(iter.next());
-            if (iter.hasNext())
-            {
-                buf.append(separator);
-            }
-        }
-        return buf.toString();
     }
 
     /**

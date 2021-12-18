@@ -2,7 +2,6 @@ package org.puretemplate;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -723,10 +723,11 @@ abstract class STGroup
 
     String show()
     {
-        StringBuilder buf = new StringBuilder();
-        if (imports.size() != 0)
+        StringBuilder result = new StringBuilder();
+        if (!imports.isEmpty())
         {
-            buf.append(" : " + imports);
+            result.append(" : ")
+                .append(imports);
         }
         for (String name : templates.keySet())
         {
@@ -737,19 +738,24 @@ abstract class STGroup
             }
             int slash = name.lastIndexOf('/');
             name = name.substring(slash + 1);
-            buf.append(name);
-            buf.append('(');
+            result.append(name)
+                .append('(');
             if (c.formalArguments != null)
             {
-                buf.append(Misc.join(c.formalArguments.values()
-                    .iterator(), ","));
+                result.append(c.formalArguments.values()
+                    .stream()
+                    .map(FormalArgument::toString)
+                    .collect(Collectors.joining(",")));
             }
-            buf.append(')');
-            buf.append(" ::= <<" + Misc.NEWLINE);
-            buf.append(c.template + Misc.NEWLINE);
-            buf.append(">>" + Misc.NEWLINE);
+            result.append(')')
+                .append(" ::= <<")
+                .append(Misc.NEWLINE)
+                .append(c.template)
+                .append(Misc.NEWLINE)
+                .append(">>")
+                .append(Misc.NEWLINE);
         }
-        return buf.toString();
+        return result.toString();
     }
 
     protected ErrorListener getListener()
