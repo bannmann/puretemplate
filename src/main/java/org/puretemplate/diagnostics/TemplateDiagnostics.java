@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import org.apiguardian.api.API;
 
 /**
- * Provides low-level diagnostics access to the static contents of a {@link org.puretemplate.Template}.
+ * Provides low-level diagnostics access to a {@link org.puretemplate.Template}.
  */
 @API(status = API.Status.EXPERIMENTAL)
 public interface TemplateDiagnostics

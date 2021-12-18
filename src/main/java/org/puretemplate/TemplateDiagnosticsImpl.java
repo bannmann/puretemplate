@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.puretemplate.diagnostics.TemplateDiagnostics;
 
 @RequiredArgsConstructor
-class TemplateDiagnosticsImpl implements TemplateDiagnostics
+final class TemplateDiagnosticsImpl implements TemplateDiagnostics
 {
     private final CompiledST compiledST;
 

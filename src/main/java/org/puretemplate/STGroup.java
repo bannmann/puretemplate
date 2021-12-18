@@ -721,7 +721,7 @@ abstract class STGroup
         return getName();
     }
 
-    String show()
+    String getDump()
     {
         StringBuilder result = new StringBuilder();
         if (!imports.isEmpty())

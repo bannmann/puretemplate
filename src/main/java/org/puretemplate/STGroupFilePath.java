@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -195,10 +194,10 @@ class STGroupFilePath extends GreenfieldStGroup
     }
 
     @Override
-    public String show()
+    public String getDump()
     {
         load();
-        return super.show();
+        return super.getDump();
     }
 
     @Override
