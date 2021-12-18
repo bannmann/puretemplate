@@ -2,6 +2,8 @@ package org.puretemplate;
 
 import java.util.function.Supplier;
 
+import org.puretemplate.diagnostics.TemplateDiagnostics;
+
 class TemplateImpl implements Template
 {
     private final Supplier<ST> stSupplier;
@@ -18,5 +20,11 @@ class TemplateImpl implements Template
     public Context createContext()
     {
         return new ContextImpl(stSupplier.get());
+    }
+
+    @Override
+    public TemplateDiagnostics diagnostics()
+    {
+        return new TemplateDiagnosticsImpl(stSupplier.get().impl);
     }
 }

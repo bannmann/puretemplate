@@ -4,11 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
+import org.puretemplate.Group;
 import org.puretemplate.misc.ErrorBuffer;
 
+@Slf4j
 class TestScopes extends BaseTest
 {
     @Test
@@ -71,16 +75,21 @@ class TestScopes extends BaseTest
     }
 
     @Test
-    void testIndexAttrVisibleLocallyOnly() throws IOException
+    void testIndexAttrVisibleLocallyOnly()
     {
         String templates = "t(names) ::= \"<names:{n | <u(n)>}>\"\n" + "u(x) ::= \"<i>:<x>\"";
         ErrorBuffer errors = new ErrorBuffer();
+        Group group = loadGroupFromString(templates, errors);
 
-        Context context = loadGroupViaDisk(templates, errors).getTemplate("t")
+        dump(log, group.getTemplate("u"));
+
+        Context context = group.getTemplate("t")
             .createContext()
             .add("names", "Ter");
 
-        assertEquals("group.stg 2:11: implicitly-defined attribute i not visible" + NEWLINE, errors.toString());
         assertRenderingResult(":Ter", context);
+
+        String expectedError = "<string> 2:11: implicitly-defined attribute i not visible" + NEWLINE;
+        assertEquals(expectedError, errors.toString());
     }
 }

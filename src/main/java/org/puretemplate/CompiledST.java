@@ -296,7 +296,7 @@ class CompiledST implements Cloneable
         printer.accept(dis.sourceMap());
     }
 
-    public String getDumpOutput()
+    public String getDump()
     {
         try (StringBuilderWriter result = new StringBuilderWriter();
              PrintWriter printWriter = new PrintWriter(result))

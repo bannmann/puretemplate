@@ -2,13 +2,31 @@ package com.example;
 
 import java.io.IOException;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
 import org.puretemplate.Group;
+import org.puretemplate.Template;
 
+@Slf4j
 class TestIndentation extends BaseTest
 {
+    @Test
+    void testIndentInFrontOfTwoExpr()
+    {
+        String templates = "list(a,b) ::= <<" + "  <a><b>" + NEWLINE + ">>" + NEWLINE;
+
+        Template template = loadGroupFromString(templates).getTemplate("list");
+        dump(log, template);
+
+        Context context = template.createContext()
+            .add("a", "Terence")
+            .add("b", "Jim");
+        assertRenderingResult("  TerenceJim", context);
+    }
+
     @Test
     void testSimpleIndentOfAttributeList()
     {

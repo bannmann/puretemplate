@@ -60,11 +60,6 @@ class Compiler
         return Collections.unmodifiableMap(result);
     }
 
-    /**
-     * Name subtemplates {@code _sub1}, {@code _sub2}, ...
-     */
-    static AtomicInteger subtemplateCount = new AtomicInteger(0);
-
     private STGroup group;
 
     public Compiler()
@@ -178,12 +173,6 @@ class Compiler
         blank.name = mangled;
         outermostImpl.addImplicitlyDefinedTemplate(blank);
         return blank;
-    }
-
-    public static String getNewSubtemplateName()
-    {
-        int count = subtemplateCount.incrementAndGet();
-        return SUBTEMPLATE_PREFIX + count;
     }
 
     protected void reportMessageAndThrowSTException(

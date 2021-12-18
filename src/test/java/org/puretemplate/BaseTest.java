@@ -11,13 +11,14 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.NonNull;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.puretemplate.diagnostics.TemplateDiagnostics;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
+import org.slf4j.Logger;
 
 public abstract class BaseTest
 {
@@ -67,7 +68,6 @@ public abstract class BaseTest
     {
         loader = new Loader();
         STGroup.defaultGroup = new LegacyBareStGroup();
-        Compiler.subtemplateCount = new AtomicInteger(0);
 
         String baseTestDirectory = System.getProperty("java.io.tmpdir");
         String testDirectory = getClass().getSimpleName() + "-" + System.currentTimeMillis();
@@ -221,8 +221,14 @@ public abstract class BaseTest
 
     protected Group loadGroupFromString(String contents)
     {
+        return loadGroupFromString(contents, null);
+    }
+
+    protected Group loadGroupFromString(String contents, ErrorListener errorListener)
+    {
         return loader.getGroup()
             .fromString(contents)
+            .withErrorListener(errorListener)
             .build();
     }
 
@@ -248,5 +254,25 @@ public abstract class BaseTest
             .createContext()
             .render()
             .intoString();
+    }
+
+    protected void dump(Logger logger, Template template)
+    {
+        dump(logger, template.diagnostics());
+    }
+
+    protected void dump(Logger logger, TemplateDiagnostics templateDiagnostics)
+    {
+        dump(logger, templateDiagnostics.getDump());
+    }
+
+    protected void dump(Logger logger, CompiledST compiledST)
+    {
+        dump(logger, compiledST.getDump());
+    }
+
+    private void dump(Logger logger, String dump)
+    {
+        logger.info("Dump:\n{}", dump);
     }
 }

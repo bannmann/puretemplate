@@ -63,16 +63,18 @@ options {
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.puretemplate;
-import org.puretemplate.misc.*;
 import org.puretemplate.error.*;
+import java.util.concurrent.atomic.AtomicInteger;
 }
 
 @members {
-	String outermostTemplateName;	// name of overall template
-	CompiledST outermostImpl;
-	Token templateToken;			// overall template token
-	String template;  				// overall template text
-	ErrorManager errMgr;
+	private String outermostTemplateName;	// name of overall template
+	private CompiledST outermostImpl;
+	private Token templateToken;			// overall template token
+	private String template;  				// overall template text
+	private ErrorManager errMgr;
+	private AtomicInteger subtemplateCount = new AtomicInteger(0);
+
 	public CodeGenerator(TreeNodeStream input, ErrorManager errMgr, String name, String template, Token templateToken) {
 		this(input, new RecognizerSharedState());
 		this.errMgr = errMgr;
@@ -91,6 +93,12 @@ import org.puretemplate.error.*;
 		}
 
 		args.add(new FormalArgument(name));
+	}
+
+	private String getNewSubtemplateName()
+	{
+		int count = subtemplateCount.incrementAndGet();
+		return Compiler.SUBTEMPLATE_PREFIX + count;
 	}
 
 	// convience funcs to hide offensive sending of emit messages to
@@ -234,7 +242,7 @@ region[CommonTree indent] returns [String name]
 
 subtemplate returns [String name, int nargs]
 @init {
-    $name = Compiler.getNewSubtemplateName();
+    $name = getNewSubtemplateName();
 	List<FormalArgument> args = new ArrayList<FormalArgument>();
 }
 	:	^(	SUBTEMPLATE

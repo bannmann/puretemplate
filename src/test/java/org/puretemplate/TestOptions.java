@@ -95,7 +95,7 @@ class TestOptions extends BaseTest
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; null=\"n/a\", separator=\", \">!");
         ST st = group.getInstanceOf("test");
-        st.impl.dump(log::info);
+        dump(log, st.impl);
         st.add("name", "Ter");
         st.add("name", null);
         st.add("name", "Sumana");

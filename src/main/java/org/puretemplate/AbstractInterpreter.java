@@ -469,7 +469,7 @@ abstract class AbstractInterpreter implements Interpreter
                     nwline += n1;
                     break;
                 default:
-                    String dump = self.impl.getDumpOutput();
+                    String dump = self.impl.getDump();
                     errMgr.internalError(scope.toLocation(),
                         MessageFormat.format("invalid bytecode @ {0}: {1}\n{2}", ip - 1, opcode, dump),
                         null);
