@@ -5,7 +5,6 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import org.apiguardian.api.API;
 import org.puretemplate.diagnostics.GroupDiagnostics;
-import org.puretemplate.diagnostics.TemplateDiagnostics;
 
 /**
  * Provides shared configuration to templates and a way for them to resolve references to other templates.

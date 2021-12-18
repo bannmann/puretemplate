@@ -10,6 +10,9 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.puretemplate.error.RuntimeMessage;
 import org.puretemplate.exception.NoSuchPropertyException;
 import org.puretemplate.misc.ErrorBufferAllErrors;
@@ -414,60 +417,36 @@ class TestCoreBasics2 extends BaseTest
         assertRenderingResult("Ter, Tom, Sumana", st);
     }
 
-    @Test
-    void testRepeatedMap() throws IOException
+    static Arguments[] mapTestData()
     {
-        STGroup group = new LegacyBareStGroup();
-        group.defineTemplate("a", "x", "[<x>]");
-        group.defineTemplate("b", "x", "(<x>)");
-        group.defineTemplate("test", "name", "hi <name:a():b()>!");
-        ST st = group.getInstanceOf("test");
-        st.add("name", "Ter");
-        st.add("name", "Tom");
-        st.add("name", "Sumana");
-        assertRenderingResult("hi ([Ter])([Tom])([Sumana])!", st);
+        return new Arguments[]{
+            args("RepeatedMap", "hi <name:a():b()>!", "Tom", "hi ([Ter])([Tom])([Sumana])!"),
+            args("RepeatedMapWithNullValue", "hi <name:a():b()>!", null, "hi ([Ter])([Sumana])!"),
+            args("RepeatedMapWithNullValueAndNullOption",
+                "hi <name:a():b(); null={x}>!",
+                null,
+                "hi ([Ter])x([Sumana])!"),
+            args("RoundRobinMap", "hi <name:a(),b()>!", "Tom", "hi [Ter](Tom)[Sumana]!")
+        };
     }
 
-    @Test
-    void testRepeatedMapWithNullValue() throws IOException
+    @ParameterizedTest(name = "[{index}] {0}")
+    @MethodSource("mapTestData")
+    void testMap(
+        @SuppressWarnings("unused") String testName,
+        String templateSource,
+        String middleAttributeValue,
+        String expectedResult) throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("a", "x", "[<x>]");
         group.defineTemplate("b", "x", "(<x>)");
-        group.defineTemplate("test", "name", "hi <name:a():b()>!");
+        group.defineTemplate("test", "name", templateSource);
         ST st = group.getInstanceOf("test");
         st.add("name", "Ter");
-        st.add("name", null);
+        st.add("name", middleAttributeValue);
         st.add("name", "Sumana");
-        assertRenderingResult("hi ([Ter])([Sumana])!", st);
-    }
-
-    @Test
-    void testRepeatedMapWithNullValueAndNullOption() throws IOException
-    {
-        STGroup group = new LegacyBareStGroup();
-        group.defineTemplate("a", "x", "[<x>]");
-        group.defineTemplate("b", "x", "(<x>)");
-        group.defineTemplate("test", "name", "hi <name:a():b(); null={x}>!");
-        ST st = group.getInstanceOf("test");
-        st.add("name", "Ter");
-        st.add("name", null);
-        st.add("name", "Sumana");
-        assertRenderingResult("hi ([Ter])x([Sumana])!", st);
-    }
-
-    @Test
-    void testRoundRobinMap() throws IOException
-    {
-        STGroup group = new LegacyBareStGroup();
-        group.defineTemplate("a", "x", "[<x>]");
-        group.defineTemplate("b", "x", "(<x>)");
-        group.defineTemplate("test", "name", "hi <name:a(),b()>!");
-        ST st = group.getInstanceOf("test");
-        st.add("name", "Ter");
-        st.add("name", "Tom");
-        st.add("name", "Sumana");
-        assertRenderingResult("hi [Ter](Tom)[Sumana]!", st);
+        assertRenderingResult(expectedResult, st);
     }
 
     @Test

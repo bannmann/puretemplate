@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import lombok.NonNull;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.provider.Arguments;
 import org.puretemplate.diagnostics.TemplateDiagnostics;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
@@ -27,6 +28,14 @@ public abstract class BaseTest
     protected String tmpdir = null;
 
     protected Loader loader;
+
+    /**
+     * Shorthand so we can write {@code args()} instead of {@code of()} or {@code Arguments.of()}.
+     */
+    protected static Arguments args(Object... arguments)
+    {
+        return Arguments.of(arguments);
+    }
 
     protected <T extends Exception> void assertThrowsExceptionOfType(Runnable invocation, Class<T> exceptionType)
     {
@@ -210,6 +219,20 @@ public abstract class BaseTest
             .fromString(s)
             .build()
             .createContext();
+    }
+
+    protected Template loadTemplateFromStringUsingBlankGroup(String template, ErrorListener errors)
+    {
+        // At some point, loader.getTemplate() will support withErrorListener() as well. Until then, use a blank group.
+        Group group = loader.getGroup()
+            .blank()
+            .withErrorListener(errors)
+            .build();
+
+        return loader.getTemplate()
+            .fromString(template)
+            .attachedToGroup(group)
+            .build();
     }
 
     protected ErrorBuffer getGroupLoadingErrors(String contents) throws IOException

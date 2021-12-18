@@ -7,46 +7,31 @@ import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
 
 @Slf4j
 class TestCompiler2 extends BaseTest
 {
-    @Test
-    void testAnonIncludeArgMismatch()
+    static Arguments[] anonIncludeArgMismatches()
     {
-        ErrorListener errors = new ErrorBuffer();
-        String template = "<a:{foo}>";
-        STGroup g = new LegacyBareStGroup();
-        g.errMgr = new ErrorManager(errors);
-        CompiledST code = new Compiler(g).compile(template);
-        String expected = "1:3: anonymous template has 0 arg(s) but mapped across 1 value(s)" + NEWLINE;
-        assertEquals(expected, errors.toString());
+        return new Arguments[]{
+            args("<a:{foo}>", "<string> 1:3: anonymous template has 0 arg(s) but mapped across 1 value(s)"),
+            args("<a,b:{x|foo}>", "<string> 1:5: anonymous template has 1 arg(s) but mapped across 2 value(s)"),
+            args("<a:{x|foo},{bar}>", "<string> 1:11: anonymous template has 0 arg(s) but mapped across 1 value(s)")
+        };
     }
 
-    @Test
-    void testAnonIncludeArgMismatch2()
+    @ParameterizedTest(name = "[{index}] {0}")
+    @MethodSource("anonIncludeArgMismatches")
+    void testAnonIncludeArgMismatch(String template, String expectedError)
     {
         ErrorListener errors = new ErrorBuffer();
-        String template = "<a,b:{x|foo}>";
-        STGroup g = new LegacyBareStGroup();
-        g.errMgr = new ErrorManager(errors);
-        CompiledST code = new Compiler(g).compile(template);
-        String expected = "1:5: anonymous template has 1 arg(s) but mapped across 2 value(s)" + NEWLINE;
-        assertEquals(expected, errors.toString());
-    }
-
-    @Test
-    void testAnonIncludeArgMismatch3()
-    {
-        ErrorListener errors = new ErrorBuffer();
-        String template = "<a:{x|foo},{bar}>";
-        STGroup g = new LegacyBareStGroup();
-        g.errMgr = new ErrorManager(errors);
-        CompiledST code = new Compiler(g).compile(template);
-        String expected = "1:11: anonymous template has 0 arg(s) but mapped across 1 value(s)" + NEWLINE;
-        assertEquals(expected, errors.toString());
+        loadTemplateFromStringUsingBlankGroup(template, errors);
+        assertEquals(expectedError + NEWLINE, errors.toString());
     }
 
     @Test
