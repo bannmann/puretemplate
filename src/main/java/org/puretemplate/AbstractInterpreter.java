@@ -1633,7 +1633,7 @@ abstract class AbstractInterpreter implements Interpreter
     private List<String> getTraceStack(List<Object> operandsList, int stackPointer)
     {
         return operandsList.stream()
-            .limit(stackPointer + 1)
+            .limit(stackPointer + 1L)
             .map(this::getTraceStackElement)
             .collect(Collectors.toList());
     }
