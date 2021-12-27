@@ -4,6 +4,7 @@ import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
+import org.puretemplate.diagnostics.Instruction;
 import org.puretemplate.error.ErrorType;
 
 /**
@@ -52,18 +53,18 @@ class CompilationState
         {
             FormalArgument arg = impl.formalArguments.get(name);
             int index = arg.index;
-            emit1(id, Bytecode.Instruction.LOAD_LOCAL, index);
+            emit1(id, Instruction.LOAD_LOCAL, index);
         }
         else
         {
             if (Language.PREDEFINED_ANON_SUBTEMPLATE_ATTRIBUTES.contains(name))
             {
                 errMgr.compileTimeError(ErrorType.REF_TO_IMPLICIT_ATTRIBUTE_OUT_OF_SCOPE, templateToken, id.token);
-                emit(id, Bytecode.Instruction.NULL);
+                emit(id, Instruction.NULL);
             }
             else
             {
-                emit1(id, Bytecode.Instruction.LOAD_ATTR, name);
+                emit1(id, Instruction.LOAD_ATTR, name);
             }
         }
     }
@@ -71,16 +72,16 @@ class CompilationState
     public void setOption(CommonTree id)
     {
         Interpreter.Option O = Compiler.supportedOptions.get(id.getText());
-        emit1(id, Bytecode.Instruction.STORE_OPTION, O.ordinal());
+        emit1(id, Instruction.STORE_OPTION, O.ordinal());
     }
 
     public void func(Token templateToken, CommonTree id)
     {
-        Bytecode.Instruction functionInstruction = Compiler.FUNCTIONS.get(id.getText());
+        Instruction functionInstruction = Compiler.FUNCTIONS.get(id.getText());
         if (functionInstruction == null)
         {
             errMgr.compileTimeError(ErrorType.NO_SUCH_FUNCTION, templateToken, id.token);
-            emit(id, Bytecode.Instruction.POP);
+            emit(id, Instruction.POP);
         }
         else
         {
@@ -88,12 +89,12 @@ class CompilationState
         }
     }
 
-    public void emit(Bytecode.Instruction instruction)
+    public void emit(Instruction instruction)
     {
         emit(null, instruction);
     }
 
-    public void emit(CommonTree opAST, Bytecode.Instruction instruction)
+    public void emit(CommonTree opAST, Instruction instruction)
     {
         ensureCapacity(1);
         if (opAST != null)
@@ -110,7 +111,7 @@ class CompilationState
         impl.instrs[ip++] = (byte) instruction.opcode;
     }
 
-    public void emit1(CommonTree opAST, Bytecode.Instruction instruction, int arg)
+    public void emit1(CommonTree opAST, Instruction instruction, int arg)
     {
         emit(opAST, instruction);
         ensureCapacity(Bytecode.OPND_SIZE_IN_BYTES);
@@ -118,7 +119,7 @@ class CompilationState
         ip += Bytecode.OPND_SIZE_IN_BYTES;
     }
 
-    public void emit2(CommonTree opAST, Bytecode.Instruction instruction, int arg, int arg2)
+    public void emit2(CommonTree opAST, Instruction instruction, int arg, int arg2)
     {
         emit(opAST, instruction);
         ensureCapacity(Bytecode.OPND_SIZE_IN_BYTES * 2);
@@ -128,19 +129,19 @@ class CompilationState
         ip += Bytecode.OPND_SIZE_IN_BYTES;
     }
 
-    public void emit2(CommonTree opAST, Bytecode.Instruction instruction, String s, int arg2)
+    public void emit2(CommonTree opAST, Instruction instruction, String s, int arg2)
     {
         int i = defineString(s);
         emit2(opAST, instruction, i, arg2);
     }
 
-    public void emit1(CommonTree opAST, Bytecode.Instruction instruction, String s)
+    public void emit1(CommonTree opAST, Instruction instruction, String s)
     {
         int i = defineString(s);
         emit1(opAST, instruction, i);
     }
 
-    public void insert(int addr, Bytecode.Instruction instruction, String s)
+    public void insert(int addr, Instruction instruction, String s)
     {
         ensureCapacity(1 + Bytecode.OPND_SIZE_IN_BYTES);
         int instrSize = 1 + Bytecode.OPND_SIZE_IN_BYTES;
@@ -154,13 +155,13 @@ class CompilationState
         while (a < ip)
         {
             byte op = impl.instrs[a];
-            Bytecode.Instruction I = Bytecode.INSTRUCTIONS[op];
-            if (op == Bytecode.Instruction.BR.opcode || op == Bytecode.Instruction.BRF.opcode)
+            instruction = Bytecode.INSTRUCTIONS[op];
+            if (op == Instruction.BR.opcode || op == Instruction.BRF.opcode)
             {
-                int opnd = BytecodeDisassembler.getShort(impl.instrs, a + 1);
+                int opnd = Misc.getShort(impl.instrs, a + 1);
                 writeShort(impl.instrs, a + 1, (short) (opnd + instrSize));
             }
-            a += I.operandTypes.length * Bytecode.OPND_SIZE_IN_BYTES + 1;
+            a += instruction.operandTypes.size() * Bytecode.OPND_SIZE_IN_BYTES + 1;
         }
     }
 
@@ -185,7 +186,7 @@ class CompilationState
 
     public void indent(CommonTree indent)
     {
-        emit1(indent, Bytecode.Instruction.INDENT, indent.getText());
+        emit1(indent, Instruction.INDENT, indent.getText());
     }
 
     /**

@@ -55,4 +55,12 @@ public class Location implements Serializable
         }
         result.append(templateName);
     }
+
+    public String toShortString()
+    {
+        return getTemplateName() +
+            getCoordinates().map(Coordinates::toString)
+                .map(s -> "#" + s)
+                .orElse("");
+    }
 }

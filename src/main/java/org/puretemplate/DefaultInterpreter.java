@@ -7,29 +7,28 @@ import org.puretemplate.error.ErrorType;
 
 class DefaultInterpreter extends AbstractInterpreter
 {
-    public DefaultInterpreter(STGroup group, Locale locale, ErrorManager errMgr, boolean debug)
+    public DefaultInterpreter(STGroup group, Locale locale, ErrorManager errMgr)
     {
-        super(group, locale, errMgr, debug);
+        super(group, locale, errMgr);
     }
 
     @Override
-    protected int writeText(STWriter out, InstanceScope scope, String o)
+    protected int writeText(Job job, InstanceScope scope, String o)
     {
-        int start = out.index(); // track char we're about to write
-        int n = writeTextObject(out, scope, o);
-        if (debug)
-        {
-            EvalExprEvent e = new EvalExprEvent(scope.toLocation(),
+        TemplateWriter writer = job.getTemplateWriter();
+        int start = writer.index(); // track char we're about to write
+        int n = writeTextObject(writer, scope, o);
+        fireEvent(job,
+            () -> new EvalExpressionEvent(scope.toLocation(),
                 start,
-                out.index() - 1,
+                writer.index() - 1,
                 getExprStartChar(scope),
-                getExprStopChar(scope));
-            trackDebugEvent(scope, e);
-        }
+                getExprStopChar(scope)),
+            ListenerInvoker.EVAL_EXPRESSION);
         return n;
     }
 
-    protected int writeTextObject(STWriter out, InstanceScope scope, String v)
+    protected int writeTextObject(TemplateWriter out, InstanceScope scope, String v)
     {
         try
         {

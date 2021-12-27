@@ -1,5 +1,6 @@
 package org.puretemplate.diagnostics;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.apiguardian.api.API;
@@ -14,7 +15,9 @@ public interface TemplateDiagnostics
 
     String getDump();
 
-    String getInstructions();
+    List<Statement> getStatements();
+
+    String getStatementsAsString();
 
     String getStrings();
 }

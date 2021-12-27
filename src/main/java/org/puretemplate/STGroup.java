@@ -120,12 +120,6 @@ abstract class STGroup
 
     public static final ErrorManager DEFAULT_ERR_MGR = new ErrorManager(ErrorListeners.SYSTEM_ERR);
 
-    /**
-     * For debugging with {@link STViz}. Records where in code an {@link ST} was created and where code added
-     * attributes.
-     */
-    public static boolean trackCreationEvents;
-
     static STGroup defaultGroup = new LegacyBareStGroup();
 
     /**
@@ -171,7 +165,7 @@ abstract class STGroup
         if (c != null)
         {
             ST st = new ST();
-            st.impl = c;
+            st.setImpl(c);
             st.groupThatCreatedThisInstance = this;
             if (c.formalArguments != null)
             {
@@ -198,7 +192,7 @@ abstract class STGroup
         String fullyQualifiedName = name;
         if (name.charAt(0) != '/')
         {
-            fullyQualifiedName = scope.st.impl.prefix + name;
+            fullyQualifiedName = scope.st.getImpl().prefix + name;
         }
         log.debug("getEmbeddedInstanceOf({})", fullyQualifiedName);
         ST st = getInstanceOf(fullyQualifiedName);
@@ -206,11 +200,6 @@ abstract class STGroup
         {
             errMgr.runTimeError(scope.toLocation(), ErrorType.NO_SUCH_TEMPLATE, fullyQualifiedName);
             return createStringTemplateInternally(new CompiledST());
-        }
-        // this is only called internally. wack any debug ST create events
-        if (trackCreationEvents)
-        {
-            st.debugState.newSTEvent = null; // toss it out
         }
         return st;
     }
@@ -224,9 +213,10 @@ abstract class STGroup
         CompiledST impl = compile(getFileName(), null, null, template, templateToken);
         ST st = createStringTemplateInternally(impl);
         st.groupThatCreatedThisInstance = this;
-        st.impl.hasFormalArgs = false;
-        st.impl.name = ST.UNKNOWN_NAME;
-        st.impl.defineImplicitlyDefinedTemplates(this);
+        st.getImpl().hasFormalArgs = false;
+        st.getImpl().name = ST.UNKNOWN_NAME;
+        st.getImpl()
+            .defineImplicitlyDefinedTemplates(this);
         return st;
     }
 
@@ -684,25 +674,20 @@ abstract class STGroup
      */
     ST createStringTemplateInternally(CompiledST impl)
     {
-        ST st1 = new ST();
-        st1.impl = impl;
-        st1.groupThatCreatedThisInstance = this;
+        ST st = new ST();
+        st.setImpl(impl);
+        st.groupThatCreatedThisInstance = this;
         if (impl.formalArguments != null)
         {
-            st1.locals = new Object[impl.formalArguments.size()];
-            Arrays.fill(st1.locals, ST.EMPTY_ATTR);
-        }
-        ST st = st1;
-        if (trackCreationEvents && st.debugState != null)
-        {
-            st.debugState.newSTEvent = null; // toss it out
+            st.locals = new Object[impl.formalArguments.size()];
+            Arrays.fill(st.locals, ST.EMPTY_ATTR);
         }
         return st;
     }
 
     ST createStringTemplateInternally(ST proto)
     {
-        return new ST(proto); // no need to wack debugState; not set in ST(proto).
+        return new ST(proto);
     }
 
     String getName()
@@ -800,28 +785,23 @@ abstract class STGroup
         {
             errorManager = new ErrorManager(listener);
         }
-        return createInterpreterInternal(locale, errorManager, false);
+        return createInterpreterInternal(locale, errorManager);
     }
 
     Interpreter createInterpreter(ErrorManager errorManager)
     {
-        return createInterpreterInternal(Locale.ROOT, errorManager, false);
+        return createInterpreterInternal(Locale.ROOT, errorManager);
     }
 
-    Interpreter createDebuggingInterpreter()
-    {
-        return createInterpreterInternal(Locale.ROOT, errMgr, true);
-    }
-
-    private Interpreter createInterpreterInternal(@NonNull Locale locale, ErrorManager errorManager, boolean debug)
+    private Interpreter createInterpreterInternal(@NonNull Locale locale, ErrorManager errorManager)
     {
         if (legacyRendering)
         {
-            return new LegacyInterpreter(this, locale, errorManager, debug);
+            return new LegacyInterpreter(this, locale, errorManager);
         }
         else
         {
-            return new DefaultInterpreter(this, locale, errorManager, debug);
+            return new DefaultInterpreter(this, locale, errorManager);
         }
     }
 }

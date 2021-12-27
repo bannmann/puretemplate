@@ -209,7 +209,7 @@ class TestCoreBasics2 extends BaseTest
     {
         String template = "load <box()>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "kewl" + NEWLINE + "daddy");
+        st.getImpl().nativeGroup.defineTemplate("box", "kewl" + NEWLINE + "daddy");
         assertRenderingResult("load kewl" + NEWLINE + "daddy;", st);
     }
 
@@ -218,8 +218,8 @@ class TestCoreBasics2 extends BaseTest
     {
         String template = "load <box(\"arg\")>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
-        dump(log, st.impl);
+        st.getImpl().nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
+        dump(log, st.getImpl());
         st.add("name", "Ter");
         assertRenderingResult("load kewl arg daddy;", st);
     }
@@ -229,8 +229,8 @@ class TestCoreBasics2 extends BaseTest
     {
         String template = "load <box({})>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
-        dump(log, st.impl);
+        st.getImpl().nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
+        dump(log, st.getImpl());
         st.add("name", "Ter");
         assertRenderingResult("load kewl  daddy;", st);
     }
@@ -240,8 +240,8 @@ class TestCoreBasics2 extends BaseTest
     {
         String template = "load <box(\"arg\", foo())>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "x,y", "kewl <x> <y> daddy");
-        st.impl.nativeGroup.defineTemplate("foo", "blech");
+        st.getImpl().nativeGroup.defineTemplate("box", "x,y", "kewl <x> <y> daddy");
+        st.getImpl().nativeGroup.defineTemplate("foo", "blech");
         st.add("name", "Ter");
         assertRenderingResult("load kewl arg blech daddy;", st);
     }
@@ -251,8 +251,8 @@ class TestCoreBasics2 extends BaseTest
     {
         String template = "load <box(foo(\"arg\"))>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "y", "kewl <y> daddy");
-        st.impl.nativeGroup.defineTemplate("foo", "x", "blech <x>");
+        st.getImpl().nativeGroup.defineTemplate("box", "y", "kewl <y> daddy");
+        st.getImpl().nativeGroup.defineTemplate("foo", "x", "blech <x>");
         st.add("name", "Ter");
         assertRenderingResult("load kewl blech arg daddy;", st);
     }

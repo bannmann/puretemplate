@@ -2,7 +2,7 @@ package org.puretemplate;
 
 import org.puretemplate.misc.Location;
 
-class EvalExprEvent extends InterpEvent
+abstract class AbstractExpressionEvent extends AbstractInterpreterEvent
 {
     /**
      * Index of first char in template.
@@ -16,7 +16,7 @@ class EvalExprEvent extends InterpEvent
 
     public final String expr;
 
-    public EvalExprEvent(Location location, int start, int stop, int exprStartChar, int exprStopChar)
+    public AbstractExpressionEvent(Location location, int start, int stop, int exprStartChar, int exprStopChar)
     {
         super(location, start, stop);
         this.exprStartChar = exprStartChar;
@@ -32,24 +32,19 @@ class EvalExprEvent extends InterpEvent
         }
     }
 
-    @Override
-    public String toString()
+    protected String getToStringDetails()
     {
-        return getClass().getSimpleName() +
-            "{" +
-            "self=" +
-            location.getReference() +
+        return "location=" +
+            location.toShortString() +
             ", expr='" +
             expr +
-            '\'' +
-            ", exprStartChar=" +
+            "', exprStartChar=" +
             exprStartChar +
             ", exprStopChar=" +
             exprStopChar +
             ", start=" +
             outputStartChar +
             ", stop=" +
-            outputStopChar +
-            '}';
+            outputStopChar;
     }
 }

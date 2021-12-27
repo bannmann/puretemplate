@@ -179,4 +179,12 @@ class Misc
         }
         return buf.toString();
     }
+
+    public static int getShort(byte[] memory, int index)
+    {
+        int b1 = memory[index] & 0xFF; // mask off sign-extended bits
+        int b2 = memory[index + 1] & 0xFF;
+        int word = b1 << (8 * 1) | b2;
+        return word;
+    }
 }

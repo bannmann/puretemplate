@@ -151,7 +151,7 @@ class TestCompiler extends BaseTest
 
         dump(log, diagnostics);
 
-        assertEquals(asmExpected, diagnostics.getInstructions());
+        assertEquals(asmExpected, diagnostics.getStatementsAsString());
         assertEquals(stringsExpected, diagnostics.getStrings());
     }
 }

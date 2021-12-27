@@ -1,10 +1,12 @@
 package org.puretemplate;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 import lombok.RequiredArgsConstructor;
 
+import org.puretemplate.diagnostics.Statement;
 import org.puretemplate.diagnostics.TemplateDiagnostics;
 
 @RequiredArgsConstructor
@@ -25,9 +27,15 @@ final class TemplateDiagnosticsImpl implements TemplateDiagnostics
     }
 
     @Override
-    public String getInstructions()
+    public List<Statement> getStatements()
     {
-        return compiledST.instrs();
+        return compiledST.getStatements();
+    }
+
+    @Override
+    public String getStatementsAsString()
+    {
+        return compiledST.getStatementsAsString();
     }
 
     @Override

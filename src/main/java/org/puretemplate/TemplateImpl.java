@@ -25,6 +25,7 @@ class TemplateImpl implements Template
     @Override
     public TemplateDiagnostics diagnostics()
     {
-        return new TemplateDiagnosticsImpl(stSupplier.get().impl);
+        return new TemplateDiagnosticsImpl(stSupplier.get()
+            .getImpl());
     }
 }

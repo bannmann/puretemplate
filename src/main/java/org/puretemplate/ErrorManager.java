@@ -78,7 +78,8 @@ class ErrorManager
         /**
          * Creates
          */
-        public GroupCompilationMessageImpl(ErrorType errorType, String sourceName, Token token, Throwable cause, Object arg)
+        public GroupCompilationMessageImpl(
+            ErrorType errorType, String sourceName, Token token, Throwable cause, Object arg)
         {
             super(errorType, null, cause, arg);
             this.token = token;
@@ -288,7 +289,13 @@ class ErrorManager
     public void compileTimeError(ErrorType error, Token templateToken, Token t, Object arg, Object arg2)
     {
         String sourceName = getSourceName(t);
-        listener.compileTimeError(new TemplateCompilationMessageImpl(error, sourceName, templateToken, t, null, arg, arg2));
+        listener.compileTimeError(new TemplateCompilationMessageImpl(error,
+            sourceName,
+            templateToken,
+            t,
+            null,
+            arg,
+            arg2));
     }
 
     public void groupSyntaxError(ErrorType error, String sourceName, RecognitionException e, String msg)

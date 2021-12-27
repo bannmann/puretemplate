@@ -190,9 +190,9 @@ public abstract class BaseTest
     protected void assertRenderingResult(String expecting, ST st) throws IOException
     {
         StringWriter stringWriter = new StringWriter();
-        STWriter stWriter = new AutoIndentWriter(stringWriter);
-        stWriter.setLineWidth(STWriter.NO_WRAP);
-        st.write(stWriter);
+        TemplateWriter templateWriter = new AutoIndentWriter(stringWriter);
+        templateWriter.setLineWidth(TemplateWriter.NO_WRAP);
+        st.write(templateWriter);
         String result = stringWriter.toString();
         assertEquals(expecting, result);
     }

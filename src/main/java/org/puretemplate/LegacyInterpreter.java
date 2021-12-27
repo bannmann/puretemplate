@@ -4,14 +4,14 @@ import java.util.Locale;
 
 class LegacyInterpreter extends AbstractInterpreter
 {
-    public LegacyInterpreter(STGroup group, Locale locale, ErrorManager errMgr, boolean debug)
+    public LegacyInterpreter(STGroup group, Locale locale, ErrorManager errMgr)
     {
-        super(group, locale, errMgr, debug);
+        super(group, locale, errMgr);
     }
 
     @Override
-    protected int writeText(STWriter out, InstanceScope scope, String o)
+    protected int writeText(Job job, InstanceScope scope, String o)
     {
-        return writeObjectNoOptions(out, scope, o);
+        return writeObjectNoOptions(job, scope, o);
     }
 }

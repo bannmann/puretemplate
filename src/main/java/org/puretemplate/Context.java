@@ -5,6 +5,7 @@ import java.util.Locale;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apiguardian.api.API;
+import org.puretemplate.diagnostics.ContextDiagnostics;
 import org.puretemplate.error.ErrorListener;
 
 /**
@@ -67,4 +68,10 @@ public interface Context
      * notes for fluent APIs in PureTemplate</a> for details.
      */
     Renderer render();
+
+    /**
+     * Retrieves low-level diagnostics data.
+     */
+    @API(status = API.Status.EXPERIMENTAL)
+    ContextDiagnostics diagnostics();
 }

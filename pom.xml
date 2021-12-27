@@ -84,6 +84,12 @@
                 <version>1.1.2</version>
             </dependency>
             <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.21.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>5.8.1</version>
@@ -117,6 +123,10 @@
         <dependency>
             <groupId>org.apiguardian</groupId>
             <artifactId>apiguardian-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -191,6 +201,7 @@
                             <link>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${org.apiguardian:apiguardian-api:jar.version}/</link>
                             <link>https://javadoc.io/doc/com.google.code.findbugs/jsr305/${com.google.code.findbugs:jsr305:jar.version}/</link>
                         </links>
+                        <show>public</show>
                     </configuration>
                 </plugin>
                 <plugin>

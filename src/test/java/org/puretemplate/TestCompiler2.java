@@ -53,7 +53,7 @@ class TestCompiler2 extends BaseTest
             "[hi , name, true, foo, , ]";
         String stringsResult = Arrays.toString(code.strings);
         assertEquals(stringsExpected, stringsResult);
-        String asmResult = code.instrs();
+        String asmResult = code.getStatementsAsString();
         assertEquals(asmExpected, asmResult);
     }
 
@@ -64,7 +64,7 @@ class TestCompiler2 extends BaseTest
         // compile as if in root dir and in template 'a'
         CompiledST code = new Compiler().compile("a", template);
         String asmExpected = "new 0 0, write";
-        String asmResult = code.instrs();
+        String asmResult = code.getStatementsAsString();
         assertEquals(asmExpected, asmResult);
         String stringsExpected = "[/region__/a__r]";
         String stringsResult = Arrays.toString(code.strings);
@@ -78,7 +78,7 @@ class TestCompiler2 extends BaseTest
         // compile as if in root dir and in template 'a'
         CompiledST code = new Compiler().compile("a", template);
         String asmExpected = "write_str 0, new 1 0, write";
-        String asmResult = code.instrs();
+        String asmResult = code.getStatementsAsString();
         assertEquals(asmExpected, asmResult);
         String stringsExpected = "[x:, /region__/a__r]";
         String stringsResult = Arrays.toString(code.strings);

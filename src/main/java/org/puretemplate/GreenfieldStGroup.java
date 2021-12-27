@@ -3,7 +3,6 @@ package org.puretemplate;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.text.MessageFormat;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;

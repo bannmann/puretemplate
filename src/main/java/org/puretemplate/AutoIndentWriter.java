@@ -20,7 +20,7 @@ import java.util.Deque;
  * {@link #newline}. The default value is taken from the {@code line.separator} system property, and can be overridden
  * by passing in a {@code String} to the appropriate constructor.</p>
  */
-class AutoIndentWriter implements STWriter
+class AutoIndentWriter implements TemplateWriter
 {
     /**
      * Stack of indents. Use {@link Deque} to rule out accidental misuse (e.g. indexed access).
@@ -113,6 +113,12 @@ class AutoIndentWriter implements STWriter
     public int index()
     {
         return charIndex;
+    }
+
+    @Override
+    public TemplateWriter createWriterTargeting(Writer target)
+    {
+        return new AutoIndentWriter(target);
     }
 
     /**

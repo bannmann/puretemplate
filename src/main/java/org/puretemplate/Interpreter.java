@@ -1,9 +1,18 @@
 package org.puretemplate;
 
-import java.util.List;
+import lombok.Value;
+import lombok.With;
 
 interface Interpreter
 {
+    @Value
+    class Job
+    {
+        @With
+        TemplateWriter templateWriter;
+        EventDistributor eventDistributor;
+    }
+
     enum Option
     {
         ANCHOR,
@@ -21,9 +30,5 @@ interface Interpreter
      *
      * @return the number of characters written to {@code out}
      */
-    int exec(ST template, STWriter out);
-
-    List<InterpEvent> getEvents();
-
-    List<String> getExecutionTrace();
+    int exec(ST template, TemplateWriter out, EventDistributor eventDistributor);
 }

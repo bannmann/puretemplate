@@ -3,9 +3,7 @@ package org.puretemplate;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,46 +15,66 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import org.puretemplate.diagnostics.Event;
+import org.puretemplate.diagnostics.Instruction;
+import org.puretemplate.diagnostics.Statement;
 import org.puretemplate.error.ErrorType;
 import org.puretemplate.exception.NoSuchAttributeException;
 import org.puretemplate.exception.NoSuchPropertyException;
 import org.puretemplate.model.AttributeRenderer;
 import org.puretemplate.model.ModelAdaptor;
 
+import com.google.common.collect.Streams;
+
 /**
  * This class knows how to execute template bytecodes relative to a particular {@link STGroup}. To execute the byte
- * codes, we need an output stream and a reference to an {@link ST} instance. That instance's {@link ST#impl} field
- * points at a {@link CompiledST}, which contains all of the byte codes and other information relevant to execution.
+ * codes, we need an output stream and a reference to an {@link ST} instance. That instance's {@link ST#getImpl() impl}
+ * field points at a {@link CompiledST}, which contains all of the byte codes and other information relevant to
+ * execution.
  * <p>
  * This interpreter is a stack-based bytecode interpreter. All operands go onto an operand stack.</p>
  * <p>
- * If {@link #debug} set, we track interpreter events. For now, I am only tracking instance creation events.</p>
- * <p>
- * We create a new interpreter for each invocation of {@link ST#render}, or {@link ST#getEvents}.</p>
+ * We create a new interpreter at the beginning of each rendering operation.</p>
  */
 @Slf4j
 abstract class AbstractInterpreter implements Interpreter
 {
-    public static final int DEFAULT_OPERAND_STACK_SIZE = 100;
+    private static class ObjectList extends ArrayList<Object>
+    {
+    }
+
+    private static class ArgumentsMap extends HashMap<String, Object>
+    {
+    }
+
+    private static final int DEFAULT_OPERAND_STACK_SIZE = 100;
 
     /**
      * Operand stack, grows upwards.
      */
-    Object[] operands = new Object[DEFAULT_OPERAND_STACK_SIZE];
+    private final Object[] operands = new Object[DEFAULT_OPERAND_STACK_SIZE];
+
+    /**
+     * List-based access to {@link #operands}.
+     */
+    @SuppressWarnings("Java9CollectionFactory")
+    private final List<Object> operandsList = Collections.unmodifiableList(Arrays.asList(operands));
 
     /**
      * Stack pointer register.
      */
-    int sp = -1;
+    int stackPointer = -1;
 
     /**
      * The number of characters written on this template line so far.
      */
-    int nwline;
+    int currentLineCharacters;
 
     /**
      * Render template with respect to this group.
@@ -73,56 +91,30 @@ abstract class AbstractInterpreter implements Interpreter
 
     ErrorManager errMgr;
 
-    /**
-     * Dump bytecode instructions as they are executed. This field is mostly for StringTemplate development.
-     */
-    public static boolean trace;
-
-    /**
-     * If {@link #trace} is {@code true}, track trace here.
-     */
-    // TODO: track the pieces not a string and track what it contributes to output
-    protected List<String> executeTrace;
-
-    /**
-     * When {@code true}, track events inside templates and in {@link #events}.
-     */
-    public boolean debug;
-
-    /**
-     * Track everything happening in interpreter across all templates if {@link #debug}. The last event in this field is
-     * the {@link EvalTemplateEvent} for the root template.
-     */
-    protected List<InterpEvent> events;
-
-    public AbstractInterpreter(STGroup group, Locale locale, ErrorManager errMgr, boolean debug)
+    public AbstractInterpreter(STGroup group, Locale locale, ErrorManager errMgr)
     {
         this.group = group;
         this.locale = locale;
         this.errMgr = errMgr;
-        this.debug = debug;
-        if (debug)
-        {
-            events = new ArrayList<>();
-            executeTrace = new ArrayList<>();
-        }
     }
 
     @Override
-    public int exec(@NonNull ST template, @NonNull STWriter out)
+    public int exec(
+        @NonNull ST template, @NonNull TemplateWriter templateWriter, @NonNull EventDistributor eventDistributor)
     {
         InstanceScope scope = new InstanceScope(null, template);
-        return exec(out, scope);
+        Job job = new Job(templateWriter, eventDistributor);
+        return exec(job, scope);
     }
 
-    protected int exec(@NonNull STWriter out, @NonNull InstanceScope scope)
+    protected int exec(@NonNull Job job, @NonNull InstanceScope scope)
     {
         final ST self = scope.st;
         log.debug("exec({})", self.getName());
         try
         {
-            setDefaultArguments(out, scope);
-            return _exec(out, scope);
+            setDefaultArguments(job, scope);
+            return _exec(job, scope);
         }
         catch (Exception e)
         {
@@ -135,11 +127,12 @@ abstract class AbstractInterpreter implements Interpreter
         }
     }
 
-    protected int _exec(STWriter out, InstanceScope scope)
+    protected int _exec(Job job, InstanceScope scope)
     {
         final ST self = scope.st;
+        TemplateWriter out = job.getTemplateWriter();
         int start = out.index(); // track char we're about to write
-        Bytecode.Instruction prevOpcode = null;
+        Instruction prevOpcode = null;
         int n = 0; // how many char we write out
         int nargs;
         int nameIndex;
@@ -148,15 +141,12 @@ abstract class AbstractInterpreter implements Interpreter
         Object o, left, right;
         ST st;
         Object[] options;
-        byte[] code = self.impl.instrs;        // which code block are we executing
+        byte[] code = self.getImpl().instrs;        // which code block are we executing
         int ip = 0;
-        while (ip < self.impl.codeSize)
+        while (ip < self.getImpl().codeSize)
         {
-            if (trace || debug)
-            {
-                trace(scope, ip);
-            }
-            Bytecode.Instruction opcode = Bytecode.INSTRUCTIONS[code[ip]];
+            trace(job, scope, ip);
+            Instruction opcode = Bytecode.INSTRUCTIONS[code[ip]];
             scope.ip = ip;
             ip++; //jump to next instruction or first byte of operand
             switch (opcode)
@@ -169,7 +159,7 @@ abstract class AbstractInterpreter implements Interpreter
                 case LOAD_ATTR:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    name = self.impl.strings[nameIndex];
+                    name = self.getImpl().strings[nameIndex];
                     try
                     {
                         o = getAttribute(scope, name);
@@ -183,7 +173,7 @@ abstract class AbstractInterpreter implements Interpreter
                         errMgr.runTimeError(scope.toLocation(), ErrorType.NO_SUCH_ATTRIBUTE, name);
                         o = null;
                     }
-                    operands[++sp] = o;
+                    operands[++stackPointer] = o;
                     break;
                 case LOAD_LOCAL:
                     int valueIndex = getShort(code, ip);
@@ -193,24 +183,24 @@ abstract class AbstractInterpreter implements Interpreter
                     {
                         o = null;
                     }
-                    operands[++sp] = o;
+                    operands[++stackPointer] = o;
                     break;
                 case LOAD_PROP:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    o = operands[sp--];
-                    name = self.impl.strings[nameIndex];
-                    operands[++sp] = getObjectProperty(out, scope, o, name);
+                    o = operands[stackPointer--];
+                    name = self.getImpl().strings[nameIndex];
+                    operands[++stackPointer] = getObjectProperty(job, scope, o, name);
                     break;
                 case LOAD_PROP_IND:
-                    Object propName = operands[sp--];
-                    o = operands[sp];
-                    operands[sp] = getObjectProperty(out, scope, o, propName);
+                    Object propName = operands[stackPointer--];
+                    o = operands[stackPointer];
+                    operands[stackPointer] = getObjectProperty(job, scope, o, propName);
                     break;
                 case NEW:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    name = self.impl.strings[nameIndex];
+                    name = self.getImpl().strings[nameIndex];
                     nargs = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     // look up in original hierarchy not enclosing template (variable group)
@@ -218,35 +208,35 @@ abstract class AbstractInterpreter implements Interpreter
                     st = self.groupThatCreatedThisInstance.getEmbeddedInstanceOf(scope, name);
                     // get n args and store into st's attr list
                     storeArgs(scope, nargs, st);
-                    sp -= nargs;
-                    operands[++sp] = st;
+                    stackPointer -= nargs;
+                    operands[++stackPointer] = st;
                     break;
                 case NEW_IND:
                     nargs = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    name = (String) operands[sp - nargs];
+                    name = (String) operands[stackPointer - nargs];
                     st = self.groupThatCreatedThisInstance.getEmbeddedInstanceOf(scope, name);
                     storeArgs(scope, nargs, st);
-                    sp -= nargs;
-                    sp--; // pop template name
-                    operands[++sp] = st;
+                    stackPointer -= nargs;
+                    stackPointer--; // pop template name
+                    operands[++stackPointer] = st;
                     break;
                 case NEW_BOX_ARGS:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    name = self.impl.strings[nameIndex];
-                    Map<String, Object> attrs = (ArgumentsMap) operands[sp--];
+                    name = self.getImpl().strings[nameIndex];
+                    Map<String, Object> attrs = (ArgumentsMap) operands[stackPointer--];
                     // look up in original hierarchy not enclosing template (variable group)
                     // see TestSubtemplates.testEvalSTFromAnotherGroup()
                     st = self.groupThatCreatedThisInstance.getEmbeddedInstanceOf(scope, name);
                     // get n args and store into st's attr list
                     storeArgs(scope, attrs, st);
-                    operands[++sp] = st;
+                    operands[++stackPointer] = st;
                     break;
                 case SUPER_NEW:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    name = self.impl.strings[nameIndex];
+                    name = self.getImpl().strings[nameIndex];
                     nargs = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     super_new(scope, name, nargs);
@@ -254,41 +244,41 @@ abstract class AbstractInterpreter implements Interpreter
                 case SUPER_NEW_BOX_ARGS:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    name = self.impl.strings[nameIndex];
-                    attrs = (ArgumentsMap) operands[sp--];
+                    name = self.getImpl().strings[nameIndex];
+                    attrs = (ArgumentsMap) operands[stackPointer--];
                     super_new(scope, name, attrs);
                     break;
                 case STORE_OPTION:
                     int optionIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    o = operands[sp--];    // value to store
-                    options = (Object[]) operands[sp]; // get options
+                    o = operands[stackPointer--];    // value to store
+                    options = (Object[]) operands[stackPointer]; // get options
                     options[optionIndex] = o; // store value into options on stack
                     break;
                 case STORE_ARG:
                     nameIndex = getShort(code, ip);
-                    name = self.impl.strings[nameIndex];
+                    name = self.getImpl().strings[nameIndex];
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    o = operands[sp--];
-                    attrs = (ArgumentsMap) operands[sp];
+                    o = operands[stackPointer--];
+                    attrs = (ArgumentsMap) operands[stackPointer];
                     attrs.put(name, o); // leave attrs on stack
                     break;
                 case WRITE:
-                    o = operands[sp--];
-                    int n1 = writeObjectNoOptions(out, scope, o);
+                    o = operands[stackPointer--];
+                    int n1 = writeObjectNoOptions(job, scope, o);
                     n += n1;
-                    nwline += n1;
+                    currentLineCharacters += n1;
                     break;
                 case WRITE_OPT:
-                    options = (Object[]) operands[sp--]; // get options
-                    o = operands[sp--];                 // get option to write
-                    int n2 = writeObjectWithOptions(out, scope, o, options);
+                    options = (Object[]) operands[stackPointer--]; // get options
+                    o = operands[stackPointer--];                 // get option to write
+                    int n2 = writeObjectWithOptions(job, scope, o, options);
                     n += n2;
-                    nwline += n2;
+                    currentLineCharacters += n2;
                     break;
                 case MAP:
-                    st = (ST) operands[sp--]; // get prototype off stack
-                    o = operands[sp--];      // get object to map prototype across
+                    st = (ST) operands[stackPointer--]; // get prototype off stack
+                    o = operands[stackPointer--];      // get object to map prototype across
                     map(scope, o, st);
                     break;
                 case ROT_MAP:
@@ -297,26 +287,26 @@ abstract class AbstractInterpreter implements Interpreter
                     List<ST> templates = new ArrayList<>();
                     for (int i = nmaps - 1; i >= 0; i--)
                     {
-                        templates.add((ST) operands[sp - i]);
+                        templates.add((ST) operands[stackPointer - i]);
                     }
-                    sp -= nmaps;
-                    o = operands[sp--];
+                    stackPointer -= nmaps;
+                    o = operands[stackPointer--];
                     if (o != null)
                     {
                         rot_map(scope, o, templates);
                     }
                     break;
                 case ZIP_MAP:
-                    st = (ST) operands[sp--];
+                    st = (ST) operands[stackPointer--];
                     nmaps = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
                     List<Object> exprs = new ObjectList();
                     for (int i = nmaps - 1; i >= 0; i--)
                     {
-                        exprs.add(operands[sp - i]);
+                        exprs.add(operands[stackPointer - i]);
                     }
-                    sp -= nmaps;
-                    operands[++sp] = zip_map(scope, exprs, st);
+                    stackPointer -= nmaps;
+                    operands[++stackPointer] = zip_map(scope, exprs, st);
                     break;
                 case BR:
                     ip = getShort(code, ip);
@@ -324,57 +314,57 @@ abstract class AbstractInterpreter implements Interpreter
                 case BRF:
                     addr = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    o = operands[sp--]; // <if(expr)>...<endif>
+                    o = operands[stackPointer--]; // <if(expr)>...<endif>
                     if (!testAttributeTrue(o))
                     {
                         ip = addr; // jump
                     }
                     break;
                 case OPTIONS:
-                    operands[++sp] = new Object[Compiler.NUM_OPTIONS];
+                    operands[++stackPointer] = new Object[Compiler.NUM_OPTIONS];
                     break;
                 case ARGS:
-                    operands[++sp] = new ArgumentsMap();
+                    operands[++stackPointer] = new ArgumentsMap();
                     break;
                 case PASSTHRU:
                     nameIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    name = self.impl.strings[nameIndex];
-                    attrs = (ArgumentsMap) operands[sp];
+                    name = self.getImpl().strings[nameIndex];
+                    attrs = (ArgumentsMap) operands[stackPointer];
                     passthru(scope, name, attrs);
                     break;
                 case LIST:
-                    operands[++sp] = new ObjectList();
+                    operands[++stackPointer] = new ObjectList();
                     break;
                 case ADD:
-                    o = operands[sp--];             // pop value
-                    List<Object> list = (ObjectList) operands[sp]; // don't pop list
-                    addToList(scope, list, o);
+                    o = operands[stackPointer--];             // pop value
+                    List<Object> list = (ObjectList) operands[stackPointer]; // don't pop list
+                    addToList(list, o);
                     break;
                 case TOSTR:
                     // replace with string value; early eval
-                    operands[sp] = toString(out, scope, operands[sp]);
+                    operands[stackPointer] = toString(job, scope, operands[stackPointer]);
                     break;
                 case FIRST:
-                    operands[sp] = first(scope, operands[sp]);
+                    operands[stackPointer] = first(operands[stackPointer]);
                     break;
                 case LAST:
-                    operands[sp] = last(scope, operands[sp]);
+                    operands[stackPointer] = last(operands[stackPointer]);
                     break;
                 case REST:
-                    operands[sp] = rest(scope, operands[sp]);
+                    operands[stackPointer] = rest(operands[stackPointer]);
                     break;
                 case TRUNC:
-                    operands[sp] = trunc(scope, operands[sp]);
+                    operands[stackPointer] = trunc(operands[stackPointer]);
                     break;
                 case STRIP:
-                    operands[sp] = strip(scope, operands[sp]);
+                    operands[stackPointer] = strip(operands[stackPointer]);
                     break;
                 case TRIM:
-                    o = operands[sp--];
+                    o = operands[stackPointer--];
                     if (o.getClass() == String.class)
                     {
-                        operands[++sp] = ((String) o).trim();
+                        operands[++stackPointer] = ((String) o).trim();
                     }
                     else
                     {
@@ -383,17 +373,17 @@ abstract class AbstractInterpreter implements Interpreter
                             "trim",
                             o.getClass()
                                 .getName());
-                        operands[++sp] = o;
+                        operands[++stackPointer] = o;
                     }
                     break;
                 case LENGTH:
-                    operands[sp] = length(operands[sp]);
+                    operands[stackPointer] = length(operands[stackPointer]);
                     break;
                 case STRLEN:
-                    o = operands[sp--];
+                    o = operands[stackPointer--];
                     if (o.getClass() == String.class)
                     {
-                        operands[++sp] = ((String) o).length();
+                        operands[++stackPointer] = ((String) o).length();
                     }
                     else
                     {
@@ -402,29 +392,29 @@ abstract class AbstractInterpreter implements Interpreter
                             "strlen",
                             o.getClass()
                                 .getName());
-                        operands[++sp] = 0;
+                        operands[++stackPointer] = 0;
                     }
                     break;
                 case REVERSE:
-                    operands[sp] = reverse(scope, operands[sp]);
+                    operands[stackPointer] = reverse(operands[stackPointer]);
                     break;
                 case NOT:
-                    operands[sp] = !testAttributeTrue(operands[sp]);
+                    operands[stackPointer] = !testAttributeTrue(operands[stackPointer]);
                     break;
                 case OR:
-                    right = operands[sp--];
-                    left = operands[sp--];
-                    operands[++sp] = testAttributeTrue(left) || testAttributeTrue(right);
+                    right = operands[stackPointer--];
+                    left = operands[stackPointer--];
+                    operands[++stackPointer] = testAttributeTrue(left) || testAttributeTrue(right);
                     break;
                 case AND:
-                    right = operands[sp--];
-                    left = operands[sp--];
-                    operands[++sp] = testAttributeTrue(left) && testAttributeTrue(right);
+                    right = operands[stackPointer--];
+                    left = operands[stackPointer--];
+                    operands[++stackPointer] = testAttributeTrue(left) && testAttributeTrue(right);
                     break;
                 case INDENT:
                     int strIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    indent(out, scope, strIndex);
+                    indent(job, scope, strIndex);
                     break;
                 case DEDENT:
                     out.popIndentation();
@@ -432,14 +422,14 @@ abstract class AbstractInterpreter implements Interpreter
                 case NEWLINE:
                     try
                     {
-                        if ((prevOpcode == null && !self.isAnonSubtemplate() && !self.impl.isRegion) ||
-                            prevOpcode == Bytecode.Instruction.NEWLINE ||
-                            prevOpcode == Bytecode.Instruction.INDENT ||
-                            nwline > 0)
+                        if ((prevOpcode == null && !self.isAnonSubtemplate() && !self.getImpl().isRegion) ||
+                            prevOpcode == Instruction.NEWLINE ||
+                            prevOpcode == Instruction.INDENT ||
+                            currentLineCharacters > 0)
                         {
                             out.write(Misc.NEWLINE);
                         }
-                        nwline = 0;
+                        currentLineCharacters = 0;
                     }
                     catch (IOException ioe)
                     {
@@ -449,46 +439,44 @@ abstract class AbstractInterpreter implements Interpreter
                 case NOOP:
                     break;
                 case POP:
-                    sp--; // throw away top of stack
+                    stackPointer--; // throw away top of stack
                     break;
                 case NULL:
-                    operands[++sp] = null;
+                    operands[++stackPointer] = null;
                     break;
                 case TRUE:
-                    operands[++sp] = true;
+                    operands[++stackPointer] = true;
                     break;
                 case FALSE:
-                    operands[++sp] = false;
+                    operands[++stackPointer] = false;
                     break;
                 case WRITE_STR:
                     strIndex = getShort(code, ip);
                     ip += Bytecode.OPND_SIZE_IN_BYTES;
-                    o = self.impl.strings[strIndex];
-                    n1 = writeText(out, scope, (String) o);
+                    o = self.getImpl().strings[strIndex];
+                    n1 = writeText(job, scope, (String) o);
                     n += n1;
-                    nwline += n1;
+                    currentLineCharacters += n1;
                     break;
                 default:
-                    String dump = self.impl.getDump();
+                    String dump = self.getImpl()
+                        .getDump();
                     errMgr.internalError(scope.toLocation(),
                         MessageFormat.format("invalid bytecode @ {0}: {1}\n{2}", ip - 1, opcode, dump),
                         null);
             }
             prevOpcode = opcode;
         }
-        if (debug)
-        {
-            int stop = out.index() - 1;
-            EvalTemplateEvent e = new EvalTemplateEvent(scope.toLocation(), start, stop);
-            trackDebugEvent(scope, e);
-        }
+        fireEvent(job,
+            () -> new EvalTemplateEvent(scope.toLocation(), start, out.index() - 1),
+            ListenerInvoker.EVAL_TEMPLATE);
         return n;
     }
 
     void load_str(ST self, int ip)
     {
-        int strIndex = getShort(self.impl.instrs, ip);
-        operands[++sp] = self.impl.strings[strIndex];
+        int strIndex = getShort(self.getImpl().instrs, ip);
+        operands[++stackPointer] = self.getImpl().strings[strIndex];
     }
 
     // TODO: refactor to remove dup'd code
@@ -496,7 +484,7 @@ abstract class AbstractInterpreter implements Interpreter
     {
         final ST self = scope.st;
         ST st = null;
-        CompiledST imported = self.impl.nativeGroup.lookupImportedTemplate(name);
+        CompiledST imported = self.getImpl().nativeGroup.lookupImportedTemplate(name);
         if (imported == null)
         {
             errMgr.runTimeError(scope.toLocation(), ErrorType.NO_IMPORTED_TEMPLATE, name);
@@ -509,15 +497,15 @@ abstract class AbstractInterpreter implements Interpreter
         }
         // get n args and store into st's attr list
         storeArgs(scope, nargs, st);
-        sp -= nargs;
-        operands[++sp] = st;
+        stackPointer -= nargs;
+        operands[++stackPointer] = st;
     }
 
     void super_new(InstanceScope scope, String name, Map<String, Object> attrs)
     {
         final ST self = scope.st;
         ST st = null;
-        CompiledST imported = self.impl.nativeGroup.lookupImportedTemplate(name);
+        CompiledST imported = self.getImpl().nativeGroup.lookupImportedTemplate(name);
         if (imported == null)
         {
             errMgr.runTimeError(scope.toLocation(), ErrorType.NO_IMPORTED_TEMPLATE, name);
@@ -531,7 +519,7 @@ abstract class AbstractInterpreter implements Interpreter
 
         // get n args and store into st's attr list
         storeArgs(scope, attrs, st);
-        operands[++sp] = st;
+        operands[++stackPointer] = st;
     }
 
     void passthru(InstanceScope scope, String templateName, Map<String, Object> attrs)
@@ -586,15 +574,17 @@ abstract class AbstractInterpreter implements Interpreter
         {
             for (Map.Entry<String, Object> argument : attrs.entrySet())
             {
-                if (!st.impl.hasFormalArgs)
+                if (!st.getImpl().hasFormalArgs)
                 {
-                    if (st.impl.formalArguments == null || !st.impl.formalArguments.containsKey(argument.getKey()))
+                    if (st.getImpl().formalArguments == null ||
+                        !st.getImpl().formalArguments.containsKey(argument.getKey()))
                     {
                         try
                         {
                             // we clone the CompiledST to prevent modifying the original
                             // formalArguments map during interpretation.
-                            st.impl = st.impl.clone();
+                            st.setImpl(st.getImpl()
+                                .clone());
                             st.add(argument.getKey(), argument.getValue());
                         }
                         catch (CloneNotSupportedException ex)
@@ -611,7 +601,8 @@ abstract class AbstractInterpreter implements Interpreter
                 else
                 {
                     // don't let it throw an exception in rawSetAttribute
-                    if (st.impl.formalArguments == null || !st.impl.formalArguments.containsKey(argument.getKey()))
+                    if (st.getImpl().formalArguments == null ||
+                        !st.getImpl().formalArguments.containsKey(argument.getKey()))
                     {
                         noSuchAttributeReported = true;
                         errMgr.runTimeError(scope.toLocation(), ErrorType.NO_SUCH_ATTRIBUTE, argument.getKey());
@@ -623,10 +614,10 @@ abstract class AbstractInterpreter implements Interpreter
             }
         }
 
-        if (st.impl.hasFormalArgs)
+        if (st.getImpl().hasFormalArgs)
         {
             boolean argumentCountMismatch = false;
-            Map<String, FormalArgument> formalArguments = st.impl.formalArguments;
+            Map<String, FormalArgument> formalArguments = st.getImpl().formalArguments;
             if (formalArguments == null)
             {
                 formalArguments = Collections.emptyMap();
@@ -670,7 +661,7 @@ abstract class AbstractInterpreter implements Interpreter
                 errMgr.runTimeError(scope.toLocation(),
                     ErrorType.ARGUMENT_COUNT_MISMATCH,
                     nargs,
-                    st.impl.name,
+                    st.getImpl().name,
                     nformalArgs);
             }
         }
@@ -678,38 +669,38 @@ abstract class AbstractInterpreter implements Interpreter
 
     void storeArgs(InstanceScope scope, int nargs, ST st)
     {
-        if (nargs > 0 && !st.impl.hasFormalArgs && st.impl.formalArguments == null)
+        if (nargs > 0 && !st.getImpl().hasFormalArgs && st.getImpl().formalArguments == null)
         {
             st.add(ST.IMPLICIT_ARG_NAME, null); // pretend we have "it" arg
         }
 
         int nformalArgs = 0;
-        if (st.impl.formalArguments != null)
+        if (st.getImpl().formalArguments != null)
         {
-            nformalArgs = st.impl.formalArguments.size();
+            nformalArgs = st.getImpl().formalArguments.size();
         }
-        int firstArg = sp - (nargs - 1);
+        int firstArg = stackPointer - (nargs - 1);
         int numToStore = Math.min(nargs, nformalArgs);
-        if (st.impl.isAnonSubtemplate)
+        if (st.getImpl().isAnonSubtemplate)
         {
             nformalArgs -= Language.PREDEFINED_ANON_SUBTEMPLATE_ATTRIBUTES.size();
         }
 
-        if (nargs < (nformalArgs - st.impl.numberOfArgsWithDefaultValues) || nargs > nformalArgs)
+        if (nargs < (nformalArgs - st.getImpl().numberOfArgsWithDefaultValues) || nargs > nformalArgs)
         {
             errMgr.runTimeError(scope.toLocation(),
                 ErrorType.ARGUMENT_COUNT_MISMATCH,
                 nargs,
-                st.impl.name,
+                st.getImpl().name,
                 nformalArgs);
         }
 
-        if (st.impl.formalArguments == null)
+        if (st.getImpl().formalArguments == null)
         {
             return;
         }
 
-        Iterator<String> argNames = st.impl.formalArguments.keySet()
+        Iterator<String> argNames = st.getImpl().formalArguments.keySet()
             .iterator();
         for (int i = 0; i < numToStore; i++)
         {
@@ -719,51 +710,51 @@ abstract class AbstractInterpreter implements Interpreter
         }
     }
 
-    protected void indent(STWriter out, InstanceScope scope, int strIndex)
+    protected void indent(Job job, InstanceScope scope, int strIndex)
     {
-        String indent = scope.st.impl.strings[strIndex];
-        if (debug)
-        {
+        TemplateWriter out = job.getTemplateWriter();
+        String indent = scope.st.getImpl().strings[strIndex];
+        fireEvent(job, () -> {
             int start = out.index(); // track char we're about to write
-            EvalExprEvent e = new IndentEvent(scope.toLocation(),
+            return new IndentEvent(scope.toLocation(),
                 start,
                 start + indent.length() - 1,
                 getExprStartChar(scope),
                 getExprStopChar(scope));
-            trackDebugEvent(scope, e);
-        }
+        }, ListenerInvoker.INDENT);
         out.pushIndentation(indent);
     }
 
     /**
      * Write out an expression result that doesn't use expression options. E.g., {@code <name>}
      */
-    protected int writeObjectNoOptions(STWriter out, InstanceScope scope, Object o)
+    protected int writeObjectNoOptions(Job job, InstanceScope scope, Object o)
     {
+        TemplateWriter out = job.getTemplateWriter();
         int start = out.index(); // track char we're about to write
-        int n = writeObject(out, scope, o, null);
-        if (debug)
-        {
-            EvalExprEvent e = new EvalExprEvent(scope.toLocation(),
+        int n = writeObject(job, scope, o, null);
+        fireEvent(job,
+            () -> new EvalExpressionEvent(scope.toLocation(),
                 start,
                 out.index() - 1,
                 getExprStartChar(scope),
-                getExprStopChar(scope));
-            trackDebugEvent(scope, e);
-        }
+                getExprStopChar(scope)),
+            ListenerInvoker.EVAL_EXPRESSION);
+
         return n;
     }
 
     /**
      * Write out a text element, i.e. a part of the template that is neither expression nor comment
      */
-    protected abstract int writeText(STWriter out, InstanceScope scope, String o);
+    protected abstract int writeText(Job out, InstanceScope scope, String o);
 
     /**
      * Write out an expression result that uses expression options. E.g., {@code <names; separator=", ">}
      */
-    protected int writeObjectWithOptions(STWriter out, InstanceScope scope, Object o, Object[] options)
+    protected int writeObjectWithOptions(Job job, InstanceScope scope, Object o, Object[] options)
     {
+        TemplateWriter out = job.getTemplateWriter();
         int start = out.index(); // track char we're about to write
         // precompute all option values (render all the way to strings)
         String[] optionStrings = null;
@@ -772,7 +763,7 @@ abstract class AbstractInterpreter implements Interpreter
             optionStrings = new String[options.length];
             for (int i = 0; i < Compiler.NUM_OPTIONS; i++)
             {
-                optionStrings[i] = toString(out, scope, options[i]);
+                optionStrings[i] = toString(job, scope, options[i]);
             }
         }
         if (options != null && options[Option.ANCHOR.ordinal()] != null)
@@ -780,21 +771,19 @@ abstract class AbstractInterpreter implements Interpreter
             out.pushAnchorPoint();
         }
 
-        int n = writeObject(out, scope, o, optionStrings);
+        int n = writeObject(job, scope, o, optionStrings);
 
         if (options != null && options[Option.ANCHOR.ordinal()] != null)
         {
             out.popAnchorPoint();
         }
-        if (debug)
-        {
-            EvalExprEvent e = new EvalExprEvent(scope.toLocation(),
+        fireEvent(job,
+            () -> new EvalExpressionEvent(scope.toLocation(),
                 start,
                 out.index() - 1,
                 getExprStartChar(scope),
-                getExprStopChar(scope));
-            trackDebugEvent(scope, e);
-        }
+                getExprStopChar(scope)),
+            ListenerInvoker.EVAL_EXPRESSION);
         return n;
     }
 
@@ -802,7 +791,7 @@ abstract class AbstractInterpreter implements Interpreter
      * Generic method to emit text for an object. It differentiates between contexts/templates, iterable objects, and
      * plain old Java objects (POJOs)
      */
-    protected int writeObject(STWriter out, InstanceScope scope, Object o, String[] options)
+    protected int writeObject(Job job, InstanceScope scope, Object o, String[] options)
     {
         if (o == null)
         {
@@ -831,27 +820,28 @@ abstract class AbstractInterpreter implements Interpreter
                 // might need to wrap
                 try
                 {
-                    out.writeWrap(options[Option.WRAP.ordinal()]);
+                    job.getTemplateWriter()
+                        .writeWrap(options[Option.WRAP.ordinal()]);
                 }
                 catch (IOException ioe)
                 {
                     errMgr.ioError(scope.toLocation(), ErrorType.WRITE_IO_ERROR, ioe);
                 }
             }
-            n = exec(out, scope);
+            n = exec(job, scope);
         }
         else
         {
-            o = convertAnythingIteratableToIterator(scope, o); // normalize
+            o = convertAnythingIteratableToIterator(o); // normalize
             try
             {
                 if (o instanceof Iterator)
                 {
-                    n = writeIterator(out, scope, o, options);
+                    n = writeIterator(job, scope, o, options);
                 }
                 else
                 {
-                    n = writePOJO(out, scope, o, options);
+                    n = writePOJO(job, scope, o, options);
                 }
             }
             catch (IOException ioe)
@@ -862,7 +852,7 @@ abstract class AbstractInterpreter implements Interpreter
         return n;
     }
 
-    protected int writeIterator(STWriter out, InstanceScope scope, Object o, String[] options) throws IOException
+    protected int writeIterator(Job job, InstanceScope scope, Object o, String[] options) throws IOException
     {
         if (o == null)
         {
@@ -886,9 +876,10 @@ abstract class AbstractInterpreter implements Interpreter
                         options[Option.NULL.ordinal()] != null); // or no value but null option
             if (needSeparator)
             {
-                n += out.writeSeparator(separator);
+                n += job.getTemplateWriter()
+                    .writeSeparator(separator);
             }
-            int nw = writeObject(out, scope, iterValue, options);
+            int nw = writeObject(job, scope, iterValue, options);
             if (nw > 0)
             {
                 seenAValue = true;
@@ -898,7 +889,7 @@ abstract class AbstractInterpreter implements Interpreter
         return n;
     }
 
-    protected int writePOJO(STWriter out, InstanceScope scope, Object o, String[] options) throws IOException
+    protected int writePOJO(Job job, InstanceScope scope, Object o, String[] options) throws IOException
     {
         String formatString = null;
         if (options != null)
@@ -909,11 +900,13 @@ abstract class AbstractInterpreter implements Interpreter
         int n;
         if (options != null && options[Option.WRAP.ordinal()] != null)
         {
-            n = out.write(v, options[Option.WRAP.ordinal()]);
+            n = job.getTemplateWriter()
+                .write(v, options[Option.WRAP.ordinal()]);
         }
         else
         {
-            n = out.write(v);
+            n = job.getTemplateWriter()
+                .write(v);
         }
         return n;
     }
@@ -921,7 +914,7 @@ abstract class AbstractInterpreter implements Interpreter
     private <T> String renderObject(InstanceScope scope, String formatString, Object o, Class<T> attributeType)
     {
         // ask the native group defining the surrounding template for the renderer
-        AttributeRenderer<? super T> r = scope.st.impl.nativeGroup.getAttributeRenderer(attributeType);
+        AttributeRenderer<? super T> r = scope.st.getImpl().nativeGroup.getAttributeRenderer(attributeType);
         if (r != null)
         {
             return r.render(attributeType.cast(o), formatString, locale);
@@ -934,7 +927,7 @@ abstract class AbstractInterpreter implements Interpreter
 
     protected int getExprStartChar(InstanceScope scope)
     {
-        Interval templateLocation = scope.st.impl.sourceMap[scope.ip];
+        Interval templateLocation = scope.st.getImpl().sourceMap[scope.ip];
         if (templateLocation != null)
         {
             return templateLocation.getA();
@@ -944,7 +937,7 @@ abstract class AbstractInterpreter implements Interpreter
 
     protected int getExprStopChar(InstanceScope scope)
     {
-        Interval templateLocation = scope.st.impl.sourceMap[scope.ip];
+        Interval templateLocation = scope.st.getImpl().sourceMap[scope.ip];
         if (templateLocation != null)
         {
             return templateLocation.getB();
@@ -964,14 +957,14 @@ abstract class AbstractInterpreter implements Interpreter
     {
         if (attr == null)
         {
-            operands[++sp] = null;
+            operands[++stackPointer] = null;
             return;
         }
-        attr = convertAnythingIteratableToIterator(scope, attr);
-        if (attr instanceof Iterator)
+        attr = convertAnythingIteratableToIterator(attr);
+        if (attr instanceof Iterator<?>)
         {
-            List<ST> mapped = rot_map_iterator(scope, (Iterator) attr, prototypes);
-            operands[++sp] = mapped;
+            List<ST> mapped = rot_map_iterator(scope, (Iterator<?>) attr, prototypes);
+            operands[++stackPointer] = mapped;
         }
         else
         {
@@ -981,24 +974,23 @@ abstract class AbstractInterpreter implements Interpreter
             if (st != null)
             {
                 setFirstArgument(scope, st, attr);
-                if (st.impl.isAnonSubtemplate)
+                if (st.getImpl().isAnonSubtemplate)
                 {
                     st.rawSetAttribute("i0", 0);
                     st.rawSetAttribute("i", 1);
                 }
-                operands[++sp] = st;
+                operands[++stackPointer] = st;
             }
             else
             {
-                operands[++sp] = null;
+                operands[++stackPointer] = null;
             }
         }
     }
 
-    protected List<ST> rot_map_iterator(InstanceScope scope, Iterator<?> attr, List<ST> prototypes)
+    protected List<ST> rot_map_iterator(InstanceScope scope, Iterator<?> iter, List<ST> prototypes)
     {
         List<ST> mapped = new ArrayList<>();
-        Iterator<?> iter = attr;
         int i0 = 0;
         int i = 1;
         int ti = 0;
@@ -1015,7 +1007,7 @@ abstract class AbstractInterpreter implements Interpreter
             ST proto = prototypes.get(templateIndex);
             ST st = group.createStringTemplateInternally(proto);
             setFirstArgument(scope, st, iterValue);
-            if (st.impl.isAnonSubtemplate)
+            if (st.getImpl().isAnonSubtemplate)
             {
                 st.rawSetAttribute("i0", i0);
                 st.rawSetAttribute("i", i);
@@ -1043,13 +1035,13 @@ abstract class AbstractInterpreter implements Interpreter
             Object attr = exprs.get(i);
             if (attr != null)
             {
-                exprs.set(i, convertAnythingToIterator(scope, attr));
+                exprs.set(i, convertAnythingToIterator(attr));
             }
         }
 
         // ensure arguments line up
         int numExprs = exprs.size();
-        CompiledST code = prototype.impl;
+        CompiledST code = prototype.getImpl();
         Map<String, FormalArgument> formalArguments = code.formalArguments;
         if (!code.hasFormalArgs || formalArguments == null)
         {
@@ -1059,7 +1051,7 @@ abstract class AbstractInterpreter implements Interpreter
 
         // todo: track formal args not names for efficient filling of locals
         String[] formalArgumentNames = formalArguments.keySet()
-            .toArray(new String[formalArguments.size()]);
+            .toArray(new String[0]);
         int nformalArgs = formalArgumentNames.length;
         if (prototype.isAnonSubtemplate())
         {
@@ -1114,26 +1106,26 @@ abstract class AbstractInterpreter implements Interpreter
 
     protected void setFirstArgument(InstanceScope scope, ST st, Object attr)
     {
-        if (!st.impl.hasFormalArgs)
+        if (!st.getImpl().hasFormalArgs)
         {
-            if (st.impl.formalArguments == null)
+            if (st.getImpl().formalArguments == null)
             {
                 st.add(ST.IMPLICIT_ARG_NAME, attr);
                 return;
             }
             // else fall thru to set locals[0]
         }
-        if (st.impl.formalArguments == null)
+        if (st.getImpl().formalArguments == null)
         {
-            errMgr.runTimeError(scope.toLocation(), ErrorType.ARGUMENT_COUNT_MISMATCH, 1, st.impl.name, 0);
+            errMgr.runTimeError(scope.toLocation(), ErrorType.ARGUMENT_COUNT_MISMATCH, 1, st.getImpl().name, 0);
             return;
         }
         st.locals[0] = attr;
     }
 
-    protected void addToList(InstanceScope scope, List<Object> list, Object o)
+    protected void addToList(List<Object> list, Object o)
     {
-        o = convertAnythingIteratableToIterator(scope, o);
+        o = convertAnythingIteratableToIterator(o);
         if (o instanceof Iterator)
         {
             // copy of elements into our temp list
@@ -1154,14 +1146,14 @@ abstract class AbstractInterpreter implements Interpreter
      * <p>
      * This method is used for rendering expressions of the form {@code <names:first()>}.</p>
      */
-    public Object first(InstanceScope scope, Object v)
+    public Object first(Object v)
     {
         if (v == null)
         {
             return null;
         }
         Object r = v;
-        v = convertAnythingIteratableToIterator(scope, v);
+        v = convertAnythingIteratableToIterator(v);
         if (v instanceof Iterator)
         {
             Iterator<?> it = (Iterator<?>) v;
@@ -1179,7 +1171,7 @@ abstract class AbstractInterpreter implements Interpreter
      * <p>
      * This method is used for rendering expressions of the form {@code <names:last()>}.</p>
      */
-    public Object last(InstanceScope scope, Object v)
+    public Object last(Object v)
     {
         if (v == null)
         {
@@ -1195,7 +1187,7 @@ abstract class AbstractInterpreter implements Interpreter
             return Array.get(v, Array.getLength(v) - 1);
         }
         Object last = v;
-        v = convertAnythingIteratableToIterator(scope, v);
+        v = convertAnythingIteratableToIterator(v);
         if (v instanceof Iterator)
         {
             Iterator<?> it = (Iterator<?>) v;
@@ -1210,7 +1202,7 @@ abstract class AbstractInterpreter implements Interpreter
     /**
      * Return everything but the first attribute if multi-valued, or {@code null} if single-valued.
      */
-    public Object rest(InstanceScope scope, Object v)
+    public Object rest(Object v)
     {
         if (v == null)
         {
@@ -1226,7 +1218,7 @@ abstract class AbstractInterpreter implements Interpreter
             }
             return elems.subList(1, elems.size());
         }
-        v = convertAnythingIteratableToIterator(scope, v);
+        v = convertAnythingIteratableToIterator(v);
         if (v instanceof Iterator)
         {
             List<Object> a = new ArrayList<>();
@@ -1249,7 +1241,7 @@ abstract class AbstractInterpreter implements Interpreter
     /**
      * Return all but the last element. <code>trunc(<i>x</i>)==null</code> if <code><i>x</i></code> is single-valued.
      */
-    public Object trunc(InstanceScope scope, Object v)
+    public Object trunc(Object v)
     {
         if (v == null)
         {
@@ -1265,7 +1257,7 @@ abstract class AbstractInterpreter implements Interpreter
             }
             return elems.subList(0, elems.size() - 1);
         }
-        v = convertAnythingIteratableToIterator(scope, v);
+        v = convertAnythingIteratableToIterator(v);
         if (v instanceof Iterator)
         {
             List<Object> a = new ArrayList<>();
@@ -1286,13 +1278,13 @@ abstract class AbstractInterpreter implements Interpreter
     /**
      * Return a new list without {@code null} values.
      */
-    public Object strip(InstanceScope scope, Object v)
+    public Object strip(Object v)
     {
         if (v == null)
         {
             return null;
         }
-        v = convertAnythingIteratableToIterator(scope, v);
+        v = convertAnythingIteratableToIterator(v);
         if (v instanceof Iterator)
         {
             List<Object> a = new ArrayList<>();
@@ -1315,13 +1307,13 @@ abstract class AbstractInterpreter implements Interpreter
      * <p>
      * Note that {@code null} values are <i>not</i> stripped out; use {@code reverse(strip(v))} to do that.</p>
      */
-    public Object reverse(InstanceScope scope, Object v)
+    public Object reverse(Object v)
     {
         if (v == null)
         {
             return null;
         }
-        v = convertAnythingIteratableToIterator(scope, v);
+        v = convertAnythingIteratableToIterator(v);
         if (v instanceof Iterator)
         {
             List<Object> a = new LinkedList<>();
@@ -1380,46 +1372,40 @@ abstract class AbstractInterpreter implements Interpreter
         return i;
     }
 
-    protected String toString(STWriter out, InstanceScope scope, Object value)
+    protected String toString(Job job, InstanceScope scope, Object value)
     {
         if (value != null)
         {
-            if (value.getClass() == String.class)
+            if (value instanceof String)
             {
                 return (String) value;
             }
+
             // if not string already, must evaluate it
-            StringWriter sw = new StringWriter();
-            STWriter stw;
-            try
-            {
-                Class<? extends STWriter> writerClass = out.getClass();
-                Constructor<? extends STWriter> ctor = writerClass.getConstructor(Writer.class);
-                stw = ctor.newInstance(sw);
-            }
-            catch (Exception e)
-            {
-                stw = new AutoIndentWriter(sw);
-                errMgr.runTimeError(scope.toLocation(),
-                    ErrorType.WRITER_CTOR_ISSUE,
-                    out.getClass()
-                        .getSimpleName());
-            }
-
-            if (debug && !scope.earlyEval)
-            {
-                scope = new InstanceScope(scope, scope.st);
-                scope.earlyEval = true;
-            }
-
-            writeObjectNoOptions(stw, scope, value);
-
-            return sw.toString();
+            return evaluateObject(job, scope, value);
         }
         return null;
     }
 
-    public Object convertAnythingIteratableToIterator(InstanceScope scope, Object o)
+    private String evaluateObject(Job job, InstanceScope scope, Object value)
+    {
+        StringWriter result = new StringWriter();
+        TemplateWriter stw = job.getTemplateWriter()
+            .createWriterTargeting(result);
+        Job subJob = job.withTemplateWriter(stw);
+
+        // TODO this behavior does not affect any unit test. find out why it exists and add one.
+        if (!scope.earlyEval)
+        {
+            scope = new InstanceScope(scope, scope.st);
+            scope.earlyEval = true;
+        }
+
+        writeObjectNoOptions(subJob, scope, value);
+        return result.toString();
+    }
+
+    public static Object convertAnythingIteratableToIterator(Object o)
     {
         Iterator<?> iter = null;
         if (o == null)
@@ -1452,9 +1438,9 @@ abstract class AbstractInterpreter implements Interpreter
         return iter;
     }
 
-    public Iterator<?> convertAnythingToIterator(InstanceScope scope, Object o)
+    public Iterator<?> convertAnythingToIterator(Object o)
     {
-        o = convertAnythingIteratableToIterator(scope, o);
+        o = convertAnythingIteratableToIterator(o);
         if (o instanceof Iterator)
         {
             return (Iterator<?>) o;
@@ -1494,7 +1480,7 @@ abstract class AbstractInterpreter implements Interpreter
         return true; // any other non-null object, return true--it's present
     }
 
-    protected Object getObjectProperty(STWriter out, InstanceScope scope, Object o, Object property)
+    protected Object getObjectProperty(Job job, InstanceScope scope, Object o, Object property)
     {
         if (o == null)
         {
@@ -1504,9 +1490,8 @@ abstract class AbstractInterpreter implements Interpreter
 
         try
         {
-            final ST self = scope.st;
-            ModelAdaptor adap = self.groupThatCreatedThisInstance.getModelAdaptor(o.getClass());
-            return adap.getProperty(o, property, toString(out, scope, property));
+            ModelAdaptor adap = scope.st.groupThatCreatedThisInstance.getModelAdaptor(o.getClass());
+            return adap.getProperty(o, property, toString(job, scope, property));
         }
         catch (NoSuchPropertyException e)
         {
@@ -1532,20 +1517,19 @@ abstract class AbstractInterpreter implements Interpreter
         {
             ST p = current.st;
             FormalArgument localArg = null;
-            if (p.impl.formalArguments != null)
+            if (p.getImpl().formalArguments != null)
             {
-                localArg = p.impl.formalArguments.get(name);
+                localArg = p.getImpl().formalArguments.get(name);
             }
             if (localArg != null)
             {
-                Object o = p.locals[localArg.index];
-                return o;
+                return p.locals[localArg.index];
             }
             current = current.parent; // look up enclosing scope chain
         }
         // got to root scope and no definition, try dictionaries in group and up
         final ST self = scope.st;
-        STGroup g = self.impl.nativeGroup;
+        STGroup g = self.getImpl().nativeGroup;
         Object o = getDictionary(g, name);
         if (o != null)
         {
@@ -1562,15 +1546,12 @@ abstract class AbstractInterpreter implements Interpreter
         {
             return g.rawGetDictionary(name);
         }
-        if (g.imports != null)
+        for (STGroup sup : g.imports)
         {
-            for (STGroup sup : g.imports)
+            Object o = getDictionary(sup, name);
+            if (o != null)
             {
-                Object o = getDictionary(sup, name);
-                if (o != null)
-                {
-                    return o;
-                }
+                return o;
             }
         }
         return null;
@@ -1583,14 +1564,14 @@ abstract class AbstractInterpreter implements Interpreter
      * The evaluation context is the {@code invokedST} template itself so template default arguments can see other
      * arguments.</p>
      */
-    public void setDefaultArguments(STWriter out, InstanceScope scope)
+    public void setDefaultArguments(Job job, InstanceScope scope)
     {
         final ST invokedST = scope.st;
-        if (invokedST.impl.formalArguments == null || invokedST.impl.numberOfArgsWithDefaultValues == 0)
+        if (invokedST.getImpl().formalArguments == null || invokedST.getImpl().numberOfArgsWithDefaultValues == 0)
         {
             return;
         }
-        for (FormalArgument arg : invokedST.impl.formalArguments.values())
+        for (FormalArgument arg : invokedST.getImpl().formalArguments.values())
         {
             // if no value for attribute and default arg, inject default arg into self
             if (invokedST.locals[arg.index] != ST.EMPTY_ATTR || arg.defaultValueToken == null)
@@ -1616,7 +1597,7 @@ abstract class AbstractInterpreter implements Interpreter
                 {
 
                     invokedST.rawSetAttribute(arg.name,
-                        toString(out, new InstanceScope(scope, invokedST), defaultArgST));
+                        toString(job, new InstanceScope(scope, invokedST), defaultArgST));
                 }
                 else
                 {
@@ -1630,98 +1611,66 @@ abstract class AbstractInterpreter implements Interpreter
         }
     }
 
-    protected void trace(InstanceScope scope, int ip)
+    protected void trace(Job job, InstanceScope scope, int ip)
     {
-        final ST self = scope.st;
-        StringBuilder tr = new StringBuilder();
-        BytecodeDisassembler dis = new BytecodeDisassembler(self.impl);
-        StringBuilder buf = new StringBuilder();
-        dis.disassembleInstruction(buf, ip);
-        String name = self.impl.name + ":";
-        if (Misc.referenceEquals(self.impl.name, ST.UNKNOWN_NAME))
-        {
-            name = "";
-        }
-        tr.append(String.format("%-40s", name + buf));
-        tr.append("\tstack=[");
-        for (int i = 0; i <= sp; i++)
-        {
-            Object o = operands[i];
-            printForTrace(tr, scope, o);
-        }
-        tr.append(" ], calls=");
-        tr.append(scope.toLocation()
-            .getCallHierarchy());
-        tr.append(", sp=" + sp + ", nw=" + nwline);
-        String s = tr.toString();
-        if (debug)
-        {
-            executeTrace.add(s);
-        }
-        log.debug("{}", s);
+        fireEvent(job,
+            () -> TraceEvent.builder()
+                .statement(getTraceStatement(scope, ip))
+                .stack(getTraceStack(operandsList, stackPointer))
+                .location(scope.toLocation())
+                .stackPointer(stackPointer)
+                .currentLineCharacters(currentLineCharacters)
+                .build(),
+            ListenerInvoker.TRACE);
     }
 
-    protected void printForTrace(StringBuilder tr, InstanceScope scope, Object o)
+    private static Statement getTraceStatement(InstanceScope scope, int ip)
+    {
+        return scope.st.getImpl()
+            .createStatement(ip);
+    }
+
+    private List<String> getTraceStack(List<Object> operandsList, int stackPointer)
+    {
+        return operandsList.stream()
+            .limit(stackPointer + 1)
+            .map(this::getTraceStackElement)
+            .collect(Collectors.toList());
+    }
+
+    protected String getTraceStackElement(Object o)
     {
         if (o instanceof ST)
         {
-            if (((ST) o).impl == null)
+            if (((ST) o).getImpl() == null)
             {
-                tr.append("bad-template()");
+                return "bad-template()";
             }
             else
             {
-                tr.append(" " + ((ST) o).impl.name + "()");
+                return String.format("%s()", ((ST) o).getImpl().name);
             }
-            return;
         }
-        o = convertAnythingIteratableToIterator(scope, o);
+        o = convertAnythingIteratableToIterator(o);
         if (o instanceof Iterator)
         {
             Iterator<?> it = (Iterator<?>) o;
-            tr.append(" [");
-            while (it.hasNext())
-            {
-                Object iterValue = it.next();
-                printForTrace(tr, scope, iterValue);
-            }
-            tr.append(" ]");
+            return Streams.stream(it)
+                .map(this::getTraceStackElement)
+                .collect(Collectors.joining(" ", "[", "]"));
         }
         else
         {
-            tr.append(" " + o);
+            return String.valueOf(o);
         }
     }
 
-    @Override
-    public List<InterpEvent> getEvents()
+    public <D extends Distributable<E>, E extends Event & Event.DistributionTarget> void fireEvent(
+        Job job, Supplier<D> eventSupplier, ListenerInvoker<E, D> invoker)
     {
-        return events;
-    }
-
-    /**
-     * For every event, we track in overall {@link #events} list and in {@code self}'s {@link InstanceScope#events} list
-     * so that each template has a list of events used to create it. If {@code e} is an {@link EvalTemplateEvent}, store
-     * in parent's {@link InstanceScope#childEvalTemplateEvents} list.
-     */
-    protected void trackDebugEvent(InstanceScope scope, InterpEvent e)
-    {
-        this.events.add(e);
-        scope.events.add(e);
-        if (e instanceof EvalTemplateEvent)
-        {
-            InstanceScope parent = scope.parent;
-            if (parent != null)
-            {
-                scope.parent.childEvalTemplateEvents.add((EvalTemplateEvent) e);
-            }
-        }
-    }
-
-    @Override
-    public List<String> getExecutionTrace()
-    {
-        return executeTrace;
+        // TODO check what events we should have, and what their interfaces can expose
+        job.getEventDistributor()
+            .distribute(eventSupplier, invoker);
     }
 
     public static int getShort(byte[] memory, int index)
@@ -1729,13 +1678,5 @@ abstract class AbstractInterpreter implements Interpreter
         int b1 = memory[index] & 0xFF; // mask off sign-extended bits
         int b2 = memory[index + 1] & 0xFF;
         return b1 << (8 * 1) | b2;
-    }
-
-    protected static class ObjectList extends ArrayList<Object>
-    {
-    }
-
-    protected static class ArgumentsMap extends HashMap<String, Object>
-    {
     }
 }
