@@ -10,6 +10,9 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.puretemplate.error.RuntimeMessage;
 import org.puretemplate.exception.NoSuchPropertyException;
 import org.puretemplate.misc.ErrorBufferAllErrors;
@@ -17,7 +20,7 @@ import org.puretemplate.misc.ErrorBufferAllErrors;
 import com.google.common.collect.ImmutableMap;
 
 @Slf4j
-class TestCoreBasics extends BaseTest
+class TestCoreBasics2 extends BaseTest
 {
     @Test
     void testNullAttr()
@@ -206,7 +209,7 @@ class TestCoreBasics extends BaseTest
     {
         String template = "load <box()>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "kewl" + NEWLINE + "daddy");
+        st.getImpl().nativeGroup.defineTemplate("box", "kewl" + NEWLINE + "daddy");
         assertRenderingResult("load kewl" + NEWLINE + "daddy;", st);
     }
 
@@ -215,8 +218,8 @@ class TestCoreBasics extends BaseTest
     {
         String template = "load <box(\"arg\")>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
-        st.impl.dump(log::info);
+        st.getImpl().nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
+        dump(log, st.getImpl());
         st.add("name", "Ter");
         assertRenderingResult("load kewl arg daddy;", st);
     }
@@ -226,8 +229,8 @@ class TestCoreBasics extends BaseTest
     {
         String template = "load <box({})>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
-        st.impl.dump(log::info);
+        st.getImpl().nativeGroup.defineTemplate("box", "x", "kewl <x> daddy");
+        dump(log, st.getImpl());
         st.add("name", "Ter");
         assertRenderingResult("load kewl  daddy;", st);
     }
@@ -237,8 +240,8 @@ class TestCoreBasics extends BaseTest
     {
         String template = "load <box(\"arg\", foo())>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "x,y", "kewl <x> <y> daddy");
-        st.impl.nativeGroup.defineTemplate("foo", "blech");
+        st.getImpl().nativeGroup.defineTemplate("box", "x,y", "kewl <x> <y> daddy");
+        st.getImpl().nativeGroup.defineTemplate("foo", "blech");
         st.add("name", "Ter");
         assertRenderingResult("load kewl arg blech daddy;", st);
     }
@@ -248,73 +251,10 @@ class TestCoreBasics extends BaseTest
     {
         String template = "load <box(foo(\"arg\"))>;";
         ST st = new ST(template);
-        st.impl.nativeGroup.defineTemplate("box", "y", "kewl <y> daddy");
-        st.impl.nativeGroup.defineTemplate("foo", "x", "blech <x>");
+        st.getImpl().nativeGroup.defineTemplate("box", "y", "kewl <y> daddy");
+        st.getImpl().nativeGroup.defineTemplate("foo", "x", "blech <x>");
         st.add("name", "Ter");
         assertRenderingResult("load kewl blech arg daddy;", st);
-    }
-
-    @Test
-    void testPassThru()
-    {
-        Context context = loader.getGroup()
-            .fromString("a(x,y) ::= \"<b(...)>\"\n" + "b(x,y) ::= \"<x><y>\"\n")
-            .build()
-            .getTemplate("a")
-            .createContext()
-            .add("x", "x")
-            .add("y", "y");
-        assertRenderingResult("xy", context);
-    }
-
-    @Test
-    void testPassThruWithDefaultValue()
-    {
-        Context context = loader.getGroup()
-            .fromString("a(x,y) ::= \"<b(...)>\"\nb(x,y={99}) ::= \"<x><y>\"\n") // 'a' should not set y when it sees "no value" from above
-            .build()
-            .getTemplate("a")
-            .createContext()
-            .add("x", "x");
-        assertRenderingResult("x99", context);
-    }
-
-    @Test
-    void testPassThruWithDefaultValueThatLacksDefinitionAbove()
-    {
-        Context context = loader.getGroup()
-            .fromString("a(x) ::= \"<b(...)>\"\nb(x,y={99}) ::= \"<x><y>\"\n") // 'a' should not set y when it sees "no definition" from above
-            .build()
-            .getTemplate("a")
-            .createContext()
-            .add("x", "x");
-        assertRenderingResult("x99", context);
-    }
-
-    @Test
-    void testPassThruPartialArgs()
-    {
-        Context context = loader.getGroup()
-            .fromString("a(x,y) ::= \"<b(y={99},...)>\"\n" + "b(x,y) ::= \"<x><y>\"\n")
-            .build()
-            .getTemplate("a")
-            .createContext()
-            .add("x", "x")
-            .add("y", "y");
-        assertRenderingResult("x99", context);
-    }
-
-    @Test
-    void testPassThruNoMissingArgs()
-    {
-        Context context = loader.getGroup()
-            .fromString("a(x,y) ::= \"<b(y={99},x={1},...)>\"\n" + "b(x,y) ::= \"<x><y>\"\n")
-            .build()
-            .getTemplate("a")
-            .createContext()
-            .add("x", "x")
-            .add("y", "y");
-        assertRenderingResult("199", context);
     }
 
     @Test
@@ -355,22 +295,6 @@ class TestCoreBasics extends BaseTest
         st.add("name", "Tom");
         st.add("name", "Sumana");
         assertRenderingResult("[Ter][Tom][Sumana]!", st);
-    }
-
-    @Test
-    void testMapWithExprAsTemplateName()
-    {
-        String templates = "d ::= [\"foo\":\"bold\"]\n" +
-            "test(name) ::= \"<name:(d.foo)()>\"\n" +
-            "bold(x) ::= <<*<x>*>>\n";
-
-        Context context = loadGroupFromString(templates).getTemplate("test")
-            .createContext()
-            .add("name", "Ter")
-            .add("name", "Tom")
-            .add("name", "Sumana");
-
-        assertRenderingResult("*Ter**Tom**Sumana*", context);
     }
 
     @Test
@@ -493,228 +417,40 @@ class TestCoreBasics extends BaseTest
         assertRenderingResult("Ter, Tom, Sumana", st);
     }
 
-    @Test
-    void testRepeatedMap() throws IOException
+    static Arguments[] mapTestData()
+    {
+        return new Arguments[]{
+            args("RepeatedMap", "hi <name:a():b()>!", "Tom", "hi ([Ter])([Tom])([Sumana])!"),
+            args("RepeatedMapWithNullValue", "hi <name:a():b()>!", null, "hi ([Ter])([Sumana])!"),
+            args("RepeatedMapWithNullValueAndNullOption",
+                "hi <name:a():b(); null={x}>!",
+                null,
+                "hi ([Ter])x([Sumana])!"),
+            args("RoundRobinMap", "hi <name:a(),b()>!", "Tom", "hi [Ter](Tom)[Sumana]!")
+        };
+    }
+
+    @ParameterizedTest(name = "[{index}] {0}")
+    @MethodSource("mapTestData")
+    void testMap(
+        @SuppressWarnings("unused") String testName,
+        String templateSource,
+        String middleAttributeValue,
+        String expectedResult) throws IOException
     {
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("a", "x", "[<x>]");
         group.defineTemplate("b", "x", "(<x>)");
-        group.defineTemplate("test", "name", "hi <name:a():b()>!");
+        group.defineTemplate("test", "name", templateSource);
         ST st = group.getInstanceOf("test");
         st.add("name", "Ter");
-        st.add("name", "Tom");
+        st.add("name", middleAttributeValue);
         st.add("name", "Sumana");
-        assertRenderingResult("hi ([Ter])([Tom])([Sumana])!", st);
+        assertRenderingResult(expectedResult, st);
     }
 
     @Test
-    void testRepeatedMapWithNullValue() throws IOException
-    {
-        STGroup group = new LegacyBareStGroup();
-        group.defineTemplate("a", "x", "[<x>]");
-        group.defineTemplate("b", "x", "(<x>)");
-        group.defineTemplate("test", "name", "hi <name:a():b()>!");
-        ST st = group.getInstanceOf("test");
-        st.add("name", "Ter");
-        st.add("name", null);
-        st.add("name", "Sumana");
-        assertRenderingResult("hi ([Ter])([Sumana])!", st);
-    }
-
-    @Test
-    void testRepeatedMapWithNullValueAndNullOption() throws IOException
-    {
-        STGroup group = new LegacyBareStGroup();
-        group.defineTemplate("a", "x", "[<x>]");
-        group.defineTemplate("b", "x", "(<x>)");
-        group.defineTemplate("test", "name", "hi <name:a():b(); null={x}>!");
-        ST st = group.getInstanceOf("test");
-        st.add("name", "Ter");
-        st.add("name", null);
-        st.add("name", "Sumana");
-        assertRenderingResult("hi ([Ter])x([Sumana])!", st);
-    }
-
-    @Test
-    void testRoundRobinMap() throws IOException
-    {
-        STGroup group = new LegacyBareStGroup();
-        group.defineTemplate("a", "x", "[<x>]");
-        group.defineTemplate("b", "x", "(<x>)");
-        group.defineTemplate("test", "name", "hi <name:a(),b()>!");
-        ST st = group.getInstanceOf("test");
-        st.add("name", "Ter");
-        st.add("name", "Tom");
-        st.add("name", "Sumana");
-        assertRenderingResult("hi [Ter](Tom)[Sumana]!", st);
-    }
-
-    @Test
-    void testTrueCond()
-    {
-        Context context = makeTemplateContext("<if(name)>works<endif>").add("name", "Ter");
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testEmptyIFTemplate()
-    {
-        Context context = makeTemplateContext("<if(x)>fail<elseif(name)><endif>").add("name", "Ter");
-        assertRenderingResult("", context);
-    }
-
-    @Test
-    void testCondParens()
-    {
-        assertNoArgRenderingResult("works", "<if(!(x||y)&&!z)>works<endif>");
-    }
-
-    @Test
-    void testFalseCond()
-    {
-        assertNoArgRenderingResult("", "<if(name)>works<endif>");
-    }
-
-    @Test
-    void testFalseCond2()
-    {
-        Context context = makeTemplateContext("<if(name)>works<endif>").add("name", null);
-        assertRenderingResult("", context);
-    }
-
-    @Test
-    void testFalseCondWithFormalArgs() throws IOException
-    {
-        // insert of indent instr was not working; ok now
-        String dir = getRandomDir();
-        String groupFile = "a(scope) ::= <<" +
-            NEWLINE +
-            "foo" +
-            NEWLINE +
-            "    <if(scope)>oops<endif>" +
-            NEWLINE +
-            "bar" +
-            NEWLINE +
-            ">>";
-        writeFile(dir, "group.stg", groupFile);
-        STGroup group = STGroupFilePath.createWithDefaults(dir + "/group.stg");
-        ST st = group.getInstanceOf("a");
-        st.impl.dump(log::info);
-        assertRenderingResult("foo" + NEWLINE + "bar", st);
-    }
-
-    @Test
-    void testElseIf2()
-    {
-        Context context = makeTemplateContext("<if(x)>fail1<elseif(y)>fail2<elseif(z)>works<else>fail3<endif>").add("z",
-            "blort");
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testElseIf3()
-    {
-        Context context = makeTemplateContext("<if(x)><elseif(y)><elseif(z)>works<else><endif>").add("z", "blort");
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testNotTrueCond()
-    {
-        Context context = makeTemplateContext("<if(!name)>works<endif>").add("name", "Ter");
-        assertRenderingResult("", context);
-    }
-
-    @Test
-    void testNotFalseCond()
-    {
-        assertNoArgRenderingResult("works", "<if(!name)>works<endif>");
-    }
-
-    @Test
-    void testParensInConditonal()
-    {
-        Context context = makeTemplateContext("<if((a||b)&&(c||d))>works<endif>").add("a", true)
-            .add("b", true)
-            .add("c", true)
-            .add("d", true);
-
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testParensInConditonal2()
-    {
-        Context context = makeTemplateContext("<if((!a||b)&&!(c||d))>broken<else>works<endif>").add("a", true)
-            .add("b", true)
-            .add("c", true)
-            .add("d", true);
-
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testTrueCondWithElse()
-    {
-        Context context = makeTemplateContext("<if(name)>works<else>fail<endif>").add("name", "Ter");
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testFalseCondWithElse()
-    {
-        assertNoArgRenderingResult("works", "<if(name)>fail<else>works<endif>");
-    }
-
-    @Test
-    void testElseIf()
-    {
-        Context context = makeTemplateContext("<if(name)>fail<elseif(id)>works<else>fail<endif>").add("id", "2DF3DF");
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testElseIfNoElseAllFalse()
-    {
-        assertNoArgRenderingResult("", "<if(name)>fail<elseif(id)>fail<endif>");
-    }
-
-    @Test
-    void testElseIfAllExprFalse()
-    {
-        assertNoArgRenderingResult("works", "<if(name)>fail<elseif(id)>fail<else>works<endif>");
-    }
-
-    @Test
-    void testOr()
-    {
-        Context context = makeTemplateContext("<if(name||notThere)>works<else>fail<endif>").add("name", "Ter");
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testMapConditionAndEscapeInside()
-    {
-        Context context = makeTemplateContext("<if(m.name)>works \\\\<endif>").add("m", Map.of("name", "Ter"));
-        assertRenderingResult("works \\", context);
-    }
-
-    @Test
-    void testAnd()
-    {
-        Context context = makeTemplateContext("<if(name&&notThere)>fail<else>works<endif>").add("name", "Ter");
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testAndNot()
-    {
-        Context context = makeTemplateContext("<if(name&&!notThere)>works<else>fail<endif>").add("name", "Ter");
-        assertRenderingResult("works", context);
-    }
-
-    @Test
-    void testCharLiterals() throws IOException
+    void testCharLiterals()
     {
         ST st = new ST("Foo <\\n><\\n><\\t> bar\n");
         StringWriter sw = new StringWriter();
@@ -736,24 +472,6 @@ class TestCoreBasics extends BaseTest
         result = sw.toString();
         expecting = "Foo bar\n"; // forced \n
         assertEquals(expecting, result);
-    }
-
-    @Test
-    void testUnicodeLiterals()
-    {
-        assertNoArgRenderingResult("Foo \ufea5" + NEWLINE + "\u00C2 bar" + NEWLINE,
-            "Foo <\\uFEA5><\\n><\\u00C2> bar\n");
-
-        assertNoArgRenderingResult("Foo \ufea5" + NEWLINE + "\u00C2 bar" + NEWLINE,
-            "Foo <\\uFEA5><\\n><\\u00C2> bar" + NEWLINE);
-
-        assertNoArgRenderingResult("Foo bar" + NEWLINE, "Foo<\\ >bar<\\n>");
-    }
-
-    @Test
-    void testSubtemplateExpr()
-    {
-        assertNoArgRenderingResult("name" + NEWLINE, "<{name\n}>");
     }
 
     @Test
@@ -850,7 +568,7 @@ class TestCoreBasics extends BaseTest
     }
 
     @Test
-    void testEarlyEvalNoIndent() throws IOException
+    void testEarlyEvalNoIndent()
     {
         String templates = "t() ::= <<  abc>>\n" + "main() ::= <<\n" + "<t()>\n" + "<(t())>\n" +
             // early eval ignores indents; mostly for simply strings
@@ -865,59 +583,6 @@ class TestCoreBasics extends BaseTest
         String result = sw.toString();
         String expected = "abc" + NEWLINE + "abc" + NEWLINE + "abc" + NEWLINE + "abc";
         assertEquals(expected, result);
-    }
-
-    @Test
-    void testArrayOfTemplates()
-    {
-        Context context = makeTemplateContext("<foo>!");
-        Context[] foo = new Context[]{ makeTemplateContext("hi"), makeTemplateContext("mom") };
-        context.add("foo", foo);
-
-        assertRenderingResult("himom!", context);
-    }
-
-    @Test
-    void testArrayOfTemplatesInTemplate()
-    {
-        Context context = makeTemplateContext("<foo>!");
-
-        Context[] foo = new Context[]{ makeTemplateContext("hi"), makeTemplateContext("mom") };
-        context.add("foo", foo);
-
-        Context wrapper = makeTemplateContext("<x>").add("x", context);
-        assertRenderingResult("himom!", wrapper);
-    }
-
-    @Test
-    void testListOfTemplates()
-    {
-        Context context = makeTemplateContext("<foo>!");
-
-        List<Context> foo = List.of(makeTemplateContext("hi"), makeTemplateContext("mom"));
-        context.add("foo", foo);
-
-        assertRenderingResult("himom!", context);
-    }
-
-    @Test
-    void testListOfTemplatesInTemplate()
-    {
-        Context context = makeTemplateContext("<foo>!");
-
-        List<Context> foo = List.of(makeTemplateContext("hi"), makeTemplateContext("mom"));
-        context.add("foo", foo);
-
-        Context wrapper = makeTemplateContext("<x>").add("x", context);
-        assertRenderingResult("himom!", wrapper);
-    }
-
-    @Test
-    void playing()
-    {
-        String template = "<a:t(x,y),u()>";
-        ST st = new ST(template);
-        st.impl.dump(log::info);
     }
 
     @Test

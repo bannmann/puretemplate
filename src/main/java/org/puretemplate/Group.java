@@ -4,6 +4,7 @@ import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.apiguardian.api.API;
+import org.puretemplate.diagnostics.GroupDiagnostics;
 
 /**
  * Provides shared configuration to templates and a way for them to resolve references to other templates.
@@ -31,4 +32,10 @@ public interface Group
      * @throws NullPointerException if name is {@code null}
      */
     Template getTemplate(String name);
+
+    /**
+     * Retrieves low-level diagnostics data.
+     */
+    @API(status = API.Status.EXPERIMENTAL)
+    GroupDiagnostics diagnostics();
 }

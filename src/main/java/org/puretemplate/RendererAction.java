@@ -25,7 +25,7 @@ class RendererAction implements IRendererAction
     private final @NonNull Locale locale;
     private final ErrorListener errorListener;
 
-    private int lineWidth = STWriter.NO_WRAP;
+    private int lineWidth = TemplateWriter.NO_WRAP;
 
     /**
      * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
@@ -83,9 +83,9 @@ class RendererAction implements IRendererAction
     @Override
     public int intoWriter(@NonNull Writer writer)
     {
-        STWriter stWriter = new AutoIndentWriter(writer);
-        stWriter.setLineWidth(lineWidth);
-        return st.write(stWriter, locale, errorListener);
+        TemplateWriter templateWriter = new AutoIndentWriter(writer);
+        templateWriter.setLineWidth(lineWidth);
+        return st.write(templateWriter, locale, errorListener);
     }
 
     /**

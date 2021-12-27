@@ -30,7 +30,7 @@ class TestOptions extends BaseTest
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; separator= \", \">!");
         ST st = group.getInstanceOf("test");
-        System.out.println(st.impl.ast.toStringTree());
+        System.out.println(st.getImpl().ast.toStringTree());
         st.add("name", "Ter");
         st.add("name", "Tom");
         st.add("name", "Sumana");
@@ -95,7 +95,7 @@ class TestOptions extends BaseTest
         STGroup group = new LegacyBareStGroup();
         group.defineTemplate("test", "name", "hi <name; null=\"n/a\", separator=\", \">!");
         ST st = group.getInstanceOf("test");
-        st.impl.dump(log::info);
+        dump(log, st.getImpl());
         st.add("name", "Ter");
         st.add("name", null);
         st.add("name", "Sumana");

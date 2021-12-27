@@ -19,4 +19,10 @@ class NoIndentWriter extends AutoIndentWriter
         out.write(str);
         return str.length();
     }
+
+    @Override
+    public TemplateWriter createWriterTargeting(Writer target)
+    {
+        return new NoIndentWriter(target);
+    }
 }

@@ -1,6 +1,5 @@
 package org.puretemplate;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,11 +7,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
-import org.slf4j.Logger;
+import org.puretemplate.diagnostics.ConstantReference;
+import org.puretemplate.diagnostics.Instruction;
+import org.puretemplate.diagnostics.Operand;
+import org.puretemplate.diagnostics.OperandType;
+import org.puretemplate.diagnostics.Statement;
+
+import com.github.mizool.core.exception.CodeInconsistencyException;
+import com.google.common.collect.ImmutableList;
 
 /**
  * The result of compiling an {@link ST}.  Contains all the bytecode instructions, string table, bytecode address to
@@ -102,7 +109,7 @@ class CompiledST implements Cloneable
 
     /**
      * byte-addressable code memory. For efficiency, this stores opcodes instead of references to the {@link
-     * Bytecode.Instruction} enum.
+     * Instruction} enum.
      */
     byte[] instrs;
 
@@ -136,7 +143,7 @@ class CompiledST implements Cloneable
         if (formalArguments != null)
         {
             // FIXME should assign to clone.formalArguments, not our own!
-            formalArguments = Collections.synchronizedMap(new LinkedHashMap<String, FormalArgument>(formalArguments));
+            formalArguments = Collections.synchronizedMap(new LinkedHashMap<>(formalArguments));
         }
 
         return clone;
@@ -225,7 +232,7 @@ class CompiledST implements Cloneable
     {
         if (formalArguments == null)
         {
-            formalArguments = Collections.synchronizedMap(new LinkedHashMap<String, FormalArgument>());
+            formalArguments = Collections.synchronizedMap(new LinkedHashMap<>());
         }
         else if (formalArguments.containsKey(a.name))
         {
@@ -248,55 +255,145 @@ class CompiledST implements Cloneable
         }
     }
 
-    public String getTemplateSource()
-    {
-        Interval r = getTemplateRange();
-        return template.substring(r.getA(), r.getB() + 1);
-    }
-
-    public Interval getTemplateRange()
-    {
-        if (isAnonSubtemplate)
-        {
-            int start = Integer.MAX_VALUE;
-            int stop = Integer.MIN_VALUE;
-            for (Interval interval : sourceMap)
-            {
-                if (interval == null)
-                {
-                    continue;
-                }
-
-                start = Math.min(start, interval.getA());
-                stop = Math.max(stop, interval.getB());
-            }
-
-            if (start <= stop + 1)
-            {
-                return new Interval(start, stop);
-            }
-        }
-        return new Interval(0, template.length() - 1);
-    }
-
-    public String instrs()
-    {
-        BytecodeDisassembler dis = new BytecodeDisassembler(this);
-        return dis.instrs();
-    }
-
     public void dump(Consumer<String> printer)
     {
-        BytecodeDisassembler dis = new BytecodeDisassembler(this);
         printer.accept(name + ":");
-        printer.accept(dis.disassemble());
+        printer.accept(formatStatements());
         printer.accept("Strings:");
-        printer.accept(dis.strings());
+        printer.accept(formatStrings());
         printer.accept("Bytecode to template map:");
-        printer.accept(dis.sourceMap());
+        printer.accept(formatSourceMap());
     }
 
-    public String getDumpOutput()
+    private String formatStatements()
+    {
+        StringBuilder buf = new StringBuilder();
+        for (Statement statement : getStatements())
+        {
+            statement.appendTo(buf, Statement.Format.PRETTY);
+            buf.append('\n');
+        }
+        return buf.toString();
+    }
+
+    public List<Statement> getStatements()
+    {
+        ImmutableList.Builder<Statement> result = ImmutableList.builder();
+        int instructionPointer = 0;
+        while (instructionPointer < codeSize)
+        {
+            Statement statement = createStatement(instructionPointer);
+            result.add(statement);
+            instructionPointer += statement.getSize();
+        }
+        return result.build();
+    }
+
+    public Statement createStatement(int instructionPointer)
+    {
+        if (instructionPointer >= codeSize)
+        {
+            throw new IllegalArgumentException("instructionPointer out of range: " + instructionPointer);
+        }
+        int startingInstructionPointer = instructionPointer;
+
+        int opcode = instrs[instructionPointer];
+        Instruction instruction = Bytecode.INSTRUCTIONS[opcode];
+        if (instruction == null)
+        {
+            throw new IllegalArgumentException("no such instruction " + opcode + " at address " + instructionPointer);
+        }
+        instructionPointer++;
+
+        ImmutableList.Builder<Operand> operands = ImmutableList.builder();
+        for (OperandType operandType : instruction.operandTypes)
+        {
+            int opnd = Misc.getShort(instrs, instructionPointer);
+            instructionPointer += Bytecode.OPND_SIZE_IN_BYTES;
+            switch (operandType)
+            {
+                case STRING:
+                    operands.add(OperandImpl.builder()
+                        .type(OperandType.STRING)
+                        .numericValue(opnd)
+                        .stringConstant(getPoolString(opnd))
+                        .build());
+                    break;
+                case ADDR:
+                case INT:
+                    operands.add(OperandImpl.builder()
+                        .type(operandType)
+                        .numericValue(opnd)
+                        .build());
+                    break;
+                default:
+                    throw new CodeInconsistencyException("unsupported operand type " + operandType);
+            }
+        }
+
+        return StatementImpl.builder()
+            .address(startingInstructionPointer)
+            .instruction(instruction)
+            .operands(operands.build())
+            .size(instructionPointer - startingInstructionPointer)
+            .build();
+    }
+
+    private ConstantReference getPoolString(int poolIndex)
+    {
+        if (poolIndex > strings.length)
+        {
+            return ConstantReferenceImpl.builder()
+                .valid(false)
+                .build();
+        }
+
+        return ConstantReferenceImpl.builder()
+            .valid(true)
+            .value(strings[poolIndex])
+            .build();
+    }
+
+    private String formatStrings()
+    {
+        StringBuilder buf = new StringBuilder();
+        int addr = 0;
+        if (strings != null)
+        {
+            for (String s : strings)
+            {
+                if (s != null)
+                {
+                    s = Misc.replaceEscapes(s);
+                    buf.append(String.format("%04d: \"%s\"\n", addr, s));
+                }
+                else
+                {
+                    buf.append(String.format("%04d: null\n", addr));
+                }
+                addr++;
+            }
+        }
+        return buf.toString();
+    }
+
+    private String formatSourceMap()
+    {
+        StringBuilder buf = new StringBuilder();
+        int addr = 0;
+        for (Interval I : sourceMap)
+        {
+            if (I != null)
+            {
+                String chunk = template.substring(I.getA(), I.getB() + 1);
+                buf.append(String.format("%04d: %s\t\"%s\"\n", addr, I, chunk));
+            }
+            addr++;
+        }
+        return buf.toString();
+    }
+
+    public String getDump()
     {
         try (StringBuilderWriter result = new StringBuilderWriter();
              PrintWriter printWriter = new PrintWriter(result))
@@ -304,5 +401,12 @@ class CompiledST implements Cloneable
             dump(printWriter::println);
             return result.toString();
         }
+    }
+
+    public String getStatementsAsString()
+    {
+        return getStatements().stream()
+            .map(statement -> statement.toString(Statement.Format.MINIMAL))
+            .collect(Collectors.joining(", "));
     }
 }

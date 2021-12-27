@@ -11,13 +11,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.NonNull;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.provider.Arguments;
+import org.puretemplate.diagnostics.TemplateDiagnostics;
 import org.puretemplate.error.ErrorListener;
 import org.puretemplate.misc.ErrorBuffer;
+import org.slf4j.Logger;
 
 public abstract class BaseTest
 {
@@ -26,6 +28,14 @@ public abstract class BaseTest
     protected String tmpdir = null;
 
     protected Loader loader;
+
+    /**
+     * Shorthand so we can write {@code args()} instead of {@code of()} or {@code Arguments.of()}.
+     */
+    protected static Arguments args(Object... arguments)
+    {
+        return Arguments.of(arguments);
+    }
 
     protected <T extends Exception> void assertThrowsExceptionOfType(Runnable invocation, Class<T> exceptionType)
     {
@@ -67,7 +77,6 @@ public abstract class BaseTest
     {
         loader = new Loader();
         STGroup.defaultGroup = new LegacyBareStGroup();
-        Compiler.subtemplateCount = new AtomicInteger(0);
 
         String baseTestDirectory = System.getProperty("java.io.tmpdir");
         String testDirectory = getClass().getSimpleName() + "-" + System.currentTimeMillis();
@@ -181,9 +190,9 @@ public abstract class BaseTest
     protected void assertRenderingResult(String expecting, ST st) throws IOException
     {
         StringWriter stringWriter = new StringWriter();
-        STWriter stWriter = new AutoIndentWriter(stringWriter);
-        stWriter.setLineWidth(STWriter.NO_WRAP);
-        st.write(stWriter);
+        TemplateWriter templateWriter = new AutoIndentWriter(stringWriter);
+        templateWriter.setLineWidth(TemplateWriter.NO_WRAP);
+        st.write(templateWriter);
         String result = stringWriter.toString();
         assertEquals(expecting, result);
     }
@@ -212,6 +221,20 @@ public abstract class BaseTest
             .createContext();
     }
 
+    protected Template loadTemplateFromStringUsingBlankGroup(String template, ErrorListener errors)
+    {
+        // At some point, loader.getTemplate() will support withErrorListener() as well. Until then, use a blank group.
+        Group group = loader.getGroup()
+            .blank()
+            .withErrorListener(errors)
+            .build();
+
+        return loader.getTemplate()
+            .fromString(template)
+            .attachedToGroup(group)
+            .build();
+    }
+
     protected ErrorBuffer getGroupLoadingErrors(String contents) throws IOException
     {
         ErrorBuffer errors = new ErrorBuffer();
@@ -221,8 +244,14 @@ public abstract class BaseTest
 
     protected Group loadGroupFromString(String contents)
     {
+        return loadGroupFromString(contents, null);
+    }
+
+    protected Group loadGroupFromString(String contents, ErrorListener errorListener)
+    {
         return loader.getGroup()
             .fromString(contents)
+            .withErrorListener(errorListener)
             .build();
     }
 
@@ -248,5 +277,25 @@ public abstract class BaseTest
             .createContext()
             .render()
             .intoString();
+    }
+
+    protected void dump(Logger logger, Template template)
+    {
+        dump(logger, template.diagnostics());
+    }
+
+    protected void dump(Logger logger, TemplateDiagnostics templateDiagnostics)
+    {
+        dump(logger, templateDiagnostics.getDump());
+    }
+
+    protected void dump(Logger logger, CompiledST compiledST)
+    {
+        dump(logger, compiledST.getDump());
+    }
+
+    private void dump(Logger logger, String dump)
+    {
+        logger.info("Dump:\n{}", dump);
     }
 }

@@ -63,16 +63,19 @@ options {
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.puretemplate;
-import org.puretemplate.misc.*;
-import org.puretemplate.error.*;
+import org.puretemplate.diagnostics.Instruction;
+import org.puretemplate.error.ErrorType;
+import java.util.concurrent.atomic.AtomicInteger;
 }
 
 @members {
-	String outermostTemplateName;	// name of overall template
-	CompiledST outermostImpl;
-	Token templateToken;			// overall template token
-	String template;  				// overall template text
-	ErrorManager errMgr;
+	private String outermostTemplateName;	// name of overall template
+	private CompiledST outermostImpl;
+	private Token templateToken;			// overall template token
+	private String template;  				// overall template text
+	private ErrorManager errMgr;
+	private AtomicInteger subtemplateCount = new AtomicInteger(0);
+
 	public CodeGenerator(TreeNodeStream input, ErrorManager errMgr, String name, String template, Token templateToken) {
 		this(input, new RecognizerSharedState());
 		this.errMgr = errMgr;
@@ -93,25 +96,31 @@ import org.puretemplate.error.*;
 		args.add(new FormalArgument(name));
 	}
 
+	private String getNewSubtemplateName()
+	{
+		int count = subtemplateCount.incrementAndGet();
+		return Compiler.SUBTEMPLATE_PREFIX + count;
+	}
+
 	// convience funcs to hide offensive sending of emit messages to
 	// CompilationState temp data object.
 
-	public void emit1(CommonTree opAST, Bytecode.Instruction instruction, int arg) {
+	public void emit1(CommonTree opAST, Instruction instruction, int arg) {
 		$template::state.emit1(opAST, instruction, arg);
 	}
-	public void emit1(CommonTree opAST, Bytecode.Instruction instruction, String arg) {
+	public void emit1(CommonTree opAST, Instruction instruction, String arg) {
 		$template::state.emit1(opAST, instruction, arg);
 	}
-	public void emit2(CommonTree opAST, Bytecode.Instruction instruction, int arg, int arg2) {
+	public void emit2(CommonTree opAST, Instruction instruction, int arg, int arg2) {
 		$template::state.emit2(opAST, instruction, arg, arg2);
 	}
-	public void emit2(CommonTree opAST, Bytecode.Instruction instruction, String s, int arg2) {
+	public void emit2(CommonTree opAST, Instruction instruction, String s, int arg2) {
 		$template::state.emit2(opAST, instruction, s, arg2);
 	}
-    public void emit(CommonTree opAST, Bytecode.Instruction instruction) {
+    public void emit(CommonTree opAST, Instruction instruction) {
 		$template::state.emit(opAST, instruction);
 	}
-	public void insert(int addr, Bytecode.Instruction instruction, String s) {
+	public void insert(int addr, Instruction instruction, String s) {
 		$template::state.insert(addr, instruction, s);
 	}
 	public void setOption(CommonTree id) {
@@ -170,7 +179,7 @@ chunk
 element
 	:	^(INDENTED_EXPR INDENT compoundElement[$INDENT]) // ignore indent in front of IF and region blocks
 	|	compoundElement[null]
-	|	^(INDENTED_EXPR INDENT {$template::state.indent($INDENT);} singleElement? {$template::state.emit(Bytecode.Instruction.DEDENT);})
+	|	^(INDENTED_EXPR INDENT {$template::state.indent($INDENT);} singleElement? {$template::state.emit(Instruction.DEDENT);})
 	|	singleElement
 	;
 
@@ -179,11 +188,11 @@ singleElement
 	|	TEXT
 		{
 		if ( $TEXT.text.length()>0 ) {
-			emit1($TEXT,Bytecode.Instruction.WRITE_STR, $TEXT.text);
+			emit1($TEXT,Instruction.WRITE_STR, $TEXT.text);
 		}
 		}
 
-	|	NEWLINE {emit($NEWLINE, Bytecode.Instruction.NEWLINE);}
+	|	NEWLINE {emit($NEWLINE, Instruction.NEWLINE);}
 	;
 
 compoundElement[CommonTree indent]
@@ -192,14 +201,14 @@ compoundElement[CommonTree indent]
 	;
 
 exprElement
-@init { Bytecode.Instruction op = Bytecode.Instruction.WRITE; }
-	:	^( EXPR expr (exprOptions {op=Bytecode.Instruction.WRITE_OPT;})? )
+@init { Instruction op = Instruction.WRITE; }
+	:	^( EXPR expr (exprOptions {op=Instruction.WRITE_OPT;})? )
 		{
 		/*
 		CompilationState state = $template::state;
 		CompiledST impl = state.impl;
-		if ( impl.instrs[state.ip-1] == Bytecode.Instruction.LOAD_LOCAL ) {
-			impl.instrs[state.ip-1] = Bytecode.Instruction.WRITE_LOCAL;
+		if ( impl.instrs[state.ip-1] == Instruction.LOAD_LOCAL ) {
+			impl.instrs[state.ip-1] = Instruction.WRITE_LOCAL;
 		}
 		else {
 			emit($EXPR, op);
@@ -214,7 +223,7 @@ region[CommonTree indent] returns [String name]
 	if ( indent!=null ) $template::state.indent(indent);
 }
 @after {
-	if ( indent!=null ) $template::state.emit(Bytecode.Instruction.DEDENT);
+	if ( indent!=null ) $template::state.emit(Instruction.DEDENT);
 }
 	:	^(	REGION ID
 			{$name = STGroup.getMangledRegionName(outermostTemplateName, $ID.text);}
@@ -226,15 +235,15 @@ region[CommonTree indent] returns [String name]
 	        sub.templateDefStartToken = $ID.token;
 			//sub.dump();
 			outermostImpl.addImplicitlyDefinedTemplate(sub);
-			emit2($start, Bytecode.Instruction.NEW, $region.name, 0);
-			emit($start, Bytecode.Instruction.WRITE);
+			emit2($start, Instruction.NEW, $region.name, 0);
+			emit($start, Instruction.WRITE);
 			}
 		 )
 	;
 
 subtemplate returns [String name, int nargs]
 @init {
-    $name = Compiler.getNewSubtemplateName();
+    $name = getNewSubtemplateName();
 	List<FormalArgument> args = new ArrayList<FormalArgument>();
 }
 	:	^(	SUBTEMPLATE
@@ -282,18 +291,18 @@ ifstat[CommonTree indent]
     if ( indent!=null ) $template::state.indent(indent);
 }
 @after {
-	if ( indent!=null ) $template::state.emit(Bytecode.Instruction.DEDENT);
+	if ( indent!=null ) $template::state.emit(Instruction.DEDENT);
 }
 	:	^(	i='if' conditional
 			{
 	        prevBranchOperand = address()+1;
-	        emit1($i,Bytecode.Instruction.BRF, -1); // write placeholder as branch target
+	        emit1($i,Instruction.BRF, -1); // write placeholder as branch target
 			}
 			chunk
 			(	^(eif='elseif'
 				{
 				endRefs.add(address()+1);
-				emit1($eif,Bytecode.Instruction.BR, -1); // br end
+				emit1($eif,Instruction.BR, -1); // br end
 				// update previous branch instruction
 				write(prevBranchOperand, (short)address());
 				prevBranchOperand = -1;
@@ -302,7 +311,7 @@ ifstat[CommonTree indent]
 				{
 		       	prevBranchOperand = address()+1;
 		       	// write placeholder as branch target
-		       	emit1($ec.start, Bytecode.Instruction.BRF, -1);
+		       	emit1($ec.start, Instruction.BRF, -1);
 				}
 				chunk
 				)
@@ -310,7 +319,7 @@ ifstat[CommonTree indent]
 			(	^(	el='else'
 					{
 					endRefs.add(address()+1);
-					emit1($el, Bytecode.Instruction.BR, -1); // br end
+					emit1($el, Instruction.BR, -1); // br end
 					// update previous branch instruction
 					write(prevBranchOperand, (short)address());
 					prevBranchOperand = -1;
@@ -328,42 +337,42 @@ ifstat[CommonTree indent]
 	;
 
 conditional
-	:	^(OR conditional conditional)		{emit($OR, Bytecode.Instruction.OR);}
-	|	^(AND conditional conditional)		{emit($AND, Bytecode.Instruction.AND);}
-	|	^(BANG conditional)					{emit($BANG, Bytecode.Instruction.NOT);}
+	:	^(OR conditional conditional)		{emit($OR, Instruction.OR);}
+	|	^(AND conditional conditional)		{emit($AND, Instruction.AND);}
+	|	^(BANG conditional)					{emit($BANG, Instruction.NOT);}
 	|	expr // not all expr are valid, but reuse code gen (parser restricts syntax)
 	;
 
-exprOptions : {emit($start, Bytecode.Instruction.OPTIONS);} ^(OPTIONS option*) ;
+exprOptions : {emit($start, Instruction.OPTIONS);} ^(OPTIONS option*) ;
 
 option : ^('=' ID expr) {setOption($ID);} ;
 
 expr
 @init {int nt = 0, ne = 0;}
 	:	^(ZIP ^(ELEMENTS (expr {ne++;})+) mapTemplateRef[ne])
-		{emit1($ZIP, Bytecode.Instruction.ZIP_MAP, ne);}
+		{emit1($ZIP, Instruction.ZIP_MAP, ne);}
 	|	^(MAP expr (mapTemplateRef[1] {nt++;})+)
 		{
-		if ( nt>1 ) emit1($MAP, nt>1?Bytecode.Instruction.ROT_MAP:Bytecode.Instruction.MAP, nt);
-		else emit($MAP, Bytecode.Instruction.MAP);
+		if ( nt>1 ) emit1($MAP, nt>1?Instruction.ROT_MAP:Instruction.MAP, nt);
+		else emit($MAP, Instruction.MAP);
 		}
 	|	prop
 	|	includeExpr
 	;
 
-prop:	^(PROP expr ID)						{emit1($PROP, Bytecode.Instruction.LOAD_PROP, $ID.text);}
-	|	^(PROP_IND expr expr)				{emit($PROP_IND, Bytecode.Instruction.LOAD_PROP_IND);}
+prop:	^(PROP expr ID)						{emit1($PROP, Instruction.LOAD_PROP, $ID.text);}
+	|	^(PROP_IND expr expr)				{emit($PROP_IND, Instruction.LOAD_PROP_IND);}
 	;
 
 mapTemplateRef[int num_exprs]
 	:	^(	INCLUDE qualifiedId
-			{for (int i=1; i<=$num_exprs; i++) emit($INCLUDE,Bytecode.Instruction.NULL);}
+			{for (int i=1; i<=$num_exprs; i++) emit($INCLUDE,Instruction.NULL);}
 			args
 		)
 		{
-		if ( $args.passThru ) emit1($start, Bytecode.Instruction.PASSTHRU, $qualifiedId.text);
-		if ( $args.namedArgs ) emit1($INCLUDE, Bytecode.Instruction.NEW_BOX_ARGS, $qualifiedId.text);
-		else emit2($INCLUDE, Bytecode.Instruction.NEW, $qualifiedId.text, $args.n+$num_exprs);
+		if ( $args.passThru ) emit1($start, Instruction.PASSTHRU, $qualifiedId.text);
+		if ( $args.namedArgs ) emit1($INCLUDE, Instruction.NEW_BOX_ARGS, $qualifiedId.text);
+		else emit2($INCLUDE, Instruction.NEW, $qualifiedId.text, $args.n+$num_exprs);
 		}
 	|	subtemplate
 		{
@@ -371,20 +380,20 @@ mapTemplateRef[int num_exprs]
             errMgr.compileTimeError(ErrorType.ANON_ARGUMENT_MISMATCH,
             						templateToken, $subtemplate.start.token, $subtemplate.nargs, $num_exprs);
 		}
-		for (int i=1; i<=$num_exprs; i++) emit($subtemplate.start,Bytecode.Instruction.NULL);
-        emit2($subtemplate.start, Bytecode.Instruction.NEW,
+		for (int i=1; i<=$num_exprs; i++) emit($subtemplate.start,Instruction.NULL);
+        emit2($subtemplate.start, Instruction.NEW,
 	              $subtemplate.name,
 	              $num_exprs);
 		}
 
 	|	^(	INCLUDE_IND expr
 			{
-			emit($INCLUDE_IND,Bytecode.Instruction.TOSTR);
-			for (int i=1; i<=$num_exprs; i++) emit($INCLUDE_IND,Bytecode.Instruction.NULL);
+			emit($INCLUDE_IND,Instruction.TOSTR);
+			for (int i=1; i<=$num_exprs; i++) emit($INCLUDE_IND,Instruction.NULL);
 			}
 			args
 			{
-			emit1($INCLUDE_IND, Bytecode.Instruction.NEW_IND, $args.n+$num_exprs);
+			emit1($INCLUDE_IND, Instruction.NEW_IND, $args.n+$num_exprs);
 			}
 		 )
 	;
@@ -393,43 +402,43 @@ includeExpr
 	:	^(EXEC_FUNC ID expr?)		{func($ID);}
 	|	^(INCLUDE qualifiedId args)
 		{
-		if ( $args.passThru ) emit1($start, Bytecode.Instruction.PASSTHRU, $qualifiedId.text);
-		if ( $args.namedArgs ) emit1($INCLUDE, Bytecode.Instruction.NEW_BOX_ARGS, $qualifiedId.text);
-		else emit2($INCLUDE, Bytecode.Instruction.NEW, $qualifiedId.text, $args.n);
+		if ( $args.passThru ) emit1($start, Instruction.PASSTHRU, $qualifiedId.text);
+		if ( $args.namedArgs ) emit1($INCLUDE, Instruction.NEW_BOX_ARGS, $qualifiedId.text);
+		else emit2($INCLUDE, Instruction.NEW, $qualifiedId.text, $args.n);
 		}
 	|	^(INCLUDE_SUPER ID args)
 		{
-		if ( $args.passThru ) emit1($start, Bytecode.Instruction.PASSTHRU, $ID.text);
-		if ( $args.namedArgs ) emit1($INCLUDE_SUPER, Bytecode.Instruction.SUPER_NEW_BOX_ARGS, $ID.text);
-		else emit2($INCLUDE_SUPER, Bytecode.Instruction.SUPER_NEW, $ID.text, $args.n);
+		if ( $args.passThru ) emit1($start, Instruction.PASSTHRU, $ID.text);
+		if ( $args.namedArgs ) emit1($INCLUDE_SUPER, Instruction.SUPER_NEW_BOX_ARGS, $ID.text);
+		else emit2($INCLUDE_SUPER, Instruction.SUPER_NEW, $ID.text, $args.n);
 		}
 	|	^(INCLUDE_REGION ID)		{
 									CompiledST impl =
 										Compiler.defineBlankRegion(outermostImpl, $ID.token);
 									//impl.dump();
-									emit2($INCLUDE_REGION,Bytecode.Instruction.NEW,impl.name,0);
+									emit2($INCLUDE_REGION,Instruction.NEW,impl.name,0);
 									}
 	|	^(INCLUDE_SUPER_REGION ID)	{
 		                            String mangled =
 		                                STGroup.getMangledRegionName(outermostImpl.name, $ID.text);
-									emit2($INCLUDE_SUPER_REGION,Bytecode.Instruction.SUPER_NEW,mangled,0);
+									emit2($INCLUDE_SUPER_REGION,Instruction.SUPER_NEW,mangled,0);
 									}
 	|	primary
 	;
 
 primary
 	:	ID				{refAttr($ID);}
-	|	STRING			{emit1($STRING,Bytecode.Instruction.LOAD_STR, Misc.strip($STRING.text,1));}
-	|	TRUE			{emit($TRUE, Bytecode.Instruction.TRUE);}
-	|	FALSE			{emit($FALSE, Bytecode.Instruction.FALSE);}
+	|	STRING			{emit1($STRING,Instruction.LOAD_STR, Misc.strip($STRING.text,1));}
+	|	TRUE			{emit($TRUE, Instruction.TRUE);}
+	|	FALSE			{emit($FALSE, Instruction.FALSE);}
 	|	subtemplate		// push a subtemplate but ignore args since we can't pass any to it here
-		                {emit2($start,Bytecode.Instruction.NEW, $subtemplate.name, 0);}
+		                {emit2($start,Instruction.NEW, $subtemplate.name, 0);}
 	|	list
 	|	^(	INCLUDE_IND
-			expr 		{emit($INCLUDE_IND, Bytecode.Instruction.TOSTR);}
-			args        {emit1($INCLUDE_IND, Bytecode.Instruction.NEW_IND, $args.n);}
+			expr 		{emit($INCLUDE_IND, Instruction.TOSTR);}
+			args        {emit1($INCLUDE_IND, Instruction.NEW_IND, $args.n);}
 		 )
-	|	^(TO_STR expr)	{emit($TO_STR, Bytecode.Instruction.TOSTR);}
+	|	^(TO_STR expr)	{emit($TO_STR, Instruction.TOSTR);}
 	;
 
 qualifiedId
@@ -442,17 +451,17 @@ arg : expr ;
 
 args returns [int n=0, boolean namedArgs=false, boolean passThru]
 	:	( arg {$n++;} )+
-	|	{emit($args.start, Bytecode.Instruction.ARGS); $namedArgs=true;}
+	|	{emit($args.start, Instruction.ARGS); $namedArgs=true;}
 		(	^(eq='=' ID expr)
-			{$n++; emit1($eq, Bytecode.Instruction.STORE_ARG, defineString($ID.text));}
+			{$n++; emit1($eq, Instruction.STORE_ARG, defineString($ID.text));}
 		)+
 		( '...' {$passThru=true;} )?
-    |   '...' {$passThru=true; emit($args.start, Bytecode.Instruction.ARGS); $namedArgs=true;}
+    |   '...' {$passThru=true; emit($args.start, Instruction.ARGS); $namedArgs=true;}
 	|
  	;
 
-list:	{emit($start, Bytecode.Instruction.LIST);}
-		^(LIST (listElement {emit($listElement.start, Bytecode.Instruction.ADD);})* )
+list:	{emit($start, Instruction.LIST);}
+		^(LIST (listElement {emit($listElement.start, Instruction.ADD);})* )
 	;
 
-listElement : expr | NULL {emit($NULL,Bytecode.Instruction.NULL);} ;
+listElement : expr | NULL {emit($NULL,Instruction.NULL);} ;

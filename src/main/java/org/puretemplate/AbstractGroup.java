@@ -7,6 +7,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import lombok.NonNull;
 
+import org.puretemplate.diagnostics.GroupDiagnostics;
 import org.puretemplate.error.ErrorListener;
 
 import com.github.mizool.core.validation.Nullable;
@@ -49,5 +50,11 @@ abstract class AbstractGroup<T extends STGroup> implements Group
     public final Template getTemplate(@NonNull String name)
     {
         return new TemplateImpl(() -> stGroup.obtainInstanceOf(name));
+    }
+
+    @Override
+    public GroupDiagnostics diagnostics()
+    {
+        return new GroupDiagnosticsImpl(stGroup);
     }
 }

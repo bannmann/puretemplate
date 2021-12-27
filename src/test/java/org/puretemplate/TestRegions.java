@@ -343,15 +343,12 @@ class TestRegions extends BaseTest
     }
 
     @Test
-    void testEmbeddedRegionOnOneLine() throws IOException
+    void testEmbeddedRegionOnOneLine()
     {
-        String dir = getRandomDir();
         String groupFile = "a() ::= <<\n" + "[\n" + "  <@r>bar<@end>\n" + "]\n" + ">>\n";
-        writeFile(dir, "group.stg", groupFile);
-        STGroup group = STGroupFilePath.createWithDefaults(dir + "/group.stg");
-        ST st = group.getInstanceOf("a");
-        st.impl.dump(log::info);
-        assertRenderingResult("[" + NEWLINE + "  bar" + NEWLINE + "]", st);
+        Template template = loadGroupFromString(groupFile).getTemplate("a");
+        dump(log, template);
+        assertRenderingResult("[" + NEWLINE + "  bar" + NEWLINE + "]", template.createContext());
     }
 
     @Test

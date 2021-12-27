@@ -2,8 +2,6 @@ package com.example;
 
 import static java.util.Calendar.JULY;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.puretemplate.Loader.RendererDepth.NON_RECURSIVE;

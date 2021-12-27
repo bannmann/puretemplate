@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -16,6 +15,7 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
+import org.puretemplate.diagnostics.Instruction;
 import org.puretemplate.error.ErrorType;
 import org.puretemplate.exception.CompilationException;
 
@@ -40,32 +40,27 @@ class Compiler
     public static final Map<String, String> defaultOptionValues = Map.ofEntries(entry("anchor", "true"),
         entry("wrap", "\n"));
 
-    public static final Map<String, Bytecode.Instruction> FUNCTIONS = createLookupMap(Bytecode.Instruction.FIRST,
-        Bytecode.Instruction.LAST,
-        Bytecode.Instruction.REST,
-        Bytecode.Instruction.TRUNC,
-        Bytecode.Instruction.STRIP,
-        Bytecode.Instruction.TRIM,
-        Bytecode.Instruction.LENGTH,
-        Bytecode.Instruction.STRLEN,
-        Bytecode.Instruction.REVERSE);
+    public static final Map<String, Instruction> FUNCTIONS = createLookupMap(Instruction.FIRST,
+        Instruction.LAST,
+        Instruction.REST,
+        Instruction.TRUNC,
+        Instruction.STRIP,
+        Instruction.TRIM,
+        Instruction.LENGTH,
+        Instruction.STRLEN,
+        Instruction.REVERSE);
 
-    private static Map<String, Bytecode.Instruction> createLookupMap(Bytecode.Instruction... instructions)
+    private static Map<String, Instruction> createLookupMap(Instruction... instructions)
     {
-        Map<String, Bytecode.Instruction> result = new HashMap<>();
-        for (Bytecode.Instruction instruction : instructions)
+        Map<String, Instruction> result = new HashMap<>();
+        for (Instruction instruction : instructions)
         {
             result.put(instruction.formalName, instruction);
         }
         return Collections.unmodifiableMap(result);
     }
 
-    /**
-     * Name subtemplates {@code _sub1}, {@code _sub2}, ...
-     */
-    static AtomicInteger subtemplateCount = new AtomicInteger(0);
-
-    private STGroup group;
+    private final STGroup group;
 
     public Compiler()
     {
@@ -178,12 +173,6 @@ class Compiler
         blank.name = mangled;
         outermostImpl.addImplicitlyDefinedTemplate(blank);
         return blank;
-    }
-
-    public static String getNewSubtemplateName()
-    {
-        int count = subtemplateCount.incrementAndGet();
-        return SUBTEMPLATE_PREFIX + count;
     }
 
     protected void reportMessageAndThrowSTException(
