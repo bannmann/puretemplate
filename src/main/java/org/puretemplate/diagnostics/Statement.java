@@ -43,6 +43,7 @@ public interface Statement
                 @Override
                 protected void beforeOperands(boolean hasAny, StringBuilder buf)
                 {
+                    // Method is only called by superclass appendTo()
                 }
 
                 protected void appendTo(StringBuilder builder, Statement statement)
