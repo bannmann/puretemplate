@@ -3,5 +3,5 @@ package org.puretemplate;
 abstract class AbstractEvent
 {
     @Override
-    abstract public String toString();
+    public abstract String toString();
 }
