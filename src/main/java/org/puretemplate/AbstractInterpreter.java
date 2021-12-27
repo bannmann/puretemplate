@@ -1434,12 +1434,13 @@ abstract class AbstractInterpreter implements Interpreter
         return iter;
     }
 
-    public Iterator<?> convertAnythingToIterator(Object o)
+    @SuppressWarnings("unchecked")
+    public Iterator<Object> convertAnythingToIterator(Object o)
     {
         o = convertAnythingIteratableToIterator(o);
         if (o instanceof Iterator)
         {
-            return (Iterator<?>) o;
+            return (Iterator<Object>) o;
         }
         List<Object> singleton = new ST.AttributeList(1);
         singleton.add(o);
