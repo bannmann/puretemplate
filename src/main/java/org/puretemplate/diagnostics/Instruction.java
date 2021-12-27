@@ -151,6 +151,7 @@ public enum Instruction
      */
     public final short opcode;
 
+    @SuppressWarnings("java:S3066") // Instance is immutable anyway due to being created via List.of()
     public final List<OperandType> operandTypes;
 
     /**
