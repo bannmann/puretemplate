@@ -1100,23 +1100,23 @@ abstract class AbstractInterpreter implements Interpreter
         return results;
     }
 
-    protected void setFirstArgument(InstanceScope scope, ST st, Object attr)
+    protected void setFirstArgument(InstanceScope scope, ST st, Object value)
     {
-        if (!st.getImpl().hasFormalArgs)
+        CompiledST code = st.getImpl();
+
+        if (!code.hasFormalArgs && code.formalArguments == null)
         {
-            if (st.getImpl().formalArguments == null)
-            {
-                st.add(ST.IMPLICIT_ARG_NAME, attr);
-                return;
-            }
-            // else fall thru to set locals[0]
-        }
-        if (st.getImpl().formalArguments == null)
-        {
-            errMgr.runTimeError(scope.toLocation(), ErrorType.ARGUMENT_COUNT_MISMATCH, 1, st.getImpl().name, 0);
+            st.add(ST.IMPLICIT_ARG_NAME, value);
             return;
         }
-        st.locals[0] = attr;
+
+        if (code.formalArguments == null)
+        {
+            errMgr.runTimeError(scope.toLocation(), ErrorType.ARGUMENT_COUNT_MISMATCH, 1, code.name, 0);
+            return;
+        }
+
+        st.locals[0] = value;
     }
 
     protected void addToList(List<Object> list, Object o)
