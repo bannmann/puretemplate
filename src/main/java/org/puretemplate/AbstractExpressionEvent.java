@@ -16,7 +16,7 @@ abstract class AbstractExpressionEvent extends AbstractInterpreterEvent
 
     public final String expr;
 
-    public AbstractExpressionEvent(Location location, int start, int stop, int exprStartChar, int exprStopChar)
+    protected AbstractExpressionEvent(Location location, int start, int stop, int exprStartChar, int exprStopChar)
     {
         super(location, start, stop);
         this.exprStartChar = exprStartChar;

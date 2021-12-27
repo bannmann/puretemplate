@@ -18,7 +18,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.puretemplate.diagnostics.Event;
@@ -43,6 +45,7 @@ import com.google.common.collect.Streams;
  * We create a new interpreter at the beginning of each rendering operation.</p>
  */
 @Slf4j
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 abstract class AbstractInterpreter implements Interpreter
 {
     private static class ObjectList extends ArrayList<Object>
@@ -82,21 +85,14 @@ abstract class AbstractInterpreter implements Interpreter
      * @see ST#groupThatCreatedThisInstance
      * @see CompiledST#nativeGroup
      */
-    STGroup group;
+    private final STGroup group;
 
     /**
      * For renderers, we have to pass in the locale.
      */
-    Locale locale;
+    private final Locale locale;
 
-    ErrorManager errMgr;
-
-    public AbstractInterpreter(STGroup group, Locale locale, ErrorManager errMgr)
-    {
-        this.group = group;
-        this.locale = locale;
-        this.errMgr = errMgr;
-    }
+    protected final ErrorManager errMgr;
 
     @Override
     public int exec(

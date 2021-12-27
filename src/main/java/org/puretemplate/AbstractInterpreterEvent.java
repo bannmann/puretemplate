@@ -1,9 +1,12 @@
 package org.puretemplate;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import org.puretemplate.misc.Location;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 abstract class AbstractInterpreterEvent extends AbstractEvent
 {
     @Getter
@@ -18,11 +21,4 @@ abstract class AbstractInterpreterEvent extends AbstractEvent
      * Index of last char into output stream (inclusive).
      */
     protected final int outputStopChar;
-
-    public AbstractInterpreterEvent(Location location, int outputStartChar, int outputStopChar)
-    {
-        this.location = location;
-        this.outputStartChar = outputStartChar;
-        this.outputStopChar = outputStopChar;
-    }
 }
