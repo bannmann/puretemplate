@@ -46,6 +46,7 @@ public interface Statement
                     // Method is only called by superclass appendTo()
                 }
 
+                @Override
                 protected void appendTo(StringBuilder builder, Statement statement)
                 {
                     builder.append(statement.getInstruction().formalName)
