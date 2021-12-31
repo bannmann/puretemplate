@@ -7,8 +7,6 @@ import java.io.IOException;
  * evaluation when specifying how to load templates or groups.
  *
  * @param <T> the type of input source supplied by this supplier
- *
- * @since 1.8
  */
 @FunctionalInterface
 public interface InputSupplier<T>
