@@ -21,7 +21,8 @@ class TraceEvent implements Event.Trace, Distributable<Event.Trace>
     int currentLineCharacters;
 
     @Builder
-    private TraceEvent(Statement statement, List<String> stack, Location location, int stackPointer, int currentLineCharacters)
+    private TraceEvent(
+        Statement statement, List<String> stack, Location location, int stackPointer, int currentLineCharacters)
     {
         this.statement = statement;
         this.stack = ImmutableList.copyOf(stack);
