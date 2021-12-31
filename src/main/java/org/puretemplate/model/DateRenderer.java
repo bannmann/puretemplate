@@ -1,13 +1,12 @@
 package org.puretemplate.model;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import org.apiguardian.api.API;
 
 /**
- * A renderer for {@link Date} and {@link Calendar}. <br>
+ * A renderer for {@link Date}. <br>
  * <br>
  * The format string in the template can be
  * <ul>
@@ -28,43 +27,22 @@ import org.apiguardian.api.API;
  * </ul>
  *
  * @see CalendarRenderer
- * @see DateRenderer
  * @see DateTimeRenderer
- * @deprecated Use {@link DateRenderer} or {@link CalendarRenderer} instead. This class stems from StringTemplate, where
- * {@link Object} was used as the {@link AttributeRenderer} type parameter to avoid having two separate classes. To
- * avoid <a href="https://github.com/antlr/stringtemplate4/issues/288">pitfalls</a>, {@code ObjectTypedDateRenderer}
- * will be removed in a future release of PureTemplate.
  */
-@Deprecated(forRemoval = true)
-@API(status = API.Status.DEPRECATED)
-public class ObjectTypedDateRenderer implements AttributeRenderer<Object>
+@API(status = API.Status.EXPERIMENTAL)
+public class DateRenderer implements AttributeRenderer<Date>
 {
     /**
-     * Renders the given {@code Date} or {@code Calendar}.
+     * Renders the given {@code Date}.
      *
-     * @param value the {@code Date} or {@code Calendar} object to render
+     * @param date the date to render
      * @param formatString a custom pattern or a predefined style; {@code null} activates the default. For details, see
-     * the {@linkplain ObjectTypedDateRenderer class description}.
+     * the {@linkplain DateRenderer class description}.
      * @param locale the active locale, never {@code null}
-     *
-     * @throws ClassCastException if the given object is neither {@link Date} nor {@link Calendar}.
      */
     @Override
-    public String render(Object value, String formatString, Locale locale)
+    public String render(Date date, String formatString, Locale locale)
     {
-        Date date = getDate(value);
         return Dates.format(date, formatString, locale);
-    }
-
-    private Date getDate(Object value)
-    {
-        if (value instanceof Calendar)
-        {
-            return ((Calendar) value).getTime();
-        }
-        else
-        {
-            return (Date) value;
-        }
     }
 }

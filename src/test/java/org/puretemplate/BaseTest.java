@@ -213,6 +213,14 @@ public abstract class BaseTest
         assertRenderingResult(expecting, context);
     }
 
+    protected void assertSingleArgRenderingResult(String expected, Template template, String name, Object value)
+    {
+        Context context = template.createContext()
+            .add(name, value);
+
+        assertRenderingResult(expected, context);
+    }
+
     protected Context makeTemplateContext(String s)
     {
         return loader.getTemplate()

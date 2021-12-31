@@ -6,7 +6,7 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
-import org.puretemplate.Context;
+import org.puretemplate.Template;
 import org.puretemplate.misc.ErrorBuffer;
 
 class TestGroupSyntax extends BaseTest
@@ -72,11 +72,9 @@ class TestGroupSyntax extends BaseTest
     {
         String templates = "delimiters \"<\", \">\"" + NEWLINE + "ta(x) ::= \"[<x>]\"" + NEWLINE;
         ErrorBuffer errors = new ErrorBuffer();
-        Context context = loadGroupFromString(templates, errors).getTemplate("ta")
-            .createContext()
-            .add("x", "hi");
+        Template template = loadGroupFromString(templates, errors).getTemplate("ta");
 
-        assertRenderingResult("[hi]", context);
+        assertSingleArgRenderingResult("[hi]", template, "x", "hi");
         assertEquals("[]",
             errors.getErrors()
                 .toString());
@@ -99,15 +97,13 @@ class TestGroupSyntax extends BaseTest
 
         ErrorBuffer errors = new ErrorBuffer();
 
-        Context context = loader.getGroup()
+        Template template = loader.getGroup()
             .fromString(templates)
             .withErrorListener(errors)
             .build()
-            .getTemplate("chapter")
-            .createContext()
-            .add("title", "hi");
-        assertRenderingResult("chapter hi", context);
+            .getTemplate("chapter");
 
+        assertSingleArgRenderingResult("chapter hi", template, "title", "hi");
         assertEquals("[]",
             errors.getErrors()
                 .toString());
@@ -117,12 +113,8 @@ class TestGroupSyntax extends BaseTest
     void testSetNonDefaultDelimiters()
     {
         String templates = "delimiters \"%\", \"%\"" + NEWLINE + "ta(x) ::= \"[%x%]\"" + NEWLINE;
-
-        Context context = loadGroupFromString(templates).getTemplate("ta")
-            .createContext()
-            .add("x", "hi");
-
-        assertRenderingResult("[hi]", context);
+        Template template = loadGroupFromString(templates).getTemplate("ta");
+        assertSingleArgRenderingResult("[hi]", template, "x", "hi");
     }
 
     /**
@@ -133,11 +125,9 @@ class TestGroupSyntax extends BaseTest
     {
         String templates = "delimiters \"@\", \"@\"" + NEWLINE + "ta(x) ::= \"[<x>]\"" + NEWLINE;
         ErrorBuffer errors = new ErrorBuffer();
-        Context context = loadGroupFromString(templates, errors).getTemplate("ta")
-            .createContext()
-            .add("x", "hi");
+        Template template = loadGroupFromString(templates, errors).getTemplate("ta");
 
-        assertRenderingResult("[hi]", context);
+        assertSingleArgRenderingResult("[hi]", template, "x", "hi");
         assertEquals("[<string> 1:11: unsupported delimiter character: @, " +
                 "<string> 1:16: unsupported delimiter character: @]",
             errors.getErrors()

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.puretemplate.BaseTest;
 import org.puretemplate.Context;
+import org.puretemplate.Template;
 import org.puretemplate.error.RuntimeMessage;
 import org.puretemplate.exception.NoSuchPropertyException;
 import org.puretemplate.misc.ErrorBufferAllErrors;
@@ -76,15 +77,13 @@ public class TestModelAdaptors extends BaseTest
     {
         String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
 
-        Context context = loader.getGroup()
+        Template template = loader.getGroup()
             .fromString(templates)
             .registerModelAdaptor(User.class, new UserAdaptor())
             .build()
-            .getTemplate("foo")
-            .createContext()
-            .add("x", new User(100, "parrt"));
+            .getTemplate("foo");
 
-        assertRenderingResult("100: parrt", context);
+        assertSingleArgRenderingResult("100: parrt", template, "x", new User(100, "parrt"));
     }
 
     @Test
@@ -93,16 +92,14 @@ public class TestModelAdaptors extends BaseTest
         String templates = "foo(x) ::= \"<x.qqq>\"\n";
         ErrorBufferAllErrors errors = new ErrorBufferAllErrors();
 
-        Context context = loader.getGroup()
+        Template template = loader.getGroup()
             .fromString(templates)
             .withErrorListener(errors)
             .registerModelAdaptor(User.class, new UserAdaptor())
             .build()
-            .getTemplate("foo")
-            .createContext()
-            .add("x", new User(100, "parrt"));
+            .getTemplate("foo");
 
-        assertRenderingResult("", context);
+        assertSingleArgRenderingResult("", template, "x", new User(100, "parrt"));
 
         RuntimeMessage msg = (RuntimeMessage) errors.getErrors()
             .get(0);
@@ -115,15 +112,13 @@ public class TestModelAdaptors extends BaseTest
     {
         String templates = "foo(x) ::= \"<x.id>: <x.name>\"\n";
 
-        Context context = loader.getGroup()
+        Template template = loader.getGroup()
             .fromString(templates)
             .registerModelAdaptor(User.class, new UserAdaptor())
             .build()
-            .getTemplate("foo")
-            .createContext()
-            .add("x", new SuperUser(100, "parrt")); // create subclass of User
+            .getTemplate("foo");
 
-        assertRenderingResult("100: super parrt", context);
+        assertSingleArgRenderingResult("100: super parrt", template, "x", new SuperUser(100, "parrt"));
     }
 
     @Test
