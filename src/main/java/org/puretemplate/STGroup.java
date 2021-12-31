@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -54,9 +55,9 @@ abstract class STGroup
      */
     protected final List<STGroup> imports = Collections.synchronizedList(new ArrayList<>());
 
-    public char delimiterStartChar;
+    char delimiterStartChar;
 
-    public char delimiterStopChar;
+    char delimiterStopChar;
 
     /**
      * Maps template name to {@link CompiledST} object. This map is synchronized.
@@ -119,30 +120,13 @@ abstract class STGroup
 
     public static final ErrorManager DEFAULT_ERR_MGR = new ErrorManager(ErrorListeners.SYSTEM_ERR);
 
-    /**
-     * Watch loading of groups and templates.
-     */
-    public static boolean verbose = false;
-
-    /**
-     * For debugging with {@link STViz}. Records where in code an {@link ST} was created and where code added
-     * attributes.
-     */
-    public static boolean trackCreationEvents = false;
-
-    /**
-     * v3 compatibility; used to iterate across {@link Map#values()} instead of v4's default {@link Map#keySet()}. But
-     * to convert ANTLR templates, it's too hard to find without static typing in templates.
-     */
-    public boolean iterateAcrossValues = false;
-
-    public static STGroup defaultGroup = new LegacyBareStGroup();
+    static STGroup defaultGroup = new LegacyBareStGroup();
 
     /**
      * The {@link ErrorManager} for entire group; all compilations and executions. This gets copied to parsers, walkers,
      * and interpreters.
      */
-    public ErrorManager errMgr = STGroup.DEFAULT_ERR_MGR;
+    ErrorManager errMgr = STGroup.DEFAULT_ERR_MGR;
 
     @VisibleForTesting
     public STGroup()
@@ -172,10 +156,7 @@ abstract class STGroup
         {
             return null;
         }
-        if (verbose)
-        {
-            System.out.println(getName() + ".getInstanceOf(" + name + ")");
-        }
+        log.debug("{}.getInstanceOf({})", getName(), name);
         if (name.charAt(0) != '/')
         {
             name = "/" + name;
@@ -184,7 +165,7 @@ abstract class STGroup
         if (c != null)
         {
             ST st = new ST();
-            st.impl = c;
+            st.setImpl(c);
             st.groupThatCreatedThisInstance = this;
             if (c.formalArguments != null)
             {
@@ -211,22 +192,14 @@ abstract class STGroup
         String fullyQualifiedName = name;
         if (name.charAt(0) != '/')
         {
-            fullyQualifiedName = scope.st.impl.prefix + name;
+            fullyQualifiedName = scope.st.getImpl().prefix + name;
         }
-        if (verbose)
-        {
-            System.out.println("getEmbeddedInstanceOf(" + fullyQualifiedName + ")");
-        }
+        log.debug("getEmbeddedInstanceOf({})", fullyQualifiedName);
         ST st = getInstanceOf(fullyQualifiedName);
         if (st == null)
         {
             errMgr.runTimeError(scope.toLocation(), ErrorType.NO_SUCH_TEMPLATE, fullyQualifiedName);
             return createStringTemplateInternally(new CompiledST());
-        }
-        // this is only called internally. wack any debug ST create events
-        if (trackCreationEvents)
-        {
-            st.debugState.newSTEvent = null; // toss it out
         }
         return st;
     }
@@ -240,9 +213,10 @@ abstract class STGroup
         CompiledST impl = compile(getFileName(), null, null, template, templateToken);
         ST st = createStringTemplateInternally(impl);
         st.groupThatCreatedThisInstance = this;
-        st.impl.hasFormalArgs = false;
-        st.impl.name = ST.UNKNOWN_NAME;
-        st.impl.defineImplicitlyDefinedTemplates(this);
+        st.getImpl().hasFormalArgs = false;
+        st.getImpl().name = ST.UNKNOWN_NAME;
+        st.getImpl()
+            .defineImplicitlyDefinedTemplates(this);
         return st;
     }
 
@@ -265,17 +239,11 @@ abstract class STGroup
         {
             name = "/" + name;
         }
-        if (verbose)
-        {
-            System.out.println(getName() + ".lookupTemplate(" + name + ")");
-        }
+        log.debug("{}.lookupTemplate({})", getName(), name);
         CompiledST code = rawGetTemplate(name);
         if (code == NOT_FOUND_ST)
         {
-            if (verbose)
-            {
-                System.out.println(name + " previously seen as not found");
-            }
+            log.debug("{} previously seen as not found", name);
             return null;
         }
         // try to load from disk and look up again
@@ -289,18 +257,12 @@ abstract class STGroup
         }
         if (code == null)
         {
-            if (verbose)
-            {
-                System.out.println(name + " recorded not found");
-            }
+            log.debug("{} recorded not found", name);
             templates.put(name, NOT_FOUND_ST);
         }
-        if (verbose)
+        if (code != null)
         {
-            if (code != null)
-            {
-                System.out.println(getName() + ".lookupTemplate(" + name + ") found");
-            }
+            log.debug("{}.lookupTemplate({}) found", getName(), name);
         }
         return code;
     }
@@ -329,24 +291,15 @@ abstract class STGroup
         }
         for (STGroup g : imports)
         {
-            if (verbose)
-            {
-                System.out.println("checking " + g.getName() + " for imported " + name);
-            }
+            log.debug("checking {} for imported {}", g.getName(), name);
             CompiledST code = g.lookupTemplate(name);
             if (code != null)
             {
-                if (verbose)
-                {
-                    System.out.println(g.getName() + ".lookupImportedTemplate(" + name + ") found");
-                }
+                log.debug("{}.lookupImportedTemplate({}) found", g.getName(), name);
                 return code;
             }
         }
-        if (verbose)
-        {
-            System.out.println(name + " not found in " + getName() + " imports");
-        }
+        log.debug("{} not found in {} imports", name, getName());
         return null;
     }
 
@@ -409,10 +362,7 @@ abstract class STGroup
     CompiledST defineTemplate(
         String fullyQualifiedTemplateName, Token nameT, List<FormalArgument> args, String template, Token templateToken)
     {
-        if (verbose)
-        {
-            System.out.println("defineTemplate(" + fullyQualifiedTemplateName + ")");
-        }
+        log.debug("defineTemplate({})", fullyQualifiedTemplateName);
         if (fullyQualifiedTemplateName == null || fullyQualifiedTemplateName.length() == 0)
         {
             throw new IllegalArgumentException("empty template name");
@@ -724,25 +674,20 @@ abstract class STGroup
      */
     ST createStringTemplateInternally(CompiledST impl)
     {
-        ST st1 = new ST();
-        st1.impl = impl;
-        st1.groupThatCreatedThisInstance = this;
+        ST st = new ST();
+        st.setImpl(impl);
+        st.groupThatCreatedThisInstance = this;
         if (impl.formalArguments != null)
         {
-            st1.locals = new Object[impl.formalArguments.size()];
-            Arrays.fill(st1.locals, ST.EMPTY_ATTR);
-        }
-        ST st = st1;
-        if (trackCreationEvents && st.debugState != null)
-        {
-            st.debugState.newSTEvent = null; // toss it out
+            st.locals = new Object[impl.formalArguments.size()];
+            Arrays.fill(st.locals, ST.EMPTY_ATTR);
         }
         return st;
     }
 
     ST createStringTemplateInternally(ST proto)
     {
-        return new ST(proto); // no need to wack debugState; not set in ST(proto).
+        return new ST(proto);
     }
 
     String getName()
@@ -761,12 +706,13 @@ abstract class STGroup
         return getName();
     }
 
-    String show()
+    String getDump()
     {
-        StringBuilder buf = new StringBuilder();
-        if (imports.size() != 0)
+        StringBuilder result = new StringBuilder();
+        if (!imports.isEmpty())
         {
-            buf.append(" : " + imports);
+            result.append(" : ")
+                .append(imports);
         }
         for (String name : templates.keySet())
         {
@@ -777,19 +723,24 @@ abstract class STGroup
             }
             int slash = name.lastIndexOf('/');
             name = name.substring(slash + 1);
-            buf.append(name);
-            buf.append('(');
+            result.append(name)
+                .append('(');
             if (c.formalArguments != null)
             {
-                buf.append(Misc.join(c.formalArguments.values()
-                    .iterator(), ","));
+                result.append(c.formalArguments.values()
+                    .stream()
+                    .map(FormalArgument::toString)
+                    .collect(Collectors.joining(",")));
             }
-            buf.append(')');
-            buf.append(" ::= <<" + Misc.NEWLINE);
-            buf.append(c.template + Misc.NEWLINE);
-            buf.append(">>" + Misc.NEWLINE);
+            result.append(')')
+                .append(" ::= <<")
+                .append(Misc.NEWLINE)
+                .append(c.template)
+                .append(Misc.NEWLINE)
+                .append(">>")
+                .append(Misc.NEWLINE);
         }
-        return buf.toString();
+        return result.toString();
     }
 
     protected ErrorListener getListener()
@@ -834,28 +785,23 @@ abstract class STGroup
         {
             errorManager = new ErrorManager(listener);
         }
-        return createInterpreterInternal(locale, errorManager, false);
+        return createInterpreterInternal(locale, errorManager);
     }
 
     Interpreter createInterpreter(ErrorManager errorManager)
     {
-        return createInterpreterInternal(Locale.ROOT, errorManager, false);
+        return createInterpreterInternal(Locale.ROOT, errorManager);
     }
 
-    Interpreter createDebuggingInterpreter()
-    {
-        return createInterpreterInternal(Locale.ROOT, errMgr, true);
-    }
-
-    private Interpreter createInterpreterInternal(@NonNull Locale locale, ErrorManager errorManager, boolean debug)
+    private Interpreter createInterpreterInternal(@NonNull Locale locale, ErrorManager errorManager)
     {
         if (legacyRendering)
         {
-            return new LegacyInterpreter(this, locale, errorManager, debug);
+            return new LegacyInterpreter(this, locale, errorManager);
         }
         else
         {
-            return new DefaultInterpreter(this, locale, errorManager, debug);
+            return new DefaultInterpreter(this, locale, errorManager);
         }
     }
 }

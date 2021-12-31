@@ -13,7 +13,10 @@ import org.apiguardian.api.API;
 public interface AttributeRenderer<T>
 {
     /**
-     * Renders the given value as a {@link String}.
+     * Renders the given non-null value as a {@link String}. <br>
+     * <br>
+     * Note: {@code null} is never passed to attribute renderers. However, if a template specifies a replacement string
+     * for {@code null}, that value <i>is</i> passed to a renderer registered for {@code String}.
      *
      * @param value the object to render, never {@code null}
      * @param formatString format string or {@code null} if unspecified

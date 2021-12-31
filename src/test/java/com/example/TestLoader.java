@@ -26,6 +26,11 @@ class TestLoader extends BaseTest
         assertTemplateWorks(template);
     }
 
+    private void assertTemplateWorks(Template template)
+    {
+        assertSingleArgRenderingResult("hi Ter!", template, "name", "Ter");
+    }
+
     @Test
     void testFromStringWithDelimiters()
     {
@@ -34,14 +39,6 @@ class TestLoader extends BaseTest
             .withDelimiters('$', '$')
             .build();
         assertTemplateWorks(template);
-    }
-
-    private void assertTemplateWorks(Template template)
-    {
-        Context context = template.createContext()
-            .add("name", "Ter");
-
-        assertRenderingResult("hi Ter!", context);
     }
 
     @Test

@@ -8,9 +8,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.Test;
 import org.puretemplate.misc.ErrorBuffer;
 
+@Slf4j
 class TestDictionaries extends BaseTest
 {
     @Test
@@ -30,20 +33,21 @@ class TestDictionaries extends BaseTest
     }
 
     @Test
-    void testDictValuesAreTemplates() throws IOException
+    void testDictValuesAreTemplates()
     {
         String templates = "typeInit ::= [\"int\":{0<w>}, \"float\":{0.0<w>}] " +
             NEWLINE +
             "var(type,w,name) ::= \"<type> <name> = <typeInit.(type)>;\"" +
             NEWLINE;
-        writeFile(tmpdir, "test.stg", templates);
-        STGroup group = STGroupFilePath.createWithDefaults(tmpdir + "/" + "test.stg");
-        ST st = group.getInstanceOf("var");
-        st.impl.dump();
-        st.add("w", "L");
-        st.add("type", "int");
-        st.add("name", "x");
-        assertRenderingResult("int x = 0L;", st);
+
+        Template template = loadGroupFromString(templates).getTemplate("var");
+        dump(log, template);
+
+        Context context = template.createContext()
+            .add("w", "L")
+            .add("type", "int")
+            .add("name", "x");
+        assertRenderingResult("int x = 0L;", context);
     }
 
     @Test

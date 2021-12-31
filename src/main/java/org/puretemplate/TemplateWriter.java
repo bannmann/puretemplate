@@ -2,6 +2,9 @@ package org.puretemplate;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.Writer;
+
+import org.puretemplate.diagnostics.Instruction;
 
 /**
  * Generic StringTemplate output writer filter.
@@ -10,7 +13,7 @@ import java.io.IOException;
  * #writeSeparator(String)} because they must be handled specially when wrapping lines (we don't want to wrap in between
  * an element and it's separator).</p>
  */
-interface STWriter extends Closeable
+interface TemplateWriter extends Closeable
 {
     int NO_WRAP = -1;
 
@@ -36,12 +39,13 @@ interface STWriter extends Closeable
     int write(String str, String wrap) throws IOException;
 
     /**
-     * Because we evaluate ST instance by invoking {@link AbstractInterpreter#exec(STWriter, InstanceScope)} again, we
-     * can't pass options in. So the {@link Bytecode.Instruction#WRITE} instruction of an applied template (such as when
-     * we wrap in between template applications like {@code <data:{v|[<v>]}; wrap>}) we need to write the {@code wrap}
-     * string before calling {@link Interpreter#exec}. We expose just like for the separator. See {@link
+     * Because we evaluate ST instance by invoking {@link AbstractInterpreter#exec(TemplateWriter, InstanceScope)}
+     * again, we can't pass options in. So the {@link Instruction#WRITE} instruction of an applied template (such as
+     * when we wrap in between template applications like {@code <data:{v|[<v>]}; wrap>}) we need to write the {@code
+     * wrap} string before calling {@link Interpreter#exec}. We expose just like for the separator. See {@link
      * AbstractInterpreter#writeObject} where it checks for ST instance. If POJO, {@link AbstractInterpreter#writePOJO}
-     * passes {@code wrap} to {@link STWriter#write(String str, String wrap)}. Can't pass to {@link Interpreter#exec}.
+     * passes {@code wrap} to {@link TemplateWriter#write(String str, String wrap)}. Can't pass to {@link
+     * Interpreter#exec}.
      */
     int writeWrap(String wrap) throws IOException;
 
@@ -56,4 +60,6 @@ interface STWriter extends Closeable
      * yet.
      */
     int index();
+
+    TemplateWriter createWriterTargeting(Writer target);
 }

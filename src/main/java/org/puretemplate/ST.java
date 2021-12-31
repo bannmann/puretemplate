@@ -9,10 +9,9 @@ import java.util.Locale;
 
 import lombok.NonNull;
 
+import org.puretemplate.diagnostics.Event;
+import org.puretemplate.diagnostics.EventListener;
 import org.puretemplate.error.ErrorListener;
-
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
 
 /**
  * An instance of the StringTemplate. It consists primarily of a {@linkplain ST#impl reference} to its implementation
@@ -47,24 +46,6 @@ class ST
     }
 
     /**
-     * Events during template hierarchy construction (not evaluation)
-     */
-    static final class DebugState
-    {
-        /**
-         * Record who made us? {@link ConstructionEvent} creates {@link Exception} to grab stack
-         */
-        public ConstructionEvent newSTEvent;
-
-        /**
-         * Track construction-time add attribute "events"; used for ST user-level debugging
-         */
-        public Multimap<String, AddAttributeEvent> addAttrEvents = MultimapBuilder.linkedHashKeys()
-            .arrayListValues()
-            .build();
-    }
-
-    /**
      * Just an alias for {@link ArrayList}, but this way I can track whether a list is something ST created or it's an
      * incoming list.
      */
@@ -91,6 +72,15 @@ class ST
      */
     static final String IMPLICIT_ARG_NAME = "it";
 
+    private static CompiledST compile(STGroup group, String template)
+    {
+        CompiledST result = group.compile(group.getFileName(), null, null, template, null);
+        result.hasFormalArgs = false;
+        result.name = UNKNOWN_NAME;
+        result.defineImplicitlyDefinedTemplates(group);
+        return result;
+    }
+
     private static boolean isArray(Object object)
     {
         return object != null &&
@@ -101,7 +91,9 @@ class ST
     /**
      * The implementation for this template among all instances of same template .
      */
-    CompiledST impl;
+    private CompiledST impl;
+
+    private final EventDistributor eventDistributor = new EventDistributor();
 
     /**
      * Safe to simultaneously write via {@link #add}, which is synchronized. Reading during exec is, however, NOT
@@ -133,24 +125,10 @@ class ST
     STGroup groupThatCreatedThisInstance;
 
     /**
-     * If {@link STGroup#trackCreationEvents}, track creation and add attribute events for each object. Create this
-     * object on first use.
-     */
-    DebugState debugState;
-
-    /**
      * Used by group creation routine, not by users
      */
     ST()
     {
-        if (STGroup.trackCreationEvents)
-        {
-            if (debugState == null)
-            {
-                debugState = new ST.DebugState();
-            }
-            debugState.newSTEvent = new ConstructionEvent();
-        }
     }
 
     /**
@@ -174,17 +152,12 @@ class ST
 
     ST(STGroup group, String template)
     {
-        this();
         groupThatCreatedThisInstance = group;
-        impl = groupThatCreatedThisInstance.compile(group.getFileName(), null, null, template, null);
-        impl.hasFormalArgs = false;
-        impl.name = UNKNOWN_NAME;
-        impl.defineImplicitlyDefinedTemplates(groupThatCreatedThisInstance);
+        impl = compile(group, template);
     }
 
     /**
-     * Clone a prototype template. Copy all fields minus {@link #debugState}; don't delegate to {@link #ST()}, which
-     * creates {@link ConstructionEvent}.
+     * Clone a prototype template.
      */
     ST(ST proto)
     {
@@ -213,22 +186,23 @@ class ST
         this.groupThatCreatedThisInstance = proto.groupThatCreatedThisInstance;
     }
 
-    public synchronized ST add(@NonNull String name, Object value)
+    CompiledST getImpl()
+    {
+        return impl;
+    }
+
+    void setImpl(CompiledST impl)
+    {
+        this.impl = impl;
+    }
+
+    public ST add(@NonNull String name, Object value)
     {
         verifyAttributeValue(value);
 
         if (name.indexOf('.') >= 0)
         {
             throw new IllegalArgumentException("cannot have '.' in attribute names");
-        }
-
-        if (STGroup.trackCreationEvents)
-        {
-            if (debugState == null)
-            {
-                debugState = new ST.DebugState();
-            }
-            debugState.addAttrEvents.put(name, new AddAttributeEvent(name, value));
         }
 
         FormalArgument arg = obtainArgument(name);
@@ -426,37 +400,26 @@ class ST
     }
 
     @Deprecated(forRemoval = true)
-    public int write(STWriter out)
+    public int write(TemplateWriter out)
     {
         Interpreter interp = groupThatCreatedThisInstance.createInterpreter(impl.nativeGroup.errMgr);
-        return interp.exec(this, out);
+        return interp.exec(this, out, eventDistributor);
     }
 
-    public int write(STWriter out, Locale locale, ErrorListener listener)
+    public int write(TemplateWriter out, Locale locale, ErrorListener listener)
     {
         Interpreter interp = groupThatCreatedThisInstance.createInterpreter(locale, listener);
-        return interp.exec(this, out);
+        return interp.exec(this, out, eventDistributor);
     }
 
     @Deprecated(forRemoval = true)
     public String render()
     {
         StringWriter out = new StringWriter();
-        STWriter wr = new AutoIndentWriter(out);
+        TemplateWriter wr = new AutoIndentWriter(out);
         Interpreter interp = groupThatCreatedThisInstance.createInterpreter(impl.nativeGroup.errMgr);
-        interp.exec(this, wr);
+        interp.exec(this, wr, eventDistributor);
         return out.toString();
-    }
-
-    // TESTING SUPPORT
-
-    public List<InterpEvent> getEvents()
-    {
-        StringWriter out = new StringWriter();
-        STWriter wr = new AutoIndentWriter(out);
-        Interpreter interp = groupThatCreatedThisInstance.createDebuggingInterpreter();
-        interp.exec(this, wr); // render and track events
-        return interp.getEvents();
     }
 
     @Override
@@ -483,5 +446,11 @@ class ST
     public Interval getInterval(int ip)
     {
         return impl.sourceMap[ip];
+    }
+
+    public <E extends Event & Event.DistributionTarget> void addEventListener(
+        EventListener listener, Class<E> eventInterface)
+    {
+        eventDistributor.addEventListener(listener, eventInterface);
     }
 }

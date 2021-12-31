@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRStringStream;
@@ -13,6 +14,7 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.Token;
 import org.puretemplate.error.ErrorType;
 
+@Slf4j
 class GreenfieldStGroup extends STGroup
 {
     public GreenfieldStGroup(@NonNull Charset charset, char delimiterStartChar, char delimiterStopChar)
@@ -27,11 +29,7 @@ class GreenfieldStGroup extends STGroup
 
     protected void loadGroupFile(Path filePath, InputStream inputStream, String prefix)
     {
-        if (verbose)
-        {
-            System.out.println(this.getClass()
-                .getSimpleName() + ".loadGroupFile(fileName=" + filePath + ")");
-        }
+        log.debug("loadGroupFile(filePath={})", filePath);
         GroupParser parser;
         try
         {
@@ -50,11 +48,7 @@ class GreenfieldStGroup extends STGroup
 
     protected void loadGroup(Path filePath, String sourceText, String prefix)
     {
-        if (verbose)
-        {
-            System.out.println(this.getClass()
-                .getSimpleName() + ".loadGroupFile(fileName=" + filePath + ")");
-        }
+        log.debug("loadGroup(filePath={})", filePath);
         try
         {
             ANTLRStringStream fs = new ANTLRStringStream(sourceText);

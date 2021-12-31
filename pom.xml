@@ -10,11 +10,12 @@
     <groupId>org.puretemplate</groupId>
     <artifactId>puretemplate</artifactId>
 
-    <version>5.0.0-beta.2</version>
+    <version>5.0.0-beta.3</version>
     <packaging>jar</packaging>
 
     <name>PureTemplate</name>
     <description>Template engine that strictly enforces model-view separation</description>
+    <url>https://github.com/puretemplate/puretemplate</url>
 
     <licenses>
         <license>
@@ -25,10 +26,10 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/bannmann/puretemplate.git</connection>
-        <developerConnection>scm:git:git@github.com:bannmann/puretemplate.git</developerConnection>
+        <connection>scm:git:git://github.com/puretemplate/puretemplate.git</connection>
+        <developerConnection>scm:git:git@github.com:puretemplate/puretemplate.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/bannmann/puretemplate/tree/master</url>
+        <url>https://github.com/puretemplate/puretemplate/tree/develop</url>
     </scm>
 
     <distributionManagement>
@@ -84,6 +85,12 @@
                 <version>1.1.2</version>
             </dependency>
             <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.21.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>5.8.1</version>
@@ -95,6 +102,12 @@
                 <artifactId>metainf-services</artifactId>
                 <version>1.8</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -113,6 +126,10 @@
             <artifactId>apiguardian-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
@@ -120,6 +137,10 @@
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>
             <artifactId>metainf-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
         </dependency>
     </dependencies>
 
@@ -181,6 +202,7 @@
                             <link>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${org.apiguardian:apiguardian-api:jar.version}/</link>
                             <link>https://javadoc.io/doc/com.google.code.findbugs/jsr305/${com.google.code.findbugs:jsr305:jar.version}/</link>
                         </links>
+                        <show>public</show>
                     </configuration>
                 </plugin>
                 <plugin>

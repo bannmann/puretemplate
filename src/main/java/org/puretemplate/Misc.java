@@ -2,7 +2,6 @@ package org.puretemplate;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Iterator;
 
 import lombok.experimental.UtilityClass;
 
@@ -17,21 +16,6 @@ class Misc
     public static boolean referenceEquals(Object x, Object y)
     {
         return x == y;
-    }
-
-    // Seriously: why isn't this built in to java?
-    public static String join(Iterator<?> iter, String separator)
-    {
-        StringBuilder buf = new StringBuilder();
-        while (iter.hasNext())
-        {
-            buf.append(iter.next());
-            if (iter.hasNext())
-            {
-                buf.append(separator);
-            }
-        }
-        return buf.toString();
     }
 
     /**
@@ -152,9 +136,9 @@ class Misc
 
     public static String replaceEscapes(String s)
     {
-        s = s.replaceAll("\n", "\\\\n");
-        s = s.replaceAll("\r", "\\\\r");
-        s = s.replaceAll("\t", "\\\\t");
+        s = s.replace("\n", "\\\\n");
+        s = s.replace("\r", "\\\\r");
+        s = s.replace("\t", "\\\\t");
         return s;
     }
 
@@ -194,5 +178,13 @@ class Misc
             i++;
         }
         return buf.toString();
+    }
+
+    public static int getShort(byte[] memory, int index)
+    {
+        int b1 = memory[index] & 0xFF; // mask off sign-extended bits
+        int b2 = memory[index + 1] & 0xFF;
+        int word = b1 << (8 * 1) | b2;
+        return word;
     }
 }

@@ -80,10 +80,7 @@ class STGroupFilePath extends GreenfieldStGroup
     @Override
     public void importTemplates(Token fileNameToken)
     {
-        if (verbose)
-        {
-            System.out.println("importTemplates(" + fileNameToken.getText() + ")");
-        }
+        log.debug("importTemplates({})", fileNameToken.getText());
         String importFileName = fileNameToken.getText();
 
         // do nothing upon syntax error
@@ -188,25 +185,19 @@ class STGroupFilePath extends GreenfieldStGroup
         }
         alreadyLoaded = true; // do before actual load to say we're doing it
 
-        if (verbose)
-        {
-            System.out.println("loading group file " + file);
-        }
+        log.debug("loading group file {}", file);
 
         // no prefix since this group file is the entire group, nothing lives beneath it.
         loadGroup(file, sourceText, "/");
 
-        if (verbose)
-        {
-            System.out.println("found " + templates.size() + " templates in " + file + " = " + templates.keySet());
-        }
+        log.debug("found {} templates in {} = {}", templates.size(), file, templates.keySet());
     }
 
     @Override
-    public String show()
+    public String getDump()
     {
         load();
-        return super.show();
+        return super.getDump();
     }
 
     @Override

@@ -1,16 +1,25 @@
 package org.puretemplate;
 
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
+import org.puretemplate.diagnostics.ConstantReference;
+import org.puretemplate.diagnostics.Instruction;
+import org.puretemplate.diagnostics.Operand;
+import org.puretemplate.diagnostics.OperandType;
+import org.puretemplate.diagnostics.Statement;
+
+import com.github.mizool.core.exception.CodeInconsistencyException;
+import com.google.common.collect.ImmutableList;
 
 /**
  * The result of compiling an {@link ST}.  Contains all the bytecode instructions, string table, bytecode address to
@@ -19,7 +28,7 @@ import org.antlr.runtime.tree.CommonTree;
  */
 class CompiledST implements Cloneable
 {
-    public String name;
+    String name;
 
     /**
      * Every template knows where it is relative to the group that loaded it. The prefix is the relative path from the
@@ -34,51 +43,51 @@ class CompiledST implements Cloneable
      * <p>
      * Always ends with {@code "/"}.</p>
      */
-    public String prefix = "/";
+    String prefix = "/";
 
     /**
      * The original, immutable pattern (not really used again after initial "compilation"). Useful for debugging.  Even
      * for subtemplates, this is entire overall template.
      */
-    public String template;
+    String template;
 
     /**
      * The token that begins template definition; could be {@code <@r>} of region.
      */
-    public Token templateDefStartToken;
+    Token templateDefStartToken;
 
     /**
      * Overall token stream for template (debug only).
      */
-    public TokenStream tokens;
+    TokenStream tokens;
 
     /**
      * How do we interpret syntax of template? (debug only)
      */
-    public CommonTree ast;
+    CommonTree ast;
 
-    public Map<String, FormalArgument> formalArguments;
+    Map<String, FormalArgument> formalArguments;
 
-    public boolean hasFormalArgs;
+    boolean hasFormalArgs;
 
-    public int numberOfArgsWithDefaultValues;
+    int numberOfArgsWithDefaultValues;
 
     /**
      * A list of all regions and subtemplates.
      */
-    public List<CompiledST> implicitlyDefinedTemplates;
+    private List<CompiledST> implicitlyDefinedTemplates;
 
     /**
      * The group that physically defines this {@link ST} definition. We use it to initiate interpretation via {@link
      * ST#toString}. From there, it becomes field {@code AbstractInterpreter.group} and is fixed until rendering
      * completes.
      */
-    public STGroup nativeGroup = STGroup.defaultGroup;
+    STGroup nativeGroup = STGroup.defaultGroup;
 
     /**
      * Does this template come from a {@code <@region>...<@end>} embedded in another template?
      */
-    public boolean isRegion;
+    boolean isRegion;
 
     /**
      * If someone refs {@code <@r()>} in template t, an implicit
@@ -89,27 +98,27 @@ class CompiledST implements Cloneable
      * is defined, but you can overwrite this def by defining your own. We need to prevent more than one manual def
      * though. Between this var and {@link #isRegion} we can determine these cases.</p>
      */
-    public ST.RegionType regionDefType;
+    ST.RegionType regionDefType;
 
-    public boolean isAnonSubtemplate;
+    boolean isAnonSubtemplate;
 
     /**
      * string operands of instructions
      */
-    public String[] strings;
+    String[] strings;
 
     /**
      * byte-addressable code memory. For efficiency, this stores opcodes instead of references to the {@link
-     * Bytecode.Instruction} enum.
+     * Instruction} enum.
      */
-    public byte[] instrs;
+    byte[] instrs;
 
-    public int codeSize;
+    int codeSize;
 
     /**
      * maps IP to range in template pattern
      */
-    public Interval[] sourceMap;
+    Interval[] sourceMap;
 
     public CompiledST()
     {
@@ -134,7 +143,7 @@ class CompiledST implements Cloneable
         if (formalArguments != null)
         {
             // FIXME should assign to clone.formalArguments, not our own!
-            formalArguments = Collections.synchronizedMap(new LinkedHashMap<String, FormalArgument>(formalArguments));
+            formalArguments = Collections.synchronizedMap(new LinkedHashMap<>(formalArguments));
         }
 
         return clone;
@@ -223,7 +232,7 @@ class CompiledST implements Cloneable
     {
         if (formalArguments == null)
         {
-            formalArguments = Collections.synchronizedMap(new LinkedHashMap<String, FormalArgument>());
+            formalArguments = Collections.synchronizedMap(new LinkedHashMap<>());
         }
         else if (formalArguments.containsKey(a.name))
         {
@@ -246,65 +255,158 @@ class CompiledST implements Cloneable
         }
     }
 
-    public String getTemplateSource()
+    public void dump(Consumer<String> printer)
     {
-        Interval r = getTemplateRange();
-        return template.substring(r.getA(), r.getB() + 1);
+        printer.accept(name + ":");
+        printer.accept(formatStatements());
+        printer.accept("Strings:");
+        printer.accept(formatStrings());
+        printer.accept("Bytecode to template map:");
+        printer.accept(formatSourceMap());
     }
 
-    public Interval getTemplateRange()
+    private String formatStatements()
     {
-        if (isAnonSubtemplate)
+        StringBuilder buf = new StringBuilder();
+        for (Statement statement : getStatements())
         {
-            int start = Integer.MAX_VALUE;
-            int stop = Integer.MIN_VALUE;
-            for (Interval interval : sourceMap)
-            {
-                if (interval == null)
-                {
-                    continue;
-                }
+            statement.appendTo(buf, Statement.Format.PRETTY);
+            buf.append('\n');
+        }
+        return buf.toString();
+    }
 
-                start = Math.min(start, interval.getA());
-                stop = Math.max(stop, interval.getB());
-            }
+    public List<Statement> getStatements()
+    {
+        ImmutableList.Builder<Statement> result = ImmutableList.builder();
+        int instructionPointer = 0;
+        while (instructionPointer < codeSize)
+        {
+            Statement statement = createStatement(instructionPointer);
+            result.add(statement);
+            instructionPointer += statement.getSize();
+        }
+        return result.build();
+    }
 
-            if (start <= stop + 1)
+    public Statement createStatement(int instructionPointer)
+    {
+        if (instructionPointer >= codeSize)
+        {
+            throw new IllegalArgumentException("instructionPointer out of range: " + instructionPointer);
+        }
+        int startingInstructionPointer = instructionPointer;
+
+        int opcode = instrs[instructionPointer];
+        Instruction instruction = Bytecode.INSTRUCTIONS[opcode];
+        if (instruction == null)
+        {
+            throw new IllegalArgumentException("no such instruction " + opcode + " at address " + instructionPointer);
+        }
+        instructionPointer++;
+
+        ImmutableList.Builder<Operand> operands = ImmutableList.builder();
+        for (OperandType operandType : instruction.operandTypes)
+        {
+            int opnd = Misc.getShort(instrs, instructionPointer);
+            instructionPointer += Bytecode.OPND_SIZE_IN_BYTES;
+            switch (operandType)
             {
-                return new Interval(start, stop);
+                case STRING:
+                    operands.add(OperandImpl.builder()
+                        .type(OperandType.STRING)
+                        .numericValue(opnd)
+                        .stringConstant(getPoolString(opnd))
+                        .build());
+                    break;
+                case ADDR:
+                case INT:
+                    operands.add(OperandImpl.builder()
+                        .type(operandType)
+                        .numericValue(opnd)
+                        .build());
+                    break;
+                default:
+                    throw new CodeInconsistencyException("unsupported operand type " + operandType);
             }
         }
-        return new Interval(0, template.length() - 1);
+
+        return StatementImpl.builder()
+            .address(startingInstructionPointer)
+            .instruction(instruction)
+            .operands(operands.build())
+            .size(instructionPointer - startingInstructionPointer)
+            .build();
     }
 
-    public String instrs()
+    private ConstantReference getPoolString(int poolIndex)
     {
-        BytecodeDisassembler dis = new BytecodeDisassembler(this);
-        return dis.instrs();
+        if (poolIndex > strings.length)
+        {
+            return ConstantReferenceImpl.builder()
+                .valid(false)
+                .build();
+        }
+
+        return ConstantReferenceImpl.builder()
+            .valid(true)
+            .value(strings[poolIndex])
+            .build();
     }
 
-    public void dump()
+    private String formatStrings()
     {
-        BytecodeDisassembler dis = new BytecodeDisassembler(this);
-        System.out.println(name + ":");
-        System.out.println(dis.disassemble());
-        System.out.println("Strings:");
-        System.out.println(dis.strings());
-        System.out.println("Bytecode to template map:");
-        System.out.println(dis.sourceMap());
+        StringBuilder buf = new StringBuilder();
+        int addr = 0;
+        if (strings != null)
+        {
+            for (String s : strings)
+            {
+                if (s != null)
+                {
+                    s = Misc.replaceEscapes(s);
+                    buf.append(String.format("%04d: \"%s\"\n", addr, s));
+                }
+                else
+                {
+                    buf.append(String.format("%04d: null\n", addr));
+                }
+                addr++;
+            }
+        }
+        return buf.toString();
     }
 
-    public String disasm()
+    private String formatSourceMap()
     {
-        BytecodeDisassembler dis = new BytecodeDisassembler(this);
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        pw.println(dis.disassemble());
-        pw.println("Strings:");
-        pw.println(dis.strings());
-        pw.println("Bytecode to template map:");
-        pw.println(dis.sourceMap());
-        pw.close();
-        return sw.toString();
+        StringBuilder buf = new StringBuilder();
+        int addr = 0;
+        for (Interval I : sourceMap)
+        {
+            if (I != null)
+            {
+                String chunk = template.substring(I.getA(), I.getB() + 1);
+                buf.append(String.format("%04d: %s\t\"%s\"\n", addr, I, chunk));
+            }
+            addr++;
+        }
+        return buf.toString();
+    }
+
+    public String getDump()
+    {
+        try (StringBuilderWriter result = new StringBuilderWriter();
+             PrintWriter printWriter = new PrintWriter(result))
+        {
+            dump(printWriter::println);
+            return result.toString();
+        }
+    }
+
+    public String getStatementsAsString()
+    {
+        return getStatements().stream()
+            .map(statement -> statement.toString(Statement.Format.MINIMAL))
+            .collect(Collectors.joining(", "));
     }
 }

@@ -200,9 +200,6 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
     }
 
     /**
-     *
-     * @param group
-     *
      * @return the next state of the fluent API. See <a href="../package-summary.html#fluent-api-usage-notes">Usage
      * notes for fluent APIs in PureTemplate</a> for details.
      */
@@ -247,8 +244,8 @@ class TemplateLoaderAction extends AbstractLoaderAction implements ITemplateLoad
         // Parent group is mutually exclusive with specifying delimiters
         if (parentGroup != null)
         {
-            InternalGroup parentGroupInternal = (InternalGroup) this.parentGroup;
-            return new ST(parentGroupInternal.getStGroup(), sourceText);
+            AbstractGroup<?> parentGroupInternal = (AbstractGroup<?>) this.parentGroup;
+            return new ST(parentGroupInternal.stGroup, sourceText);
         }
         else
         {

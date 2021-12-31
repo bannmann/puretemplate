@@ -11,7 +11,7 @@ class STGroupString extends GreenfieldStGroup
 {
     private final String sourceName;
     private final String text;
-    protected boolean alreadyLoaded = false;
+    protected boolean alreadyLoaded;
 
     public STGroupString(String text)
     {

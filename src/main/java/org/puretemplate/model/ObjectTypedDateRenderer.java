@@ -1,48 +1,59 @@
 package org.puretemplate.model;
 
-import static java.util.Map.entry;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apiguardian.api.API;
 
 /**
- * A renderer for {@link Date} and {@link Calendar} objects. It understands a variety of format names as shown in {@link
- * #FORMATS} field. By default it assumes {@code "short"} format. A prefix of {@code "date:"} or {@code "time:"} shows
- * only those components of the time object.<br>
+ * A renderer for {@link Date} and {@link Calendar}. <br>
  * <br>
- * <b>API status:</b> {@link API.Status#MAINTAINED} because PureTemplate will most likely fix
- * <a href="https://github.com/antlr/stringtemplate4/issues/288">antlr/stringtemplate4#288</a> by replacing this with
- * two distinct classes for {@link Date} and {@link Calendar}.
+ * The format string in the template can be
+ * <ul>
+ *     <li>a {@linkplain java.text.SimpleDateFormat custom pattern}</li>
+ *     <li>one of the standard {@linkplain java.time.format.FormatStyle formatting styles}
+ *     <ul>
+ *         <li>{@code "short"}, typically numeric. Examples: '12.13.52' or '3:30pm'</li>
+ *         <li>{@code "medium"}, with some detail. Example: 'Jan 12, 1952'</li>
+ *         <li>{@code "long"}, with lots of detail. Example: 'January 12, 1952'</li>
+ *         <li>{@code "full"}, with the most detail. Examples: 'Tuesday, April 12, 1952 AD' or '3:30:42pm PST'</li>
+ *     </ul>
+ *     </li>
+ *     <li>
+ *         one of the standard formatting styles (see above), but prefixed by {@code "date:"} or {@code "time:"} to show
+ *         only those components of the time object
+ *     </li>
+ *     <li>left out to use the default ({@code "short"})</li>
+ * </ul>
+ *
+ * @see CalendarRenderer
+ * @see DateRenderer
+ * @see DateTimeRenderer
+ * @deprecated Use {@link DateRenderer} or {@link CalendarRenderer} instead. This class stems from StringTemplate, where
+ * {@link Object} was used as the {@link AttributeRenderer} type parameter to avoid having two separate classes. To
+ * avoid <a href="https://github.com/antlr/stringtemplate4/issues/288">pitfalls</a>, {@code ObjectTypedDateRenderer}
+ * will be removed in a future release of PureTemplate.
  */
-// using <Object> because this can handle Date and Calendar objects, which don't have a common supertype.
-@API(status = API.Status.MAINTAINED)
+@Deprecated(forRemoval = true)
+@API(status = API.Status.DEPRECATED)
 public class ObjectTypedDateRenderer implements AttributeRenderer<Object>
 {
-    private static final Map<String, Integer> FORMATS = Map.ofEntries(entry("short", DateFormat.SHORT),
-        entry("medium", DateFormat.MEDIUM),
-        entry("long", DateFormat.LONG),
-        entry("full", DateFormat.FULL),
-        entry("date:short", DateFormat.SHORT),
-        entry("date:medium", DateFormat.MEDIUM),
-        entry("date:long", DateFormat.LONG),
-        entry("date:full", DateFormat.FULL),
-        entry("time:short", DateFormat.SHORT),
-        entry("time:medium", DateFormat.MEDIUM),
-        entry("time:long", DateFormat.LONG),
-        entry("time:full", DateFormat.FULL));
-
+    /**
+     * Renders the given {@code Date} or {@code Calendar}.
+     *
+     * @param value the {@code Date} or {@code Calendar} object to render
+     * @param formatString a custom pattern or a predefined style; {@code null} activates the default. For details, see
+     * the {@linkplain ObjectTypedDateRenderer class description}.
+     * @param locale the active locale, never {@code null}
+     *
+     * @throws ClassCastException if the given object is neither {@link Date} nor {@link Calendar}.
+     */
     @Override
     public String render(Object value, String formatString, Locale locale)
     {
         Date date = getDate(value);
-        DateFormat dateFormat = getDateFormat(formatString, locale);
-        return dateFormat.format(date);
+        return Dates.format(date, formatString, locale);
     }
 
     private Date getDate(Object value)
@@ -55,31 +66,5 @@ public class ObjectTypedDateRenderer implements AttributeRenderer<Object>
         {
             return (Date) value;
         }
-    }
-
-    private DateFormat getDateFormat(String formatString, Locale locale)
-    {
-        if (formatString == null)
-        {
-            formatString = "short";
-        }
-        Integer style = FORMATS.get(formatString);
-
-        if (style == null)
-        {
-            return new SimpleDateFormat(formatString, locale);
-        }
-
-        if (formatString.startsWith("date:"))
-        {
-            return DateFormat.getDateInstance(style, locale);
-        }
-
-        if (formatString.startsWith("time:"))
-        {
-            return DateFormat.getTimeInstance(style, locale);
-        }
-
-        return DateFormat.getDateTimeInstance(style, style, locale);
     }
 }

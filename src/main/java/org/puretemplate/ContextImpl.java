@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import org.puretemplate.diagnostics.ContextDiagnostics;
 import org.puretemplate.error.ErrorListener;
 
 @RequiredArgsConstructor
@@ -62,5 +63,11 @@ class ContextImpl implements Context
     public Object getAttribute(String name)
     {
         return st.getAttribute(name);
+    }
+
+    @Override
+    public ContextDiagnostics diagnostics()
+    {
+        return new ContextDiagnosticsImpl(st);
     }
 }
